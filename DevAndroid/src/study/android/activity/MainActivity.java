@@ -63,12 +63,17 @@ public class MainActivity extends Activity{
 
     private Logger logger = Logger.getLogger(MainActivity.class.getName());
     private void activityStates(String state){
-//        Toast.makeText(this, MainActivity.class.getName() + " - " + state, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, MainActivity.class.getName() + " - " + state, Toast.LENGTH_SHORT).show();
         logger.info(state);
     }
     
     public void startWebviewActivity(View view){
         Intent intent = new Intent(this, WebViewActivity.class);
+        startActivity(intent);
+    }
+    
+    public void startDesktopActivity(View view){
+        Intent intent = new Intent(this, DesktopActivity.class);
         startActivity(intent);
     }
 }

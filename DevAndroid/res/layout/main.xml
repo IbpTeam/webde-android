@@ -8,7 +8,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/webviewActivity"
+        android:text="@string/WebviewActivity"
         android:onClick="startWebviewActivity" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/DesktopActivity"
+        android:onClick="startDesktopActivity" />
 
 </LinearLayout>
