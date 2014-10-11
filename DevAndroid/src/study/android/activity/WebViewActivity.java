@@ -51,9 +51,7 @@ public class WebViewActivity extends Activity{
               super.handleMessage(msg);
             }
         };
-        loadurl(wv,"file:///android_asset/index.html");
-        //"http://www.baidu.com"
-        //"file:///sdcard/AndroidStudy/index.html"
+        loadurl(wv,"file:///android_asset/index.html");//"file:///sdcard/AndroidStudy/index.html"
     }
 
     private void getHtml() {
@@ -128,12 +126,6 @@ public class WebViewActivity extends Activity{
         ad.show();//显示对话框
     }
     public void loadurl(final WebView view,final String url){
-//        new Thread(){
-//            public void run(){
-//                handler.sendEmptyMessage(0);
-//                view.loadUrl(url);//载入网页
-//            }
-//        }.start();
         handler.sendEmptyMessage(0);
         view.loadUrl(url);
     }
