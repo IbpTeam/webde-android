@@ -135,7 +135,7 @@ public class WebViewActivity extends Activity{
 //            }
 //        }.start();
         handler.sendEmptyMessage(0);
-        view.loadUrl(url);//载入网页
+        view.loadUrl(url);
     }
 }
 /**
