@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -21,22 +22,14 @@ public class DesktopActivity extends Activity {
     private List<ResolveInfo> apps;  
     @Override  
     protected void onCreate(Bundle savedInstanceState) {  
-        super.onCreate(savedInstanceState);  
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.desktop);
         loadApps();  
         appsGrid = (GridView) findViewById(R.id.apps_list);  
         appsGrid.setAdapter(new AppsAdapter());  
         appsGrid.setOnItemClickListener(clickListener);  
-    }  
-  
-  
-//    @Override  
-//    public boolean onCreateOptionsMenu(Menu menu) {  
-//        // Inflate the menu; this adds items to the action bar if it is present.  
-//        getMenuInflater().inflate(R.menu.main, menu);  
-//        return true;  
-//    }  
-    
+    }    
     
     private OnItemClickListener clickListener = new OnItemClickListener() {
         @Override
@@ -59,7 +52,6 @@ public class DesktopActivity extends Activity {
         new ImageView(DesktopActivity.this);  
         apps = getPackageManager().queryIntentActivities(mainIntent, 0);  
     }  
-  
   
     public class AppsAdapter extends BaseAdapter {  
   
@@ -98,5 +90,13 @@ public class DesktopActivity extends Activity {
             return iv;  
         }
 
-    }  
+    }
+    
+    
+//  @Override  
+//  public boolean onCreateOptionsMenu(Menu menu) {  
+//      // Inflate the menu; this adds items to the action bar if it is present.  
+//      getMenuInflater().inflate(R.menu.main, menu);  
+//      return true;  
+//  }
 }  
