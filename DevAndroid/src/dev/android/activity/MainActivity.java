@@ -2,6 +2,7 @@ package dev.android.activity;
 
 import java.util.logging.Logger;
 
+import dev.android.dnssd.DnssdDiscovery;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -74,6 +75,11 @@ public class MainActivity extends Activity{
     
     public void startDesktopActivity(View view){
         Intent intent = new Intent(this, DesktopActivity.class);
+        startActivity(intent);
+    }
+    
+    public void startDnsSDActivity(View view){
+        Intent intent = new Intent(this, DnssdDiscovery.class);
         startActivity(intent);
     }
 }
