@@ -1,4 +1,4 @@
-package study.android.activity;
+package dev.android.activity;
 
 import java.io.IOException;
 import java.io.InputStream;

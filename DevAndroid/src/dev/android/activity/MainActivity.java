@@ -1,4 +1,4 @@
-package study.android.activity;
+package dev.android.activity;
 
 import java.util.logging.Logger;
 
