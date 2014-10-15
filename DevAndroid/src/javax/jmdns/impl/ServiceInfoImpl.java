@@ -131,7 +131,6 @@ public class ServiceInfoImpl extends ServiceInfo implements DNSListener, DNSStat
             ByteArrayOutputStream out = new ByteArrayOutputStream(text.length());
             writeUTF(out, text);
             this._text = out.toByteArray();
-//            logger.info("value of txts: " + readUTF(_text, 0, _text.length));
         } catch (IOException e) {
             throw new RuntimeException("unexpected exception: " + e);
         }

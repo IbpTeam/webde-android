@@ -29,14 +29,11 @@ class SocketListener extends Thread {
         super("SocketListener(" + (jmDNSImpl != null ? jmDNSImpl.getName() : "") + ")");
         this.setDaemon(true);
         this._jmDNSImpl = jmDNSImpl;
-        logger.setLevel(Level.FINEST);
-//        System.out.println("in class SocketListener");
     }
 
     @Override
     public void run() {
         try {
-//            System.out.println("in SocketListener.run");
             byte buf[] = new byte[DNSConstants.MAX_MSG_ABSOLUTE];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             while (!this._jmDNSImpl.isCanceling() && !this._jmDNSImpl.isCanceled()) {

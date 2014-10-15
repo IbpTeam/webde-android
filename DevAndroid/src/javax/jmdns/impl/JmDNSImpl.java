@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -392,11 +391,6 @@ public class JmDNSImpl extends JmDNS implements DNSStatefulObject, DNSTaskStarte
      */
     public JmDNSImpl(InetAddress address, String name) throws IOException {
         super();
-//        logger.setLevel(Level.FINER);
-//        ConsoleHandler handler = new ConsoleHandler();
-//        handler.setLevel(Level.FINER);
-//        logger.addHandler(handler);
-        
         if (logger.isLoggable(Level.FINER)) {
             logger.finer("JmDNS instance created");
         }
@@ -411,7 +405,6 @@ public class JmDNSImpl extends JmDNS implements DNSStatefulObject, DNSTaskStarte
         _serviceTypes = new ConcurrentHashMap<String, ServiceTypeEntry>(20);
 
         _localHost = HostInfo.newHostInfo(address, this, name);
-//        logger.info(this._localHost.toString());
         _name = (name != null ? name : _localHost.getName());
 
         // _cancelerTimer = new Timer("JmDNS.cancelerTimer");
@@ -1012,8 +1005,6 @@ public class JmDNSImpl extends JmDNS implements DNSStatefulObject, DNSTaskStarte
 
         this.startProber();
         info.waitForAnnounced(DNSConstants.SERVICE_INFO_TIMEOUT);
-        
-//        logger.info("registerService() JmDNS registered service as " + info);
 
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("registerService() JmDNS registered service as " + info);
@@ -2043,7 +2034,7 @@ public class JmDNSImpl extends JmDNS implements DNSStatefulObject, DNSTaskStarte
                     _infos.put(event.getName(), info);
                 } else {
                     String subtype = (info != null ? info.getSubtype() : "");
-                    info = ((JmDNSImpl) event.getDNS()).resolveServiceInfo(event.getType(), event.getName(), subtype, true);
+//                    info = ((JmDNSImpl) event.getDNS()).resolveServiceInfo(event.getType(), event.getName(), subtype, true);
                     if (info != null) {
                         _infos.put(event.getName(), info);
                     } else {

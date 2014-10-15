@@ -77,16 +77,8 @@ public class HostInfo implements DNSStatefulObject {
                     if (addr.isLoopbackAddress()) {
                         // Find local address that isn't a loopback address
                         InetAddress[] addresses = NetworkTopologyDiscovery.Factory.getInstance().getInetAddresses();
-//                        for(int i = 0; i < addresses.length; i++){
-//                            if(addresses[i] instanceof Inet4Address){
-////                                logger.info("value of addresses: " + addresses[i]);
-//                                addr = addresses[i];
-//                                break;
-//                            }
-//                        }
                         if (addresses.length > 0) {
                             addr = addresses[0];
-                            logger.info(addr.toString());
                         }
                     }
                 }
@@ -264,16 +256,13 @@ public class HostInfo implements DNSStatefulObject {
     public String toString() {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("local host info[");
-//        buf.append(getName() != null ? getName() : "no name");
-//        buf.append(", ");
-//        buf.append(getInterface() != null ? getInterface().getDisplayName() : "???");
-//        buf.append(":");
-//        buf.append(getInetAddress() != null ? getInetAddress().getHostAddress() : "no address");
-//        buf.append(", ");
-//        buf.append(getInetAddress() != null ? getInetAddress().toString() : "no address");
-//        buf.append(", ");
-//        buf.append(_state);
-        buf.append(getInetAddress() != null ? getInetAddress().toString() : "no address");
+        buf.append(getName() != null ? getName() : "no name");
+        buf.append(", ");
+        buf.append(getInterface() != null ? getInterface().getDisplayName() : "???");
+        buf.append(":");
+        buf.append(getInetAddress() != null ? getInetAddress().getHostAddress() : "no address");
+        buf.append(", ");
+        buf.append(_state);
         buf.append("]");
         return buf.toString();
     }
