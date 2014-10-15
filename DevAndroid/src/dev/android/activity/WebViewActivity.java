@@ -51,7 +51,7 @@ public class WebViewActivity extends Activity{
               super.handleMessage(msg);
             }
         };
-        loadurl(wv,"file:///android_asset/index.html");//"file:///sdcard/AndroidStudy/index.html"
+        loadurl(wv,"file:///android_asset/rexsee/index.html");//"file:///sdcard/AndroidStudy/index.html"
     }
 
     private void getHtml() {
