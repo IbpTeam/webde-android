@@ -34,11 +34,6 @@ public class DnssdActivity extends Activity {
     private NetworkDiscovery nds;
     @Override
     protected void onResume() {
-//        handler.postDelayed(new Runnable() {
-//            public void run() {
-//                activeServiceListener();
-//            }
-//        }, 500);
         String[] props = new String[]{"Platform=HammerHead", "string"};
         nds = new NetworkDiscovery(this);
         nds.startServer("Android-hammerhead", 6666, props);

@@ -2034,7 +2034,6 @@ public class JmDNSImpl extends JmDNS implements DNSStatefulObject, DNSTaskStarte
                     _infos.put(event.getName(), info);
                 } else {
                     String subtype = (info != null ? info.getSubtype() : "");
-//                    info = ((JmDNSImpl) event.getDNS()).resolveServiceInfo(event.getType(), event.getName(), subtype, true);
                     if (info != null) {
                         _infos.put(event.getName(), info);
                     } else {
