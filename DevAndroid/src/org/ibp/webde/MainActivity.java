@@ -1,8 +1,8 @@
-package dev.android.activity;
+package org.ibp.webde;
 
 import java.util.logging.Logger;
 
-import dev.android.dnssd.DnssdActivity;
+import org.ibp.dnssd.DnssdActivity;
 
 import android.app.Activity;
 import android.content.Intent;

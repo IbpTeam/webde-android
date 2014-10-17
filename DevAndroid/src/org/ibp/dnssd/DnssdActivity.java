@@ -1,8 +1,8 @@
-package dev.android.dnssd;
+package org.ibp.dnssd;
 
 import java.util.logging.Logger;
 
-import dev.android.activity.R;
+import org.ibp.webde.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

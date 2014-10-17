@@ -1,4 +1,4 @@
-package dev.android.dnssd;
+package org.ibp.dnssd;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

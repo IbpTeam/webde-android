@@ -1,4 +1,4 @@
-package dev.android.activity;
+package org.ibp.webde;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +48,7 @@ public class WebViewActivity extends Activity{
               super.handleMessage(msg);
             }
         };
-        loadurl(wv,"file:///android_asset/www/dummy.html");
+        loadurl(wv,"file:///android_asset/www/index.html");
     }
 
     private void getHtml() {
