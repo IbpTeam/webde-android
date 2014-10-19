@@ -10,5 +10,7 @@ ant-gen
 # Eclipse builds
 gen
 out
+CordovaLib/bin/
+bin/
 # Gradle builds
 /build
