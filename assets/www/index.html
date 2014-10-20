@@ -35,7 +35,23 @@
                 <p class="event received">Device is Ready</p>
             </div>
         </div>
+        <button onclick="test();">Click me!</button> 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            function success(){
+                alert(JSON.stringify(arguments));
+            }
+            function error(){
+                alert("error");
+            }
+            function test() {
+                //Device.getInfo(success, error);
+                alert("test");
+                device.getInfo(success, error);
+                //cordova.exec(success, error, Device, getInfo, []);
+                //window.Device.getInfo(success, error);         
+            }  
+        </script>
     </body>
 </html>
