@@ -2,31 +2,28 @@
 (function () {
 
     //add later
-    var homeTpl = Handlebars.compile($("#home-tpl").html());
-    var employeeListTpl = Handlebars.compile($("#employee-list-tpl").html());
+    //var homeTpl = Handlebars.compile($("#home-tpl").html());
+    //var employeeListTpl = Handlebars.compile($("#employee-list-tpl").html());
 
     //add later
-    function renderHomeView() {
-        $('body').html(homeTpl());
-        $('.search-key').on('keyup', findByName);
-    }
-    function findByName() {
-        service.findByName($('.search-key').val()).done(function (employees) {
-            $('.content').html(employeeListTpl(employees));
-        });
-    }
+    // function findByName() {
+    //     service.findByName($('.search-key').val()).done(function (employees) {
+    //         $('.content').html(employeeListTpl(employees));
+    //     });
+    // }
 
     /* ---------------------------------- Local Variables ---------------------------------- */
+    HomeView.prototype.template = Handlebars.compile($("#home-tpl").html());
+    EmployeeListView.prototype.template = Handlebars.compile($("#employee-list-tpl").html());
     var service = new EmployeeService();
     service.initialize().done(function () {
-        console.log("Service initialized");
+        $('body').html(new HomeView(service).render().$el);
     });
-
     /* --------------------------------- Event Registration -------------------------------- */
-    $('.search-key').on('keyup', findByName);
-    $('.help-btn').on('click', function() {
-        alert("Employee Directory v3.4");
-    });
+    // $('.search-key').on('keyup', findByName);
+    // $('.help-btn').on('click', function() {
+    //     alert("Employee Directory v3.4");
+    // });
 
     /* ---------------------------------- Local Functions ---------------------------------- */
     // function findByName() {
@@ -54,5 +51,4 @@
           };
       }
     }, false);
-    renderHomeView();
 }());
