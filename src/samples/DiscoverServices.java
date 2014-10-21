@@ -68,6 +68,7 @@ public class DiscoverServices {
                 @Override
                 public void serviceAdded(ServiceEvent event) {
                     System.out.println("Service added   : " + event.getName() + "." + event.getType());
+                    jmdns.getServiceInfo(event.getType(), event.getName());
 //                    jmdns.requestServiceInfo(event.getType(), event.getName(), 0);
                 }
 
