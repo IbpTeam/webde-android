@@ -5,6 +5,7 @@
     HomeView.prototype.template = Handlebars.compile($("#home-tpl").html());
     EmployeeListView.prototype.template = Handlebars.compile($("#employee-list-tpl").html());
     EmployeeView.prototype.template = Handlebars.compile($("#employee-tpl").html());
+    // console.log($("#employee-list-tpl").html());
     var service = new EmployeeService();
     service.initialize().done(function () {
         router.addRoute('', function() {
