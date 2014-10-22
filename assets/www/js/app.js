@@ -15,6 +15,7 @@
 
     /* ---------------------------------- Local Functions ---------------------------------- */
     function findByName() {
+      console.log($('.search-key').val());
         service.findByName($('.search-key').val()).done(function (employees) {
             var l = employees.length;
             var e;
@@ -25,7 +26,7 @@
             }
         });
     }
-
+    findByName();
     document.addEventListener('deviceready', function () {
       if (navigator.notification) { // Override default HTML alert with native dialog
           window.alert = function (message) {

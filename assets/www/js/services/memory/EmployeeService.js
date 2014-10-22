@@ -23,10 +23,15 @@ var EmployeeService = function() {
 
     this.findByName = function(searchKey) {
         var deferred = $.Deferred();
-        var results = employees.filter(function(element) {
-            var fullName = element.firstName + " " + element.lastName;
-            return fullName.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-        });
+        var results;
+        if(searchKey.length) {
+            results = employees.filter(function(element) {
+                var fullName = element.firstName + " " + element.lastName;
+                return fullName.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+        }else{
+            results = employees;
+        }
         deferred.resolve(results);
         return deferred.promise();
     }
