@@ -1,0 +1,258 @@
+<HTML>
+<HEAD>
+	<TITLE>Rexsee开发手册</TITLE>
+	<META http-equiv=Content-Type content=text/html charset=GB2312>  
+	<META http-equiv=Expires content=0>
+	<META http-equiv=Cache-Control content=no-cache>
+	<META http-equiv=Pragma content=no-cache>
+	<LINK href="help.css" type=text/css rel=stylesheet>
+	<LINK href="init.css" type=text/css rel=stylesheet>
+	<SCRIPT type=text/javascript src="init.js"></SCRIPT>
+</HEAD>
+<BODY>
+
+<table width=100% height=100% cellspacing=0 cellpadding=0>
+	<tr><td>
+		<div style="width:100%; height:100%; overflow:auto;">
+			<table width=100% height=100% cellspacing=0 cellpadding=0>
+				<tr>
+					<td id=helpIndexTD width=260px valign=top>
+						<div id=helpIndex>
+	<div class=sectionTitle><img src="images/noexpand.gif" class=itemlogo><a href="aboutHelp.html" target="content">关于手册</a></div>
+	<div class=sectionTitle><img src="images/expand.gif" id=info_logo class=itemlogo><a href="javascript:" onclick="toggle('info');" target="content">通用信息</a></div>
+	<div id=info class=sectionContent style="display:none;">
+		<div class=object2><img src="images/noexpand.gif"><a href="help/userAgent.html" target="content">浏览器的UserAgent字符串</a></div>
+		<div class=object2><img src="images/noexpand.gif"><a href="help/browserLink.html" target="content">浏览器链接</a></div>
+		<div class=object2><img src="images/noexpand.gif"><a href="help/stylesheet.html" target="content">布局样式表</a></div>
+		<div class=object2><img src="images/noexpand.gif"><a href="help/stylesheetAnimation.html" target="content">动画样式表</a></div>
+		<div class=object2><img src="images/noexpand.gif"><a href="help/stylesheetColor.html" target="content">样式表颜色</a></div>
+	</div>
+	<div class=sectionTitle><img src="images/expand.gif" id=objects_logo class=itemlogo><a href="javascript:" onclick="toggle('objects');" target="content">对象、方法和事件</a></div>
+	<div id=objects class=sectionContent style="display:none;">
+		<div class=objectCategory><img src="images/expand.gif" id=application_logo class=itemlogo><a href="javascript:" onclick="toggle('application');" target="content">应用程序</a></div>
+		<div id=application class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/application.html" target="content">rexseeApplication</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/applicationEventList.html" target="content">rexseeApplication事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/applicationManager.html" target="content">rexseeApplicationManager</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/intent.html" target="content">rexseeIntent</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/intentEventList.html" target="content">rexseeIntent事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/interfaceManager.html" target="content">rexseeInterfaceManager</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/language.html" target="content">rexseeLanguage</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=bar_logo class=itemlogo><a href="javascript:" onclick="toggle('bar');" target="content">用户界面：布局</a></div>
+		<div id=bar class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/buttonBars.html" target="content">rexseeButtonBars</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/layoutStyle.html" target="content">rexseeLayoutStyle</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/menu.html" target="content">rexseeMenu</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/statusBar.html" target="content">rexseeStatusBar</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/tabBars.html" target="content">rexseeTabBars</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/tabs.html" target="content">rexseeTabs</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/titleBar.html" target="content">rexseeTitleBar</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=dialog_logo class=itemlogo><a href="javascript:" onclick="toggle('dialog');" target="content">用户界面：窗体</a></div>
+		<div id=dialog class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/buttonDialog.html" target="content">rexseeButtonDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/buttonDialogEventList.html" target="content">rexseeButtonDialog事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/chronometer.html" target="content">rexseeChronometer</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/dialog.html" target="content">rexseeDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/imageDialog.html" target="content">rexseeImageDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/imageDialogEventList.html" target="content">rexseeImageDialog事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/popupWindow.html" target="content">rexseePopupWindow</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/popupWindowEventList.html" target="content">rexseePopupWindow事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/progressBarDialog.html" target="content">rexseeProgressBarDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/progressCover.html" target="content">rexseeProgressCover</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/progressDialog.html" target="content">rexseeProgressDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/progressTextDialog.html" target="content">rexseeProgressTextDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/prompt2.html" target="content">rexseePrompt</a></div>
+			<div class=object><img src="images/noexpand.gif"><span class=method><a href="help/prompt.html" target="content">window.prompt</a></span></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=browser_logo class=itemlogo><a href="javascript:" onclick="toggle('browser');" target="content">浏览器</a></div>
+		<div id=browser class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/browser.html" target="content">rexseeBrowser</div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/browserLoadingEventList.html" target="content">rexseeBrowser事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/browserStyle.html" target="content">rexseeBrowserStyle</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/browserTouchEvent.html" target="content">rexseeBrowserTouchEvent</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/browserTouchEventList.html" target="content">rexseeBrowserTouchEvent事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/cookie.html" target="content">rexseeCookie</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=data_logo class=itemlogo><a href="javascript:" onclick="toggle('data');" target="content">数据传输和存储</a></div>
+		<div id=data class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/advanceDownload.html" target="content">rexseeAdvanceDownload</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/ajax.html" target="content">rexseeAjax</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/ajaxEventList.html" target="content">rexseeAjax事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/asset.html" target="content">rexseeAsset</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/database.html" target="content">rexseeDatabase</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/download.html" target="content">rexseeDownload</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/downloadEventList.html" target="content">rexseeDownload事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/file.html" target="content">rexseeFile</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/preference.html" target="content">rexseePreference</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/professionalUpload.html" target="content">rexseeProfessionalUpload</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/storage.html" target="content">rexseeStorage</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/reliableSubmit.html" target="content">rexseeReliableSubmit</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/upload.html" target="content">rexseeUpload</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/uploadEventList.html" target="content">rexseeUpload事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/baidupcs.html" target="content">rexseeBaiduPCS</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/baidupcsEventList.html" target="content">rexseeBaiduPCS事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=fileSelector_logo class=itemlogo><a href="javascript:" onclick="toggle('fileSelector');">文件选取器</a></div>
+		<div id=fileSelector class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/fileSelector.html" target="content">rexseeFileSelector</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/fileSelectorEventList.html" target="content">rexseeFileSlector事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=sms_logo class=itemlogo><a href="javascript:" onclick="toggle('sms');" target="content">短信、彩信和通话</a></div>
+		<div id=sms class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/accounts.html" target="content">rexseeAccounts</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/callLog.html" target="content">rexseeCallLog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/contacts.html" target="content">rexseeContacts</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/mms.html" target="content">rexseeMMS</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/sendTo.html" target="content">rexseeSendTo</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/sms.html" target="content">rexseeSMS</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/smsSender.html" target="content">rexseeSMSSender</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/smsSenderEventList.html" target="content">rexseeSMSSender事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=push_logo class=itemlogo><a href="javascript:" onclick="toggle('push');" target="content">推送</a></div>
+		<div id=push class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/push.html" target="content">rexseePush</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/pushHttp.html" target="content">rexseePushHttpListener</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/pushHttpEventList.html" target="content">rexseePushHttpListener事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/pushSms.html" target="content">rexseePushSmsListener</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=lbs_logo class=itemlogo><a href="javascript:" onclick="toggle('lbs');" target="content">定位</a></div>
+		<div id=lbs class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/cellLocation.html" target="content">rexseeCellLocation</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/cellLocationEventList.html" target="content">rexseeCellLocation事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/gps.html" target="content">rexseeGps</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/gpsEventList.html" target="content">rexseeGps事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=ebook_logo class=itemlogo><a href="javascript:" onclick="toggle('ebook');" target="content">电子书</a></div>
+		<div id=ebook class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/pageFlip.html" target="content">rexseePageFlip</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/pageFlipEventList.html" target="content">rexseePageFlip事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=multimedia_logo class=itemlogo><a href="javascript:" onclick="toggle('multimedia');" target="content">多媒体</a></div>
+		<div id=multimedia class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/audioCapture.html" target="content">rexseeAudioCapture</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/audioCaptureEventList.html" target="content">rexseeAudioCapture事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/audioPlayer.html" target="content">rexseeAudioPlayer</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/audioPlayerEventList.html" target="content">rexseeAudioPlayer事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/recorder.html" target="content">rexseeAudioRecorder</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/recorderEventList.html" target="content">rexseeAudioRecorder事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/camera.html" target="content">rexseeCamera</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/cameraEventList.html" target="content">rexseeCamera事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/cameraPreview.html" target="content">rexseeCameraPreview</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/cameraPreviewEventList.html" target="content">rexseeCameraPreview事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/image.html" target="content">rexseeImage</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/imageCapture.html" target="content">rexseeImageCapture</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/imageCaptureEventList.html" target="content">rexseeImageCapture事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/videoCapture.html" target="content">rexseeVideoCapture</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/videoCaptureEventList.html" target="content">rexseeVideoCapture事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/videoPlayer.html" target="content">rexseeVideoPlayer</div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/videoPlayerEventList.html" target="content">rexseeVideoPlayer事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=barcode_logo class=itemlogo><a href="javascript:" onclick="toggle('barcode');" target="content">条形码</a></div>
+		<div id=barcode class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/barcode.html" target="content">rexseeBarcode</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/barcodeEventList.html" target="content">rexseeBarcode事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=sensor_logo class=itemlogo><a href="javascript:" onclick="toggle('sensor');" target="content">传感器</a></div>
+		<div id=sensor class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/accelerometer.html" target="content">rexseeAccelerometer</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/accelerometerEventList.html" target="content">rexseeAccelerometer事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/light.html" target="content">rexseeLight</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/lightEventList.html" target="content">rexseeLight事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/magnetic.html" target="content">rexseeMagneticField</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/magneticEventList.html" target="content">rexseeMagneticField事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/orientation.html" target="content">rexseeOrientation</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/orientationEventList.html" target="content">rexseeOrientation事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/proximity.html" target="content">rexseeProximity</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/proximityEventList.html" target="content">rexseeProximity事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/temperature.html" target="content">rexseeTemperature</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/temperatureEventList.html" target="content">rexseeTemperature事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=phone_logo class=itemlogo><a href="javascript:" onclick="toggle('phone');" target="content">终端和系统</a></div>
+		<div id=phone class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/battery.html" target="content">rexseeBattery</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/batteryEventList.html" target="content">rexseeBattery事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/build.html" target="content">rexseeBuild</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/configuration.html" target="content">rexseeConfiguration</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/screenOrientationEventList.html" target="content">rexseeConfiguration事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/content.html" target="content">rexseeContent</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/garbageCollector.html" target="content">rexseeGarbageCollector</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/inputMethod.html" target="content">rexseeInputMethod</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/locale.html" target="content">rexseeLocale</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/notification.html" target="content">rexseeNotification</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/screen.html" target="content">rexseeScreen</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/specialKey.html" target="content">rexseeSpecialKey</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/telephony.html" target="content">rexseeTelephony</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/vibrate.html" target="content">rexseeVibrate</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/wallpaper.html" target="content">rexseeWallpaper</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=network_logo class=itemlogo><a href="javascript:" onclick="toggle('network');" target="content">网络</a></div>
+		<div id=network class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/bluetooth.html" target="content">rexseeBluetooth</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/bluetoothEventList.html" target="content">rexseeBluetooth事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/network.html" target="content">rexseeNetwork</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/networkEventList.html" target="content">rexseeNetwork事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/wifi.html" target="content">rexseeWiFi</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/wifiEventList.html" target="content">rexseeWiFi事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/socket.html" target="content">rexseeSocket</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/socketEventList.html" target="content">rexseeSocket事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=encryption_logo class=itemlogo><a href="javascript:" onclick="toggle('encryption');" target="content">加密和压缩</a></div>
+		<div id=encryption class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/checkSum.html" target="content">rexseeCheckSum</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/digest.html" target="content">rexseeDigest</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/encryption.html" target="content">rexseeEncryption</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/keyPairGenerator.html" target="content">rexseeKeyPairGenerator</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/signature.html" target="content">rexseeSignature</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/zip.html" target="content">rexseeZIP</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=preload_logo class=itemlogo><a href="javascript:" onclick="toggle('preload');" target="content">本地化和预处理</a></div>
+		<div id=preload class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/client.html" target="content">rexseeClient</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/inception.html" target="content">rexseeInception</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/pregFilter.html" target="content">rexseePregFilter</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/preload.html" target="content">rexseePreload</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=xml_logo class=itemlogo><a href="javascript:" onclick="toggle('xml');" target="content">XML</a></div>
+		<div id=xml class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/xml.html" target="content">rexseeXML</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=animation_logo class=itemlogo><a href="javascript:" onclick="toggle('animation');" target="content">动画效果</a></div>
+		<div id=animation class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/animationEventList.html" target="content">Animation 事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/transition.html" target="content">rexseeTransition</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/transitionEventList.html" target="content">rexseeTransition事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=native_logo class=itemlogo><a href="javascript:" onclick="toggle('native');" target="content">原生界面</a></div>
+		<div id=native class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/drawable.html" target="content">rexseeDrawable</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaBar.html" target="content">rexseeJavaBar</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaDialog.html" target="content">rexseeJavaDialog</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaDialogEventList.html" target="content">rexseeJavaDialog事件</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaView.html" target="content">rexseeJavaView</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaViewByType.html" target="content">rexseeJavaView类型详解</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaViewSurfaceView.html" target="content">rexseeJavaView之SurfaceView</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/javaViewEventList.html" target="content">rexseeJavaView事件</a></div>
+		</div>
+		<div class=objectCategory><img src="images/expand.gif" id=other_logo class=itemlogo><a href="javascript:" onclick="toggle('other');" target="content">其它</a></div>
+		<div id=other class=sectionContent style="display:none;">
+			<div class=object><img src="images/noexpand.gif"><a href="help/array.html" target="content">rexseeArray</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/clazz.html" target="content">rexseeClazz</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/hashmap.html" target="content">rexseeHashMap</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/string.html" target="content">rexseeString</a></div>
+			<div class=object><img src="images/noexpand.gif"><a href="help/utilities.html" target="content">rexseeUtilities</a></div>
+		</div>
+	</div>
+						</div>
+					</td>
+					<td><iframe id=content name=content src="aboutHelp.html" width=100% height=100% scrolling=yes frameborder=0></iframe></td>
+				</tr>
+			</table>
+		</div>
+	</td></tr>
+</table>
+
+
+</BODY>
+</HTML>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <Button
+        android:id="@+id/list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btn_listServiceInfo"
+        android:text="ListServiceInfo" />
+    <Button
+        android:id="@+id/unregister_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btn_unregisterService"
+        android:text="UnregisterService" />
+    <Button
+        android:id="@+id/showServiceInfo_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btn_showServiceInfo"
+        android:text="resolveServiceInfo" />
+        
+    <TextView android:id="@+id/text"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:text="mdns" />
+</LinearLayout>
