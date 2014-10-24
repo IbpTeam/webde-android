@@ -6,6 +6,7 @@ var router = (function () {
 
     function addRoute(route, handler) {
         routes.push({parts: route.split('/'), handler: handler});
+        console.log("routes: " + JSON.stringify(routes));
     }
 
     function load(route) {
@@ -13,7 +14,7 @@ var router = (function () {
     }
 
     function start() {
-
+        console.log("window.location.hash: " + window.location.hash);
         var path = window.location.hash.substr(1),
             parts = path.split('/'),
             partsLength = parts.length;

@@ -24,7 +24,7 @@ var EmployeeService = function() {
     this.findByName = function(searchKey) {
         var deferred = $.Deferred();
         var results;
-        if(searchKey.length) {
+        if(searchKey && searchKey.length) {
             results = employees.filter(function(element) {
                 var fullName = element.firstName + " " + element.lastName;
                 return fullName.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
@@ -32,6 +32,7 @@ var EmployeeService = function() {
         }else{
             results = employees;
         }
+
         deferred.resolve(results);
         return deferred.promise();
     }

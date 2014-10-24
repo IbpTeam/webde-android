@@ -7,6 +7,7 @@ var HomeView = function (service) {
         this.$el.on('keyup', '.search-key', this.findByName);
         employeeListView = new EmployeeListView();
         this.render();
+        this.findByName();
         console.log("in HomeView`s initialize.");
     };
 
