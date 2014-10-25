@@ -2,7 +2,7 @@ var EmployeeView = function(employee) {
 
 	this.initialize = function() {
 	    this.$el = $('<div/>');
-	    this.$el.on('click', this.addLocation);//'.media', .add-location-btn
+	    this.$el.on('click', '.add-location-btn', this.addLocation);//'.media', 
 	};
 
 	this.render = function() {
