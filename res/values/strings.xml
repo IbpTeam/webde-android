@@ -2,7 +2,6 @@
 
     <string name="app_name">Android开发</string>
     <string name="WebviewActivity">Webview示例</string>
-    <string name="DesktopActivity">Desktop示例</string>
     <string name="DnsSDActivity">DnsSD示例</string>
 
 </resources>

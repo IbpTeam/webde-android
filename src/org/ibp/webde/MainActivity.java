@@ -73,11 +73,6 @@ public class MainActivity extends Activity{
         startActivity(intent);
     }
     
-    public void startDesktopActivity(View view){
-        Intent intent = new Intent(this, DesktopActivity.class);
-        startActivity(intent);
-    }
-    
     public void startDnsSDActivity(View view){
         Intent intent = new Intent(this, DnssdActivity.class);
         startActivity(intent);
