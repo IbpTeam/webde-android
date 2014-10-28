@@ -1,19 +1,15 @@
 package org.ibp.dnssd;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-import android.view.View;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +23,7 @@ import javax.jmdns.impl.DNSRecord;
 import javax.jmdns.impl.constants.DNSConstants;
 
 /**
- * @author alwx
+ * @author xifeiwu
  * @version 1.0
  */
 @SuppressLint("NewApi")
@@ -38,22 +34,21 @@ public class NetworkDiscovery {
     private StringBuffer strBuffer = new StringBuffer();
     private final String TYPE = "_http._tcp.local.";
 
-    private Context mContext;
+    private DnssdActivity mContext;
     private JmDNS mJmDNS = null;
     private ServiceInfo mServiceInfo = null;
     private ServiceListener mServiceListener;
     private WifiManager.MulticastLock mMulticastLock;
 
-    public NetworkDiscovery(Context context) {
+    public NetworkDiscovery(DnssdActivity context) {
         mContext = context;
         try {
-            WifiManager wifi = (WifiManager) mContext
-                    .getSystemService(android.content.Context.WIFI_SERVICE);
+            WifiManager wifi = (WifiManager) mContext.getSystemService(android.content.Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifi.getConnectionInfo();
             int intaddr = wifiInfo.getIpAddress();
-            byte[] byteaddr = new byte[] { (byte) (intaddr & 0xff),
+            byte[] byteaddr = new byte[] { (byte) (intaddr & 0xff), 
                     (byte) (intaddr >> 8 & 0xff),
-                    (byte) (intaddr >> 16 & 0xff),
+                    (byte) (intaddr >> 16 & 0xff), 
                     (byte) (intaddr >> 24 & 0xff) };
             InetAddress addr = InetAddress.getByAddress(byteaddr);
             logger.info(addr.getHostName() + " - " + addr.getHostAddress());
@@ -62,7 +57,6 @@ public class NetworkDiscovery {
             Log.d(DEBUG_TAG, "Error in JmDNS creation: " + e);
         }
     }
-
     public void startServer(String name, int port, String[] props) {
         try {
             mServiceInfo = ServiceInfo.create(TYPE, name, 8888, 0, 0, textFromStringArray(props));
@@ -71,10 +65,11 @@ public class NetworkDiscovery {
             Log.d(DEBUG_TAG, "Error in JmDNS initialization: " + e);
         }
     }
-    public void stopServer(){
+
+    public void stopServer() {
         if ((mJmDNS != null) && (mServiceInfo != null)) {
             mJmDNS.unregisterService(mServiceInfo);
-        }        
+        }
     }
 
     public void findServers() {
@@ -100,8 +95,7 @@ public class NetworkDiscovery {
             public void serviceResolved(ServiceEvent event) {
                 String notify = "Service resolved: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-//                    strBuffer.append(notify + "\n");
-//                    updateTextView();
+                strBuffer.append(notify + "\n");
             }
         };
         mJmDNS.addServiceListener(TYPE, mServiceListener);
@@ -115,33 +109,35 @@ public class NetworkDiscovery {
             }
             mJmDNS.unregisterAllServices();
         }
-//        mJmDNS.close();
+        // mJmDNS.close();
         if (mMulticastLock != null && mMulticastLock.isHeld()) {
             mMulticastLock.release();
         }
     }
 
     private void wifiLock() {
-        WifiManager wifiManager = (WifiManager) mContext
-                .getSystemService(android.content.Context.WIFI_SERVICE);
+        // 应该加一个对wifi状态的判断，否则程序会报错退出。
+        WifiManager wifiManager = (WifiManager) mContext.getSystemService(android.content.Context.WIFI_SERVICE);
         mMulticastLock = wifiManager.createMulticastLock(DEBUG_TAG);
         mMulticastLock.setReferenceCounted(true);
         mMulticastLock.acquire();
     }
 
-    
-    public void btn_listServiceInfo(){
+    public void btn_listServiceInfo() {
         printServiceInfoList();
     }
+
     private int infocnt = 0;
-    public void btn_resolveServiceInfo(){
-        if(infocnt < mServiceInfoList.size()){
+
+    public void btn_resolveServiceInfo() {
+        if (infocnt < mServiceInfoList.size()) {
             ServiceInfo element = mServiceInfoList.get(infocnt);
             overWriteServiceInfo(mJmDNS.getServiceInfo(element.getType(), element.getName()));
             logger.info("resolve serviceinfo finished");
         }
     }
-    public void showServiceCollector(){
+
+    public void showServiceCollector() {
         List<ServiceInfo> infolist = Arrays.asList(mJmDNS.list(TYPE, DNSConstants.SERVICE_INFO_TIMEOUT));
         int cnt = 1;
         Iterator<ServiceInfo> iter = infolist.iterator();
@@ -152,7 +148,8 @@ public class NetworkDiscovery {
             printServiceInfo(element);
         }
     }
-    public void printServiceInfoList(){
+
+    public void printServiceInfoList() {
         int cnt = 1;
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element = null;
@@ -162,7 +159,8 @@ public class NetworkDiscovery {
             printServiceInfo(element);
         }
     }
-    public void printServiceInfo(ServiceInfo info){
+
+    public void printServiceInfo(ServiceInfo info) {
         StringBuffer sb = new StringBuffer();
         String name = info.getName();
         String type = info.getType();
@@ -170,11 +168,11 @@ public class NetworkDiscovery {
         int port = info.getPort();
         byte[] txts = info.getTextBytes();
         sb.append(name + " - ");
-        for(int i = 0; i < addresses.length; i++){
-//            logger.info(addresses[i].getHostAddress() + ", ");
-            sb.append("{" + addresses[i].getHostAddress() + ":" + port + "} ");       
+        for (int i = 0; i < addresses.length; i++) {
+            // logger.info(addresses[i].getHostAddress() + ", ");
+            sb.append("{" + addresses[i].getHostAddress() + ":" + port + "} ");
         }
-        if(info.getTextBytes() != null && info.getTextBytes().length > 0){
+        if (info.getTextBytes() != null && info.getTextBytes().length > 0) {
             sb.append("txts: ");
         }
         int off = 0;
@@ -186,19 +184,18 @@ public class NetworkDiscovery {
             }
             txt = readUTF(info.getTextBytes(), off, len);
             off += len;
-            sb.append(txt + ", ");   
+            sb.append(txt + ", ");
         }
-        if(info.hasData()){
+        if (info.hasData()) {
             sb.append("has Data");
-        }else{
-            sb.append("Not has Data");            
+        } else {
+            sb.append("Not has Data");
         }
         logger.info(sb.toString());
     }
-    
 
-    
     private final List<ServiceInfo> mServiceInfoList = new ArrayList<ServiceInfo>();
+
     public void addServiceInfo(ServiceInfo info) {
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element;
@@ -214,6 +211,7 @@ public class NetworkDiscovery {
             mServiceInfoList.add(info);
         }
     }
+
     public void overWriteServiceInfo(ServiceInfo info) {
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element = null;
@@ -225,8 +223,8 @@ public class NetworkDiscovery {
                 break;
             }
         }
-        if (isExist){
-            mServiceInfoList.remove(element);            
+        if (isExist) {
+            mServiceInfoList.remove(element);
         }
         mServiceInfoList.add(info);
     }
@@ -246,7 +244,7 @@ public class NetworkDiscovery {
             mServiceInfoList.remove(element);
         }
     }
-    
+
     /**
      * Read data bytes as a UTF stream.
      */
@@ -279,8 +277,7 @@ public class NetworkDiscovery {
                     return null;
                 }
                 // 1110 xxxx 10xx xxxx 10xx xxxx
-                ch = ((ch & 0x0f) << 12) | ((data[offset++] & 0x3F) << 6)
-                        | (data[offset++] & 0x3F);
+                ch = ((ch & 0x0f) << 12) | ((data[offset++] & 0x3F) << 6) | (data[offset++] & 0x3F);
                 break;
             default:
                 if (offset + 1 >= len) {
@@ -294,6 +291,7 @@ public class NetworkDiscovery {
         }
         return buf.toString();
     }
+
     /**
      * Write a UTF string with a length to a stream.
      */
@@ -314,6 +312,7 @@ public class NetworkDiscovery {
             }
         }
     }
+
     private byte[] textFromProperties(Map<String, ?> props) {
         byte[] text = null;
         if (props != null) {
@@ -340,7 +339,8 @@ public class NetworkDiscovery {
                     }
                     byte data[] = out2.toByteArray();
                     if (data.length > 255) {
-                        throw new IOException("Cannot have individual values larger that 255 chars. Offending value: " + key + (val != null ? "" : "=" + val));
+                        throw new IOException("Cannot have individual values larger that 255 chars. Offending value: "
+                                + key + (val != null ? "" : "=" + val));
                     }
                     out.write((byte) data.length);
                     out.write(data, 0, data.length);
@@ -352,7 +352,6 @@ public class NetworkDiscovery {
         }
         return (text != null && text.length > 0 ? text : DNSRecord.EMPTY_TXT);
     }
-    
 
     private byte[] textFromStringArray(String[] props) {
         byte[] text = null;
@@ -370,7 +369,8 @@ public class NetworkDiscovery {
                     }
                     byte data[] = out2.toByteArray();
                     if (data.length > 255) {
-                        throw new IOException("Cannot have individual values larger that 255 chars. Offending value: " + val);
+                        throw new IOException("Cannot have individual values larger that 255 chars. Offending value: "
+                                + val);
                     }
                     out.write((byte) data.length);
                     out.write(data, 0, data.length);
