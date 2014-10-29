@@ -1,37 +1,33 @@
 package org.ibp.dnssd;
 
 import java.util.logging.Logger;
-
-import org.ibp.webde.R;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class DnssdActivity extends Activity {
     public static final String TAG = "DnssdDiscovery";
-    private Logger logger = Logger.getLogger(DnssdActivity.class.getName());
+    public Logger logger = Logger.getLogger(DnssdActivity.class.getName());
     android.os.Handler handler = new android.os.Handler();
-    public StringBuffer strBuffer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dnssd);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        strBuffer = new StringBuffer("用SurfaceView显示发现的网络服务设备\n");
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
     @Override
@@ -43,67 +39,29 @@ public class DnssdActivity extends Activity {
     protected void onStop() {
         super.onStop();
     }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        
-        menu.add(Menu.NONE,Menu.FIRST+1,1,"服务列表");
-        menu.add(Menu.NONE,Menu.FIRST+2, 2, "注册服务");
-        menu.add(Menu.NONE,Menu.FIRST+3, 3, "注销服务");
-        
-        return true;
-    }
-   
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
 
-        case Menu.FIRST + 1:
-
-            logger.info("list of network services");
-            nds.btn_listServiceInfo();
-            break;
-
-        case Menu.FIRST + 2:
-            
-            String[] props = new String[]{"Platform=HammerHead", "string"};
-            nds.startServer("Android-hammerhead", 6666, props);
-            logger.info("start server");
-            strBuffer.append("start server"+ "\n");
-            break;
-
-        case Menu.FIRST + 3:
-            nds.stopServer();
-            logger.info("stop server");
-            strBuffer.append("stop server"+ "\n");
-            break;
-
-        }
-
-        return false;
-
-    }
-    
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-//        Toast.makeText(this, "选项菜单关闭了", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Toast.makeText(this,"Preparing Options Menu",Toast.LENGTH_LONG).show();
-
-        //如果返回false，此方法就把用户点击menu的动作给销毁了，onCreateOptionsMenu方法将不会被调用
-        return true;
-    }
-
+    private String value = "范德萨分的萨福打算；分的萨罗分挨饿哦萨福家的萨罗；分诶萨阿凡达类似fices阿凡达" +
+    		"类似adieus否定了萨福诶萨弗兰克的萨abies份额了萨福诶哦无分发了房间哦i诶萨\n解放奥i哦非萨德佛诶萨佛饿死啊发送的f\n";
+    public LoggerView loggerView;
     private NetworkDiscovery nds;
     @Override
     protected void onResume() {
-        nds = null;
-        if(checkWifiState()){
-            nds = new NetworkDiscovery(this);
-            nds.findServers();
+        if (loggerView == null) {
+            loggerView = new LoggerView(this);
         }
+        setContentView(loggerView);
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                nds = null;
+                if(checkWifiState()){
+                    nds = new NetworkDiscovery(DnssdActivity.this);
+                    nds.findServers();
+                }                
+            }
+            
+        }, 200);
         super.onResume();
     }
     @Override
@@ -111,7 +69,99 @@ public class DnssdActivity extends Activity {
         if(nds != null){
             nds.close();
         }
+        if (loggerView != null) {
+            loggerView.surfaceDestroyed(null);            
+        }
         super.onPause();
+    }
+
+
+    public void mAlertDialog(String title, String message, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negetiveListener){//退出确认
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);//context
+        ad.setTitle(title);
+        ad.setMessage(message);
+        ad.setPositiveButton("是", positiveListener);
+        ad.setNegativeButton("否",negetiveListener);
+        ad.show();
+    }
+    
+    private final int ACTION_WIFI_SETTINGS = 0;
+    public boolean checkWifiState(){
+        boolean isWifiEnabled = false;
+        WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
+        DialogInterface.OnClickListener yes = new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+                DnssdActivity.this.startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), ACTION_WIFI_SETTINGS);
+            }
+        };
+        DialogInterface.OnClickListener no = new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+                DnssdActivity.this.onDestroy();
+                System.exit(0);       
+            }
+        };
+        if((wifi == null) || (wifi.getWifiState() != WifiManager.WIFI_STATE_ENABLED)){
+            mAlertDialog("需要打开Wifi，程序才能运行。", "是否打开Wifi ?", yes, no);
+        }else{
+            if(checkConnectionState()){
+                isWifiEnabled = true;
+                logger.info("wifi is ready");
+            }else{
+                mAlertDialog("请连接一个可用Wifi", "是否重设Wifi参数 ?", yes, no);
+            }
+        }
+        return isWifiEnabled;
+    }
+
+    private boolean checkConnectionState() {
+        boolean isConnectionEnable = false;
+        ConnectivityManager connManager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        State state = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+        if (State.CONNECTED == state) {
+            isConnectionEnable = true;
+        }
+        return isConnectionEnable;
+    }
+    
+    private final int LIST_SERVICE_INFO = 0, REGISTER_SERVICE = 1, UNREGISTER_SERVICE = 2, OTHER_OPERATION = 3;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        super.onCreateOptionsMenu(menu);
+        menu.add(0, LIST_SERVICE_INFO, 0, "服务列表");
+        menu.add(0, REGISTER_SERVICE, 0, "发布服务");
+        menu.add(0, UNREGISTER_SERVICE, 0, "注销服务");
+        menu.add(0, OTHER_OPERATION, 0, "其它操作");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+        case LIST_SERVICE_INFO:
+            Toast.makeText(this, "服务列表", Toast.LENGTH_SHORT).show();
+            nds.btn_listServiceInfo();    
+            break;
+        case REGISTER_SERVICE:
+            Toast.makeText(this, "发布服务", Toast.LENGTH_SHORT).show();
+            String[] props = new String[]{"Platform=HammerHead", "string"};
+            nds.startServer("Android-hammerhead", 6666, props);
+            break;
+        case UNREGISTER_SERVICE:
+            Toast.makeText(this, "注销服务", Toast.LENGTH_SHORT).show();
+            nds.stopServer();
+            break;
+        case OTHER_OPERATION:
+            Toast.makeText(this, "其它操作", Toast.LENGTH_SHORT).show();
+            loggerView.refreshSubVec(value);
+            break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void btn_listServiceInfo(View v){
@@ -121,56 +171,14 @@ public class DnssdActivity extends Activity {
         String[] props = new String[]{"Platform=HammerHead", "string"};
         nds.startServer("Android-hammerhead", 6666, props);
         logger.info("start server");
-        strBuffer.append("start server"+ "\n"); 
     }
     public void btn_unregisterService(View v){
         nds.stopServer();
         logger.info("stop server");
-        strBuffer.append("stop server"+ "\n"); 
     }
     public void btn_showServiceCollector(View v){
         nds.showServiceCollector();       
     }
-
-    public void mAlertDialog(String title, String message, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negetiveListener){//退出确认
-        AlertDialog.Builder ad = new AlertDialog.Builder(this);//context
-        ad.setTitle(title);
-        ad.setMessage(message);
-        ad.setPositiveButton("是", positiveListener);
-        ad.setNegativeButton("否",negetiveListener);
-        ad.show();//显示对话框
-    }
-    
-    private final int ACTION_WIFI_SETTINGS = 0;
-    public boolean checkWifiState(){
-        boolean isWifiEnabled = false;
-        WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
-        if((wifi == null) || (wifi.getWifiState() != WifiManager.WIFI_STATE_ENABLED)){
-            logger.info("wifi is not ready");
-            DialogInterface.OnClickListener yes = new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // TODO Auto-generated method stub
-                    DnssdActivity.this.startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), ACTION_WIFI_SETTINGS);
-                }                    
-            };
-            DialogInterface.OnClickListener no = new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // TODO Auto-generated method stub
-                    DnssdActivity.this.onDestroy();
-                    System.exit(0);                    
-                }                    
-            };
-            mAlertDialog("需要打开Wifi，程序才能运行。", "是否打开Wifi ?", yes, no);
-        }else{
-            logger.info("wifi is ready");
-            isWifiEnabled = true;
-        }
-        return isWifiEnabled;
-    }
-    
-    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -180,19 +188,4 @@ public class DnssdActivity extends Activity {
             break;
         }
     }
-
-    private Thread th;
-    private boolean flag = true;
-    private void startServiceListener(){
-        th = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-            }
-            
-        });
-        flag = true;
-        th.start();
-    }
 }
-
