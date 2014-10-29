@@ -12,17 +12,26 @@ import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class DnssdActivity extends Activity {
     public static final String TAG = "DnssdDiscovery";
     private Logger logger = Logger.getLogger(DnssdActivity.class.getName());
     android.os.Handler handler = new android.os.Handler();
+    public StringBuffer strBuffer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dnssd);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        strBuffer = new StringBuffer("用SurfaceView显示发现的网络服务设备\n");
     }
 
     @Override
@@ -33,6 +42,58 @@ public class DnssdActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        
+        menu.add(Menu.NONE,Menu.FIRST+1,1,"服务列表");
+        menu.add(Menu.NONE,Menu.FIRST+2, 2, "注册服务");
+        menu.add(Menu.NONE,Menu.FIRST+3, 3, "注销服务");
+        
+        return true;
+    }
+   
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+        case Menu.FIRST + 1:
+
+            logger.info("list of network services");
+            nds.btn_listServiceInfo();
+            break;
+
+        case Menu.FIRST + 2:
+            
+            String[] props = new String[]{"Platform=HammerHead", "string"};
+            nds.startServer("Android-hammerhead", 6666, props);
+            logger.info("start server");
+            strBuffer.append("start server"+ "\n");
+            break;
+
+        case Menu.FIRST + 3:
+            nds.stopServer();
+            logger.info("stop server");
+            strBuffer.append("stop server"+ "\n");
+            break;
+
+        }
+
+        return false;
+
+    }
+    
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+//        Toast.makeText(this, "选项菜单关闭了", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Toast.makeText(this,"Preparing Options Menu",Toast.LENGTH_LONG).show();
+
+        //如果返回false，此方法就把用户点击menu的动作给销毁了，onCreateOptionsMenu方法将不会被调用
+        return true;
     }
 
     private NetworkDiscovery nds;
@@ -60,10 +121,12 @@ public class DnssdActivity extends Activity {
         String[] props = new String[]{"Platform=HammerHead", "string"};
         nds.startServer("Android-hammerhead", 6666, props);
         logger.info("start server");
+        strBuffer.append("start server"+ "\n"); 
     }
     public void btn_unregisterService(View v){
         nds.stopServer();
         logger.info("stop server");
+        strBuffer.append("stop server"+ "\n"); 
     }
     public void btn_showServiceCollector(View v){
         nds.showServiceCollector();       
