@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
@@ -29,8 +27,10 @@ import javax.jmdns.impl.constants.DNSConstants;
 @SuppressLint("NewApi")
 public class NetworkDiscovery {
     private final String DEBUG_TAG = NetworkDiscovery.class.getName();
-    private Logger logger = Logger.getLogger(DEBUG_TAG);
+//    private Logger logger = Logger.getLogger(DEBUG_TAG);
+    private LoggerView logger;
 
+    private StringBuffer strBuffer = new StringBuffer();
     private final String TYPE = "_http._tcp.local.";
 
     private DnssdActivity mContext;
@@ -38,11 +38,10 @@ public class NetworkDiscovery {
     private ServiceInfo mServiceInfo = null;
     private ServiceListener mServiceListener;
     private WifiManager.MulticastLock mMulticastLock;
-    private DnssdActivity mDnssdActivity;
 
     public NetworkDiscovery(DnssdActivity context) {
         mContext = context;
-        mDnssdActivity = (DnssdActivity) context;
+        logger = mContext.loggerView;
         try {
             WifiManager wifi = (WifiManager) mContext.getSystemService(android.content.Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifi.getConnectionInfo();
@@ -80,7 +79,7 @@ public class NetworkDiscovery {
             public void serviceAdded(ServiceEvent event) {
                 String notify = "Service added: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-//                mDnssdActivity.strBuffer.append(notify + "\n");
+                strBuffer.append(notify + "\n");
                 overWriteServiceInfo(mJmDNS.getServiceInfo(event.getType(), event.getName()));
             }
 
@@ -88,7 +87,7 @@ public class NetworkDiscovery {
             public void serviceRemoved(ServiceEvent event) {
                 String notify = "Service removed: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-//                mDnssdActivity.strBuffer.append(notify + "\n");
+                strBuffer.append(notify + "\n");
                 removeServiceInfo(event.getInfo());
             }
 
@@ -96,7 +95,7 @@ public class NetworkDiscovery {
             public void serviceResolved(ServiceEvent event) {
                 String notify = "Service resolved: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-//                mDnssdActivity.strBuffer.append(notify + "\n");
+                strBuffer.append(notify + "\n");
             }
         };
         mJmDNS.addServiceListener(TYPE, mServiceListener);
@@ -154,11 +153,8 @@ public class NetworkDiscovery {
         int cnt = 1;
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element = null;
-        String numberOfServices = "Number of service is " + this.mServiceInfoList.size();
-        mDnssdActivity.strBuffer.append(numberOfServices + "\n");
         while (iter.hasNext()) {
             element = (ServiceInfo) iter.next();
-            mDnssdActivity.strBuffer.append(cnt + ":\n");
             logger.info(cnt++ + ":");
             printServiceInfo(element);
         }
@@ -173,7 +169,6 @@ public class NetworkDiscovery {
         byte[] txts = info.getTextBytes();
         sb.append(name + " - ");
         for (int i = 0; i < addresses.length; i++) {
-            // logger.info(addresses[i].getHostAddress() + ", ");
             sb.append("{" + addresses[i].getHostAddress() + ":" + port + "} ");
         }
         if (info.getTextBytes() != null && info.getTextBytes().length > 0) {
@@ -196,7 +191,6 @@ public class NetworkDiscovery {
             sb.append("Not has Data");
         }
         logger.info(sb.toString());
-        mDnssdActivity.strBuffer.append(sb.toString() + "\n");
     }
 
     private final List<ServiceInfo> mServiceInfoList = new ArrayList<ServiceInfo>();
