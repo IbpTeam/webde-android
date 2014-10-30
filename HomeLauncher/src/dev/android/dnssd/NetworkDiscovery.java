@@ -1,4 +1,4 @@
-package org.ibp.dnssd;
+package dev.android.dnssd;
 
 import android.annotation.SuppressLint;
 import android.net.wifi.WifiInfo;
@@ -128,34 +128,31 @@ public class NetworkDiscovery {
         while (iter.hasNext()) {
             element = (ServiceInfo) iter.next();
             logger.info(cnt++ + ":");
-            printServiceInfo(element);
+            logger.info(this.getAbstractServiceInfo(element).toString());
         }
     }
 
     public void printServiceInfoList() {
         int cnt = 1;
-        Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
-        ServiceInfo element = null;
+        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
+        AbsServiceInfo element = null;
         while (iter.hasNext()) {
-            element = (ServiceInfo) iter.next();
-            logger.info(cnt++ + ":");
-            printServiceInfo(element);
+            element = (AbsServiceInfo) iter.next();
+            logger.info(cnt++ + "、" + element.toString());
         }
     }
 
-    public void printServiceInfo(ServiceInfo info) {
-        StringBuffer sb = new StringBuffer();
-        String name = info.getName();
-        String type = info.getType();
+    public AbsServiceInfo getAbstractServiceInfo(ServiceInfo info){
+        AbsServiceInfo absInfo= new AbsServiceInfo();
+        absInfo.name = info.getName();
+        absInfo.type = info.getType();
         InetAddress[] addresses = info.getInet4Addresses();
-        int port = info.getPort();
-        byte[] txts = info.getTextBytes();
-        sb.append(name + " - ");
-        for (int i = 0; i < addresses.length; i++) {
-            sb.append("{" + addresses[i].getHostAddress() + ":" + port + "} ");
+        if(addresses.length > 0){
+            absInfo.address = addresses[0].getHostAddress();
         }
+        absInfo.port = info.getPort();
         if (info.getTextBytes() != null && info.getTextBytes().length > 0) {
-            sb.append("txts: ");
+            absInfo.txtList = new ArrayList<String>();
         }
         int off = 0;
         String txt;
@@ -166,39 +163,37 @@ public class NetworkDiscovery {
             }
             txt = readUTF(info.getTextBytes(), off, len);
             off += len;
-            sb.append(txt + ", ");
+            absInfo.txtList.add(txt);
         }
+        absInfo.txts = absInfo.txtList.toArray(new String[absInfo.txtList.size()]);
         if (info.hasData()) {
-            sb.append("has Data");
-        } else {
-            sb.append("Not has Data");
         }
-        logger.info(sb.toString());
+        return absInfo;
     }
-
-    private final List<ServiceInfo> mServiceInfoList = new ArrayList<ServiceInfo>();
+    private final List<AbsServiceInfo> mServiceInfoList = new ArrayList<AbsServiceInfo>();
     //rarely used.
     public void addServiceInfo(ServiceInfo info) {
-        Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
-        ServiceInfo element;
+        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
+        AbsServiceInfo element;
         boolean isExist = false;
         while (iter.hasNext()) {
-            element = (ServiceInfo) iter.next();
+            element = (AbsServiceInfo) iter.next();
             if (element.getName().equals(info.getName())) {
                 isExist = true;
                 break;
             }
         }
         if (!isExist) {
-            mServiceInfoList.add(info);
+            mServiceInfoList.add(this.getAbstractServiceInfo(info));
         }
+        mContext.nofityStateChange(mServiceInfoList);
     }
     public void overWriteServiceInfo(ServiceInfo info) {
-        Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
-        ServiceInfo element = null;
+        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
+        AbsServiceInfo element = null;
         boolean isExist = false;
         while (iter.hasNext()) {
-            element = (ServiceInfo) iter.next();
+            element = (AbsServiceInfo) iter.next();
             if (element.getName().equals(info.getName())) {
                 isExist = true;
                 break;
@@ -207,14 +202,16 @@ public class NetworkDiscovery {
         if (isExist) {
             mServiceInfoList.remove(element);
         }
-        mServiceInfoList.add(info);
+        AbsServiceInfo absInfo = this.getAbstractServiceInfo(info);
+        mServiceInfoList.add(absInfo);
+        mContext.nofityStateChange(mServiceInfoList);
     }
     public void removeServiceInfo(ServiceInfo info) {
-        Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
-        ServiceInfo element = null;
+        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
+        AbsServiceInfo element = null;
         boolean isExist = false;
         while (iter.hasNext()) {
-            element = (ServiceInfo) iter.next();
+            element = (AbsServiceInfo) iter.next();
             if (element.getName().equals(info.getName())) {
                 isExist = true;
                 break;
@@ -223,8 +220,47 @@ public class NetworkDiscovery {
         if (isExist) {
             mServiceInfoList.remove(element);
         }
+        mContext.nofityStateChange(mServiceInfoList);
     }
 
+    class AbsServiceInfo{
+        private String name;
+        private String type;
+        private String address;
+        private int port;
+        private String[] txts;
+        private List<String> txtList;
+        public String getName(){
+            return name;
+        }
+        public String getType(){
+            return type;
+        }
+        public String getAddress(){
+            return address;
+        }
+        public int getPort(){
+            return port;
+        }
+        public String[] getTxts(){
+            return txts;
+        }
+        public String toString(){
+            StringBuffer sb = new StringBuffer();
+            sb.append(name);
+            sb.append(" - ");
+            sb.append("{");
+            sb.append(address + ":" + port);
+            sb.append("} - ");
+            sb.append("txts: {");
+            for(String txt: txts){
+                sb.append(txt);
+                sb.append(", ");
+            }
+            sb.append("}");
+            return sb.toString();
+        }
+    }
     /**
      * Read data bytes as a UTF stream.
      */
@@ -361,17 +397,5 @@ public class NetworkDiscovery {
             }
         }
         return (text != null && text.length > 0 ? text : DNSRecord.EMPTY_TXT);
-    }
-    class ServiceInfo{
-        
-    }
-    //can delete
-    private int infocnt = 0;
-    public void btn_resolveServiceInfo() {
-        if (infocnt < mServiceInfoList.size()) {
-            ServiceInfo element = mServiceInfoList.get(infocnt);
-            overWriteServiceInfo(mJmDNS.getServiceInfo(element.getType(), element.getName()));
-            logger.info("resolve serviceinfo finished");
-        }
     }
 }

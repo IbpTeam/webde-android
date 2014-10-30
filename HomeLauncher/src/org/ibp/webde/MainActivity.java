@@ -2,7 +2,7 @@ package org.ibp.webde;
 
 import java.util.logging.Logger;
 
-import org.ibp.dnssd.DnssdActivity;
+import dev.android.dnssd.DnssdActivity;
 
 import android.app.Activity;
 import android.content.Intent;

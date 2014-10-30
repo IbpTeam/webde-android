@@ -17,7 +17,7 @@
         <activity android:name=".MainActivity"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name="org.ibp.dnssd.DnssdActivity"
+        <activity android:name="dev.android.dnssd.DnssdActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

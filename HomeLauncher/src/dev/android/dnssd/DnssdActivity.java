@@ -1,6 +1,9 @@
-package org.ibp.dnssd;
+package dev.android.dnssd;
 
+import java.util.List;
 import java.util.logging.Logger;
+
+import dev.android.dnssd.NetworkDiscovery.AbsServiceInfo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,7 +54,12 @@ public class DnssdActivity extends Activity {
         }
 //        setContentView(loggerView);
         Toast.makeText(this, "NsdChatUserList未完成", Toast.LENGTH_SHORT).show();
-        curView = NSDCHATUSERLIST;        
+        curView = NSDCHATUSERLIST;
+    }
+    public void nofityStateChange(List<AbsServiceInfo> mServiceInfoList){
+        if(curView == NSDCHATUSERLIST){
+            userListView.updateAdapter(mServiceInfoList);
+        }
     }
     @Override
     protected void onResume() {

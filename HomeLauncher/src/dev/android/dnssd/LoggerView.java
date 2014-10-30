@@ -1,4 +1,4 @@
-package org.ibp.dnssd;
+package dev.android.dnssd;
 
 import java.util.Vector;
 import java.util.logging.Level;
@@ -29,8 +29,6 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize(20);
         paint.setAntiAlias(true);
-        this.setKeepScreenOn(true);  
-        this.setFocusable(true);
         logger.setLevel(Level.OFF);
     }
 
@@ -39,6 +37,7 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
     public void myDraw() {
         canvas = sfh.lockCanvas();
         canvas.drawColor(Color.LTGRAY);
+//        canvas.drawText(timeStr, 10, 10, paint);
         for (di = 0; di <  vecLength; di++) {
             dstr = subStrVec.elementAt(di);
             dp = subPosVec.elementAt(di);
