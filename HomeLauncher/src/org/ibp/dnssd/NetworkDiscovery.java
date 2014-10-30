@@ -30,7 +30,7 @@ public class NetworkDiscovery {
 //    private Logger logger = Logger.getLogger(DEBUG_TAG);
     private LoggerView logger;
 
-    private StringBuffer strBuffer = new StringBuffer();
+//    private StringBuffer strBuffer = new StringBuffer();
     private final String TYPE = "_http._tcp.local.";
 
     private DnssdActivity mContext;
@@ -79,7 +79,6 @@ public class NetworkDiscovery {
             public void serviceAdded(ServiceEvent event) {
                 String notify = "Service added: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-                strBuffer.append(notify + "\n");
                 overWriteServiceInfo(mJmDNS.getServiceInfo(event.getType(), event.getName()));
             }
 
@@ -87,7 +86,6 @@ public class NetworkDiscovery {
             public void serviceRemoved(ServiceEvent event) {
                 String notify = "Service removed: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-                strBuffer.append(notify + "\n");
                 removeServiceInfo(event.getInfo());
             }
 
@@ -95,7 +93,6 @@ public class NetworkDiscovery {
             public void serviceResolved(ServiceEvent event) {
                 String notify = "Service resolved: " + event.getName() + "." + event.getType();
                 logger.info(notify);
-                strBuffer.append(notify + "\n");
             }
         };
         mJmDNS.addServiceListener(TYPE, mServiceListener);
@@ -121,20 +118,6 @@ public class NetworkDiscovery {
         mMulticastLock = wifiManager.createMulticastLock(DEBUG_TAG);
         mMulticastLock.setReferenceCounted(true);
         mMulticastLock.acquire();
-    }
-
-    public void btn_listServiceInfo() {
-        printServiceInfoList();
-    }
-
-    private int infocnt = 0;
-
-    public void btn_resolveServiceInfo() {
-        if (infocnt < mServiceInfoList.size()) {
-            ServiceInfo element = mServiceInfoList.get(infocnt);
-            overWriteServiceInfo(mJmDNS.getServiceInfo(element.getType(), element.getName()));
-            logger.info("resolve serviceinfo finished");
-        }
     }
 
     public void showServiceCollector() {
@@ -194,7 +177,7 @@ public class NetworkDiscovery {
     }
 
     private final List<ServiceInfo> mServiceInfoList = new ArrayList<ServiceInfo>();
-
+    //rarely used.
     public void addServiceInfo(ServiceInfo info) {
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element;
@@ -210,7 +193,6 @@ public class NetworkDiscovery {
             mServiceInfoList.add(info);
         }
     }
-
     public void overWriteServiceInfo(ServiceInfo info) {
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element = null;
@@ -227,7 +209,6 @@ public class NetworkDiscovery {
         }
         mServiceInfoList.add(info);
     }
-
     public void removeServiceInfo(ServiceInfo info) {
         Iterator<ServiceInfo> iter = mServiceInfoList.iterator();
         ServiceInfo element = null;
@@ -380,5 +361,17 @@ public class NetworkDiscovery {
             }
         }
         return (text != null && text.length > 0 ? text : DNSRecord.EMPTY_TXT);
+    }
+    class ServiceInfo{
+        
+    }
+    //can delete
+    private int infocnt = 0;
+    public void btn_resolveServiceInfo() {
+        if (infocnt < mServiceInfoList.size()) {
+            ServiceInfo element = mServiceInfoList.get(infocnt);
+            overWriteServiceInfo(mJmDNS.getServiceInfo(element.getType(), element.getName()));
+            logger.info("resolve serviceinfo finished");
+        }
     }
 }

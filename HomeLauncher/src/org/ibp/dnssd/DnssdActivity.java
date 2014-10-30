@@ -158,7 +158,7 @@ public class DnssdActivity extends Activity {
         switch (item.getItemId()) {
         case LIST_SERVICE_INFO:
             Toast.makeText(this, "服务列表", Toast.LENGTH_SHORT).show();
-            nds.btn_listServiceInfo();    
+            nds.printServiceInfoList();    
             break;
         case REGISTER_SERVICE:
             Toast.makeText(this, "发布服务", Toast.LENGTH_SHORT).show();
@@ -177,9 +177,6 @@ public class DnssdActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void btn_listServiceInfo(View v){
-        nds.btn_listServiceInfo();    
-    }
     public void btn_registerService(View v){
         String[] props = new String[]{"Platform=HammerHead", "string"};
         nds.startServer("Android-hammerhead", 6666, props);
