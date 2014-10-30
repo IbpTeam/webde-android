@@ -42,8 +42,7 @@ public class DnssdActivity extends Activity {
         super.onStop();
     }
 
-    private String value = "范德萨分的萨福打算；分的萨罗分挨饿哦萨福家的萨罗；分诶萨阿凡达类似fices阿凡达" +
-    		"类似adieus否定了萨福诶萨弗兰克的萨abies份额了萨福诶哦无分发了房间哦i诶萨\n解放奥i哦非萨德佛诶萨佛饿死啊发送的f\n";
+
     public LoggerView loggerView;
     private NetworkDiscovery nds;
     @Override
@@ -138,7 +137,7 @@ public class DnssdActivity extends Activity {
         menu.add(0, LIST_SERVICE_INFO, 0, "服务列表");
         menu.add(0, REGISTER_SERVICE, 0, "发布服务");
         menu.add(0, UNREGISTER_SERVICE, 0, "注销服务");
-        menu.add(0, OTHER_OPERATION, 0, "其它操作");
+        menu.add(0, OTHER_OPERATION, 0, "用户列表");
         return true;
     }
 
@@ -160,8 +159,7 @@ public class DnssdActivity extends Activity {
             nds.stopServer();
             break;
         case OTHER_OPERATION:
-            Toast.makeText(this, "其它操作", Toast.LENGTH_SHORT).show();
-            loggerView.refreshSubVec(value);
+            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
             break;
         }
         return super.onOptionsItemSelected(item);
