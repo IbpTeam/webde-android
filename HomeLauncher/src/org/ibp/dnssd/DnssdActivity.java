@@ -10,6 +10,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +52,7 @@ public class DnssdActivity extends Activity {
             loggerView = new LoggerView(this);
         }
         setContentView(loggerView);
+        this.registerForContextMenu(loggerView);
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
@@ -58,7 +61,7 @@ public class DnssdActivity extends Activity {
                 if(checkWifiState()){
                     nds = new NetworkDiscovery(DnssdActivity.this);
                     nds.findServers();
-                }                
+                }
             }
             
         }, 200);
@@ -179,6 +182,34 @@ public class DnssdActivity extends Activity {
     public void btn_showServiceCollector(View v){
         nds.showServiceCollector();       
     }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        // TODO Auto-generated method stub
+        logger.info("in onCreateContextMenu");
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("操作选项");
+        menu.add(0, 0, 0, "运行文件");
+        menu.add(0, 1, 0, "删除文件");
+        menu.add(0, 2, 0, "上传保存数据");
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        logger.info("in onContextItemSelected");
+        switch (item.getItemId()) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        default:
+            break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub

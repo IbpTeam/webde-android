@@ -68,11 +68,6 @@ public class MainActivity extends Activity{
         logger.info(state);
     }
     
-    public void startWebviewActivity(View view){
-        Intent intent = new Intent(this, WebViewActivity.class);
-        startActivity(intent);
-    }
-    
     public void startDnsSDActivity(View view){
         Intent intent = new Intent(this, DnssdActivity.class);
         startActivity(intent);
