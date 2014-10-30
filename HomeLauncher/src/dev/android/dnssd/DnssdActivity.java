@@ -1,6 +1,9 @@
-package org.ibp.dnssd;
+package dev.android.dnssd;
 
+import java.util.List;
 import java.util.logging.Logger;
+
+import dev.android.dnssd.NetworkDiscovery.AbsServiceInfo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +13,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,26 +35,42 @@ public class DnssdActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    private String value = "范德萨分的萨福打算；分的萨罗分挨饿哦萨福家的萨罗；分诶萨阿凡达类似fices阿凡达" +
-    		"类似adieus否定了萨福诶萨弗兰克的萨abies份额了萨福诶哦无分发了房间哦i诶萨\n解放奥i哦非萨德佛诶萨佛饿死啊发送的f\n";
     public LoggerView loggerView;
+    public NsdChatUserList userListView;
     private NetworkDiscovery nds;
-    @Override
-    protected void onResume() {
+    private final int LOGGERVIEW = 0, NSDCHATUSERLIST = 1;
+    public int curView = LOGGERVIEW;
+    public void showLoggerView(){
         if (loggerView == null) {
             loggerView = new LoggerView(this);
         }
         setContentView(loggerView);
+        this.registerForContextMenu(loggerView);
+        curView = LOGGERVIEW;     
+    }
+    public void showNstChatUserList(){
+        if (userListView == null) {
+            userListView = new NsdChatUserList();
+        }
+//        setContentView(loggerView);
+        Toast.makeText(this, "NsdChatUserList未完成", Toast.LENGTH_SHORT).show();
+        curView = NSDCHATUSERLIST;
+    }
+    public void nofityStateChange(List<AbsServiceInfo> mServiceInfoList){
+        if(curView == NSDCHATUSERLIST){
+            userListView.updateAdapter(mServiceInfoList);
+        }
+    }
+    @Override
+    protected void onResume() {
+        switch(curView){
+        case LOGGERVIEW:
+            showLoggerView();
+            break;
+        case NSDCHATUSERLIST:
+            showNstChatUserList();
+            break;
+        }
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
@@ -58,7 +79,7 @@ public class DnssdActivity extends Activity {
                 if(checkWifiState()){
                     nds = new NetworkDiscovery(DnssdActivity.this);
                     nds.findServers();
-                }                
+                }
             }
             
         }, 200);
@@ -85,7 +106,7 @@ public class DnssdActivity extends Activity {
         ad.show();
     }
     
-    private final int ACTION_WIFI_SETTINGS = 0;
+//    private final int ACTION_WIFI_SETTINGS = 0;
     public boolean checkWifiState(){
         boolean isWifiEnabled = false;
         WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -93,7 +114,7 @@ public class DnssdActivity extends Activity {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 // TODO Auto-generated method stub
-                DnssdActivity.this.startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), ACTION_WIFI_SETTINGS);
+                DnssdActivity.this.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
             }
         };
         DialogInterface.OnClickListener no = new DialogInterface.OnClickListener(){
@@ -135,7 +156,7 @@ public class DnssdActivity extends Activity {
         menu.add(0, LIST_SERVICE_INFO, 0, "服务列表");
         menu.add(0, REGISTER_SERVICE, 0, "发布服务");
         menu.add(0, UNREGISTER_SERVICE, 0, "注销服务");
-        menu.add(0, OTHER_OPERATION, 0, "其它操作");
+        menu.add(0, OTHER_OPERATION, 0, "用户列表");
         return true;
     }
 
@@ -145,7 +166,7 @@ public class DnssdActivity extends Activity {
         switch (item.getItemId()) {
         case LIST_SERVICE_INFO:
             Toast.makeText(this, "服务列表", Toast.LENGTH_SHORT).show();
-            nds.btn_listServiceInfo();    
+            nds.printServiceInfoList();    
             break;
         case REGISTER_SERVICE:
             Toast.makeText(this, "发布服务", Toast.LENGTH_SHORT).show();
@@ -157,16 +178,13 @@ public class DnssdActivity extends Activity {
             nds.stopServer();
             break;
         case OTHER_OPERATION:
-            Toast.makeText(this, "其它操作", Toast.LENGTH_SHORT).show();
-            loggerView.refreshSubVec(value);
+//            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
+            showNstChatUserList();
             break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void btn_listServiceInfo(View v){
-        nds.btn_listServiceInfo();    
-    }
     public void btn_registerService(View v){
         String[] props = new String[]{"Platform=HammerHead", "string"};
         nds.startServer("Android-hammerhead", 6666, props);
@@ -179,11 +197,39 @@ public class DnssdActivity extends Activity {
     public void btn_showServiceCollector(View v){
         nds.showServiceCollector();       
     }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        // TODO Auto-generated method stub
+        logger.info("in onCreateContextMenu");
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("操作选项");
+        menu.add(0, 0, 0, "运行文件");
+        menu.add(0, 1, 0, "删除文件");
+        menu.add(0, 2, 0, "上传保存数据");
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        logger.info("in onContextItemSelected");
+        switch (item.getItemId()) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        default:
+            break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         switch(requestCode){
-        case ACTION_WIFI_SETTINGS:
+        default:
             logger.info("resultCode: " + resultCode);
             break;
         }

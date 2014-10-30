@@ -2,7 +2,7 @@ package org.ibp.webde;
 
 import java.util.logging.Logger;
 
-import org.ibp.dnssd.DnssdActivity;
+import dev.android.dnssd.DnssdActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -66,11 +66,6 @@ public class MainActivity extends Activity{
     private void activityStates(String state){
         Toast.makeText(this, MainActivity.class.getName() + " - " + state, Toast.LENGTH_SHORT).show();
         logger.info(state);
-    }
-    
-    public void startWebviewActivity(View view){
-        Intent intent = new Intent(this, WebViewActivity.class);
-        startActivity(intent);
     }
     
     public void startDnsSDActivity(View view){

@@ -1,4 +1,4 @@
-package org.ibp.dnssd;
+package dev.android.dnssd;
 
 import java.util.Vector;
 import java.util.logging.Level;
