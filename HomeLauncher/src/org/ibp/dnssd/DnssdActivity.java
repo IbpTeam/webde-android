@@ -32,26 +32,37 @@ public class DnssdActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-
     public LoggerView loggerView;
+    public NsdChatUserList userListView;
     private NetworkDiscovery nds;
-    @Override
-    protected void onResume() {
+    private final int LOGGERVIEW = 0, NSDCHATUSERLIST = 1;
+    public int curView = LOGGERVIEW;
+    public void showLoggerView(){
         if (loggerView == null) {
             loggerView = new LoggerView(this);
         }
         setContentView(loggerView);
         this.registerForContextMenu(loggerView);
+        curView = LOGGERVIEW;     
+    }
+    public void showNstChatUserList(){
+        if (userListView == null) {
+            userListView = new NsdChatUserList();
+        }
+//        setContentView(loggerView);
+        Toast.makeText(this, "NsdChatUserList未完成", Toast.LENGTH_SHORT).show();
+        curView = NSDCHATUSERLIST;        
+    }
+    @Override
+    protected void onResume() {
+        switch(curView){
+        case LOGGERVIEW:
+            showLoggerView();
+            break;
+        case NSDCHATUSERLIST:
+            showNstChatUserList();
+            break;
+        }
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
@@ -87,7 +98,7 @@ public class DnssdActivity extends Activity {
         ad.show();
     }
     
-    private final int ACTION_WIFI_SETTINGS = 0;
+//    private final int ACTION_WIFI_SETTINGS = 0;
     public boolean checkWifiState(){
         boolean isWifiEnabled = false;
         WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -95,7 +106,7 @@ public class DnssdActivity extends Activity {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 // TODO Auto-generated method stub
-                DnssdActivity.this.startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), ACTION_WIFI_SETTINGS);
+                DnssdActivity.this.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
             }
         };
         DialogInterface.OnClickListener no = new DialogInterface.OnClickListener(){
@@ -159,7 +170,8 @@ public class DnssdActivity extends Activity {
             nds.stopServer();
             break;
         case OTHER_OPERATION:
-            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
+            showNstChatUserList();
             break;
         }
         return super.onOptionsItemSelected(item);
@@ -212,7 +224,7 @@ public class DnssdActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         switch(requestCode){
-        case ACTION_WIFI_SETTINGS:
+        default:
             logger.info("resultCode: " + resultCode);
             break;
         }
