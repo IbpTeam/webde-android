@@ -28,7 +28,7 @@ import java.io.IOException;
  *
  * @author Werner Randelshofer
  */
-public class DiscoverServices {
+public class NSDDemo {
     /**
      * @param args
      *            the command line arguments
