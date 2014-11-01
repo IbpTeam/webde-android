@@ -18,6 +18,7 @@
 
 package samples;
 
+import java.awt.Dimension;
 import java.io.IOException;
 
 
@@ -33,15 +34,22 @@ public class NSDDemo {
      * @param args
      *            the command line arguments
      */
+    public static final int WIDTH = 500;
+    public static final int HEIGHT = 650;
+    public static final int PORT = 9090;
     public static void main(String[] args) {
         try {
             NetworkDiscovery nsd = new NetworkDiscovery();
             nsd.findServers();
 
-            int PORT = 9090;
-            String[] props = new String[] { "Platform=HammerHead", "string" };
+            String[] props = new String[] { "Platform=PC", "string" };
             nsd.startServer("Java-NetworkDiscovery-Demo", PORT, props);
 
+            ServerFrame serverFrame = new ServerFrame();
+            serverFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+            serverFrame.pack();
+            serverFrame.setVisible(true);
+            
             System.out.println("Press q and Enter, to quit");
             int b;
             while ((b = System.in.read()) != -1 && (char) b != 'q') {
