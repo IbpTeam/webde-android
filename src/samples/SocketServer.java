@@ -119,7 +119,7 @@ public class SocketServer implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("run in socketserver!!!");
+//			System.out.println("run in socketserver!!!");
 		}
 	}
 	
