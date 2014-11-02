@@ -22,10 +22,6 @@ public class NsdChatUserList extends ListView{
         // TODO Auto-generated constructor stub
         super(context);
         mContext = context;
-//        this.setBackgroundColor(this.getResources().getColor(R.color.ltgray));
-//        mServiceInfoList = new ArrayList<AbsServiceInfo>();
-//        AbsServiceInfo defautInfo = new AbsServiceInfo("未发现设备", "0.0.0.0", 0);
-//        mServiceInfoList.add(defautInfo);
         userListAdapter = new UserListAdapter(mContext, R.layout.nsdchat_userlist, mServiceInfoList);
         this.setAdapter(userListAdapter);
         this.setOnItemClickListener(clickListener);
@@ -35,7 +31,6 @@ public class NsdChatUserList extends ListView{
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             AbsServiceInfo serviceInfo = mServiceInfoList.get(i);
             DnssdActivity.instance.showNsdChatViewFromUserList(serviceInfo);
-//            DnssdActivity.logger.info(serviceInfo.getName());
         }
     };
     public void updateAdapter(List<AbsServiceInfo> infoList){
@@ -46,7 +41,6 @@ public class NsdChatUserList extends ListView{
         userListAdapter.resetData(mServiceInfoList);
         userListAdapter.notifyDataSetChanged();
         this.setSelection(0);
-//        DnssdActivity.logger.info("in function updateAdapter: " + mServiceInfoList.size());
     }
 }
 class UserListAdapter extends ArrayAdapter<AbsServiceInfo>{

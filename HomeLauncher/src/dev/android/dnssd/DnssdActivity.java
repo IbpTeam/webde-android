@@ -46,9 +46,6 @@ public class DnssdActivity extends Activity {
     private final int LOGGERVIEW = 0, NSDCHATUSERLIST = 1, NSDCHATVIEW = 2;
     public int curView = LOGGERVIEW;
     public void showLoggerView(){
-//        if (loggerView == null) {
-//            loggerView = new LoggerView(this);
-//        }
         setContentView(loggerView);
         this.registerForContextMenu(loggerView);
         curView = LOGGERVIEW;     
@@ -78,7 +75,6 @@ public class DnssdActivity extends Activity {
         }
         chatView = null;
         chatView = new NsdChatView(connection);
-//        connection.startClient("xifeiwu", "192.168.160.176", 6666);
         connection.startClient(serviceInfo.getName(), serviceInfo.getAddress(), serviceInfo.getPort());
         curView = NSDCHATVIEW;
     }
@@ -166,7 +162,6 @@ public class DnssdActivity extends Activity {
         ad.show();
     }
     
-//    private final int ACTION_WIFI_SETTINGS = 0;
     public boolean checkWifiState(){
         boolean isWifiEnabled = false;
         WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -239,7 +234,6 @@ public class DnssdActivity extends Activity {
             nds.stopServer();
             break;
         case OTHER_OPERATION:
-//            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
             showNstChatUserList();
             break;
         }

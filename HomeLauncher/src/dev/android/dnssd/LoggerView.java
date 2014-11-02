@@ -37,7 +37,6 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize(20);
         paint.setAntiAlias(true);
-//        logger.setLevel(Level.OFF);
         DisplayMetrics metrics = new DisplayMetrics();        
         DnssdActivity.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenW = metrics.heightPixels;
@@ -52,7 +51,6 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
     public void myDraw() {
         canvas = sfh.lockCanvas();
         canvas.drawColor(Color.LTGRAY);
-//        canvas.drawText(timeStr, 10, 10, paint);
         for (di = 0; di <  vecLength; di++) {
             dstr = subStrVec.elementAt(di);
             dp = subPosVec.elementAt(di);
@@ -175,13 +173,12 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         } else {
             subPosVec = new Vector<Integer>();
         }
-        // subColor = new Vector<Character>();
         vecLength = 0;
         appendToSubVec(mainStr);
     }
     private void appendToSubVec(String mainStr) {
         int i, strLen = mainStr.length();
-//        logger.info("strLen: "+strLen);
+        logger.info("strLen: "+strLen);
 
         char ch;
         String substr;
@@ -196,7 +193,7 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
             ch = mainStr.charAt(i);
             if (ch == '\n') {
                 end = i;
-//                logger.info("substring1: " + start + "and " + end);
+                logger.info("substring1: " + start + "and " + end);
                 substr = mainStr.substring(start, end);
                 subStrVec.add(substr);
                 vecLength++;
@@ -209,11 +206,9 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
                 continue;
             }
             curLen += chLen[i];
-//            logger.info(i+": "+chLen[i]);
             if (curLen > screenW) {
                 i--;
                 end = i;
-//                logger.info("substring2: " + start + "and " + end);
                 substr = mainStr.substring(start, end);
                 subStrVec.add(substr);
                 vecLength++;
@@ -227,9 +222,7 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         //收尾工作
         if ((curLen > 0)) {
             end = i;
-//            logger.info("substring3: " + start + "and " + end);
             substr = mainStr.substring(start, end);
-//            logger.info("substr: " + substr);
             subStrVec.add(substr);
             vecLength++;
             start = end;

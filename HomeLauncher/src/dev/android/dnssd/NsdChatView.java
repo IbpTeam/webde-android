@@ -61,7 +61,6 @@ public class NsdChatView {
                 if(chatView != null && (inputString.length() > 0)){
                     mConnection.sendMessage(inputString);
                     editText.setText("");
-//                    Toast.makeText(curActivity, inputString, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -201,12 +200,6 @@ class NsdChatConnection {
                         clientIP = clientIP.substring(1);
                         clientPort = mSocket.getPort();
                         updateMessages("NOTICE", "Connected, " + clientIP + ":" + clientPort);
-//                        if (mChatClient == null) {
-//                            int port = mSocket.getPort();
-//                            InetAddress address = mSocket.getInetAddress();
-//                            connectToServer(address, port);
-//                        }
-//                        startClient("me", clientIP, clientPort);
 
                         mChatClient = new ChatClient("me", clientIP, clientPort);
                     }
@@ -278,15 +271,6 @@ class NsdChatConnection {
                     Log.d(CLIENT_TAG, "Initializing socket failed, IOE.", e);
                     updateMessages(CLIENT_TAG, "Initializing socket failed, IOE.");
                 }
-//                while (true) {
-//                    try {
-//                        String msg = mMessageQueue.take();
-//                        sendMessage(msg);
-//                    } catch (InterruptedException ie) {
-//                        Log.d(CLIENT_TAG, "Message sending loop interrupted, exiting");
-//                        updateMessages(CLIENT_TAG, "Message sending loop interrupted, exiting");
-//                    }
-//                }
             }
         }
 
