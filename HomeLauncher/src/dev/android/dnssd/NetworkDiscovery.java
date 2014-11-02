@@ -59,7 +59,7 @@ public class NetworkDiscovery {
     }
     public void startServer(String name, int port, String[] props) {
         try {
-            mServiceInfo = ServiceInfo.create(TYPE, name, 8888, 0, 0, textFromStringArray(props));
+            mServiceInfo = ServiceInfo.create(TYPE, name, port, 0, 0, textFromStringArray(props));
             mJmDNS.registerService(mServiceInfo);
         } catch (IOException e) {
             Log.d(DEBUG_TAG, "Error in JmDNS initialization: " + e);
@@ -144,33 +144,36 @@ public class NetworkDiscovery {
 
     public AbsServiceInfo getAbstractServiceInfo(ServiceInfo info){
         AbsServiceInfo absInfo= new AbsServiceInfo();
-        absInfo.name = info.getName();
-        absInfo.type = info.getType();
+        absInfo.setName(info.getName());
+        absInfo.setType(info.getType());
         InetAddress[] addresses = info.getInet4Addresses();
         if(addresses.length > 0){
-            absInfo.address = addresses[0].getHostAddress();
+            absInfo.setAddress(addresses[0].getHostAddress());
         }
-        absInfo.port = info.getPort();
+        absInfo.setPort(info.getPort());
         if (info.getTextBytes() != null && info.getTextBytes().length > 0) {
-            absInfo.txtList = new ArrayList<String>();
-        }
-        int off = 0;
-        String txt;
-        while (off < info.getTextBytes().length) {
-            int len = info.getTextBytes()[off++] & 0xFF;
-            if ((len == 0) || (off + len > info.getTextBytes().length)) {
-                break;
+            List<String> txtList = new ArrayList<String>();
+            int off = 0;
+            String txt;
+            while (off < info.getTextBytes().length) {
+                int len = info.getTextBytes()[off++] & 0xFF;
+                if ((len == 0) || (off + len > info.getTextBytes().length)) {
+                    break;
+                }
+                txt = readUTF(info.getTextBytes(), off, len);
+                off += len;
+                txtList.add(txt);
             }
-            txt = readUTF(info.getTextBytes(), off, len);
-            off += len;
-            absInfo.txtList.add(txt);
+            absInfo.setTxts(txtList.toArray(new String[txtList.size()]));
         }
-        absInfo.txts = absInfo.txtList.toArray(new String[absInfo.txtList.size()]);
         if (info.hasData()) {
         }
         return absInfo;
     }
     private final List<AbsServiceInfo> mServiceInfoList = new ArrayList<AbsServiceInfo>();
+    public List<AbsServiceInfo> getServiceInfoList(){
+        return mServiceInfoList;
+    }
     //rarely used.
     public void addServiceInfo(ServiceInfo info) {
         Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
@@ -223,44 +226,6 @@ public class NetworkDiscovery {
         mContext.nofityStateChange(mServiceInfoList);
     }
 
-    class AbsServiceInfo{
-        private String name;
-        private String type;
-        private String address;
-        private int port;
-        private String[] txts;
-        private List<String> txtList;
-        public String getName(){
-            return name;
-        }
-        public String getType(){
-            return type;
-        }
-        public String getAddress(){
-            return address;
-        }
-        public int getPort(){
-            return port;
-        }
-        public String[] getTxts(){
-            return txts;
-        }
-        public String toString(){
-            StringBuffer sb = new StringBuffer();
-            sb.append(name);
-            sb.append(" - ");
-            sb.append("{");
-            sb.append(address + ":" + port);
-            sb.append("} - ");
-            sb.append("txts: {");
-            for(String txt: txts){
-                sb.append(txt);
-                sb.append(", ");
-            }
-            sb.append("}");
-            return sb.toString();
-        }
-    }
     /**
      * Read data bytes as a UTF stream.
      */
@@ -397,5 +362,67 @@ public class NetworkDiscovery {
             }
         }
         return (text != null && text.length > 0 ? text : DNSRecord.EMPTY_TXT);
+    }
+}
+
+class AbsServiceInfo{
+    private String name;
+    private String type;
+    private String address;
+    private int port;
+    private String[] txts = null;
+    public AbsServiceInfo(){
+    }
+    public AbsServiceInfo(String name, String address, int port){
+        this.name = name;
+        this.address = address;
+        this.port = port;
+    }
+    public String getName(){
+        return name;
+    }
+    public String getType(){
+        return type;
+    }
+    public String getAddress(){
+        return address;
+    }
+    public int getPort(){
+        return port;
+    }
+    public String[] getTxts(){
+        return txts;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+    public void setType(String type){
+        this.type = type;
+    }
+    public void setAddress(String address){
+        this.address = address;
+    }
+    public void setPort(int port){
+        this.port = port;
+    }
+    public void setTxts(String[] txts){
+        this.txts = txts;
+    }
+    public String toString(){
+        StringBuffer sb = new StringBuffer();
+        sb.append(name);
+        sb.append(" - ");
+        sb.append("{");
+        sb.append(address + ":" + port);
+        sb.append("} - ");
+        sb.append("txts: {");
+        if(txts != null){
+            for(String txt: txts){
+                sb.append(txt);
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }
