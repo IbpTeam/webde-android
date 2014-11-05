@@ -1,18 +1,21 @@
-package dev.android.dnssd;
+package samples;
 
-import android.annotation.SuppressLint;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
@@ -20,49 +23,35 @@ import javax.jmdns.ServiceListener;
 import javax.jmdns.impl.DNSRecord;
 import javax.jmdns.impl.constants.DNSConstants;
 
-/**
- * @author xifeiwu
- * @version 1.0
- */
-@SuppressLint("NewApi")
 public class NetworkDiscovery {
-    private final String DEBUG_TAG = NetworkDiscovery.class.getName();
-//    private Logger logger = Logger.getLogger(DEBUG_TAG);
-    private LoggerView logger;
-
-//    private StringBuffer strBuffer = new StringBuffer();
-    private final String TYPE = "_http._tcp.local.";
-
-    private DnssdActivity mContext;
+    private Logger logger = Logger.getLogger(NetworkDiscovery.class.getName());
     private JmDNS mJmDNS = null;
     private ServiceInfo mServiceInfo = null;
     private ServiceListener mServiceListener;
-    private WifiManager.MulticastLock mMulticastLock;
-
-    public NetworkDiscovery(DnssdActivity context) {
-        mContext = context;
-        logger = mContext.loggerView;
+    private final String TYPE = "_http._tcp.local.";
+    private InetAddress localAddress;
+    
+    public NetworkDiscovery(){
+        ConsoleHandler handler = new ConsoleHandler();
+        logger.addHandler(handler);
+        logger.setLevel(Level.FINER);
+        handler.setLevel(Level.FINER);
         try {
-            WifiManager wifi = (WifiManager) mContext.getSystemService(android.content.Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifi.getConnectionInfo();
-            int intaddr = wifiInfo.getIpAddress();
-            byte[] byteaddr = new byte[] { (byte) (intaddr & 0xff), 
-                    (byte) (intaddr >> 8 & 0xff),
-                    (byte) (intaddr >> 16 & 0xff), 
-                    (byte) (intaddr >> 24 & 0xff) };
-            InetAddress addr = InetAddress.getByAddress(byteaddr);
-            logger.info(addr.getHostName() + " - " + addr.getHostAddress());
-            mJmDNS = JmDNS.create(addr);
+            localAddress = getInetAddress();
+            System.out.println(localAddress.getHostName() + " - " + localAddress.getHostAddress());
+            mJmDNS = JmDNS.create(localAddress);
         } catch (IOException e) {
-            Log.d(DEBUG_TAG, "Error in JmDNS creation: " + e);
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
+
     public void startServer(String name, int port, String[] props) {
         try {
             mServiceInfo = ServiceInfo.create(TYPE, name, port, 0, 0, textFromStringArray(props));
             mJmDNS.registerService(mServiceInfo);
         } catch (IOException e) {
-            Log.d(DEBUG_TAG, "Error in JmDNS initialization: " + e);
+            logger.info("Error in JmDNS initialization: " + e);
         }
     }
 
@@ -70,32 +59,6 @@ public class NetworkDiscovery {
         if ((mJmDNS != null) && (mServiceInfo != null)) {
             mJmDNS.unregisterService(mServiceInfo);
         }
-    }
-
-    public void findServers() {
-        wifiLock();
-        mServiceListener = new ServiceListener() {
-            @Override
-            public void serviceAdded(ServiceEvent event) {
-                String notify = "Service added: " + event.getName() + "." + event.getType();
-                logger.info(notify);
-                overWriteServiceInfo(mJmDNS.getServiceInfo(event.getType(), event.getName()));
-            }
-
-            @Override
-            public void serviceRemoved(ServiceEvent event) {
-                String notify = "Service removed: " + event.getName() + "." + event.getType();
-                logger.info(notify);
-                removeServiceInfo(event.getInfo());
-            }
-
-            @Override
-            public void serviceResolved(ServiceEvent event) {
-                String notify = "Service resolved: " + event.getName() + "." + event.getType();
-                logger.info(notify);
-            }
-        };
-        mJmDNS.addServiceListener(TYPE, mServiceListener);
     }
 
     public void close() {
@@ -106,40 +69,37 @@ public class NetworkDiscovery {
             }
             mJmDNS.unregisterAllServices();
         }
-        // mJmDNS.close();
-        if (mMulticastLock != null && mMulticastLock.isHeld()) {
-            mMulticastLock.release();
+        try {
+            mJmDNS.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
-    private void wifiLock() {
-        // 应该加一个对wifi状态的判断，否则程序会报错退出。
-        WifiManager wifiManager = (WifiManager) mContext.getSystemService(android.content.Context.WIFI_SERVICE);
-        mMulticastLock = wifiManager.createMulticastLock(DEBUG_TAG);
-        mMulticastLock.setReferenceCounted(true);
-        mMulticastLock.acquire();
-    }
+    public void findServers() {
+        mServiceListener = new ServiceListener() {
+            @Override
+            public void serviceAdded(ServiceEvent event) {
+                String notify = "Service added: " + event.getName() + "." + event.getType();
+                System.out.println(notify);
+                overWriteServiceInfo(mJmDNS.getServiceInfo(event.getType(), event.getName()));
+            }
 
-    public void showServiceCollector() {
-        List<ServiceInfo> infolist = Arrays.asList(mJmDNS.list(TYPE, DNSConstants.SERVICE_INFO_TIMEOUT));
-        int cnt = 1;
-        Iterator<ServiceInfo> iter = infolist.iterator();
-        ServiceInfo element = null;
-        while (iter.hasNext()) {
-            element = (ServiceInfo) iter.next();
-            logger.info(cnt++ + ":");
-            logger.info(this.getAbstractServiceInfo(element).toString());
-        }
-    }
+            @Override
+            public void serviceRemoved(ServiceEvent event) {
+                String notify = "Service removed: " + event.getName() + "." + event.getType();
+                System.out.println(notify);
+                removeServiceInfo(event.getInfo());
+            }
 
-    public void printServiceInfoList() {
-        int cnt = 1;
-        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
-        AbsServiceInfo element = null;
-        while (iter.hasNext()) {
-            element = (AbsServiceInfo) iter.next();
-            logger.info(cnt++ + "、" + element.toString());
-        }
+            @Override
+            public void serviceResolved(ServiceEvent event) {
+                String notify = "Service resolved: " + event.getName() + "." + event.getType();
+                System.out.println(notify);
+            }
+        };
+        mJmDNS.addServiceListener(TYPE, mServiceListener);
     }
 
     public AbsServiceInfo getAbstractServiceInfo(ServiceInfo info){
@@ -189,7 +149,6 @@ public class NetworkDiscovery {
         if (!isExist) {
             mServiceInfoList.add(this.getAbstractServiceInfo(info));
         }
-        mContext.nofityStateChange(mServiceInfoList);
     }
     public void overWriteServiceInfo(ServiceInfo info) {
         Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
@@ -207,7 +166,6 @@ public class NetworkDiscovery {
         }
         AbsServiceInfo absInfo = this.getAbstractServiceInfo(info);
         mServiceInfoList.add(absInfo);
-        mContext.nofityStateChange(mServiceInfoList);
     }
     public void removeServiceInfo(ServiceInfo info) {
         Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
@@ -223,7 +181,6 @@ public class NetworkDiscovery {
         if (isExist) {
             mServiceInfoList.remove(element);
         }
-        mContext.nofityStateChange(mServiceInfoList);
     }
 
     /**
@@ -362,6 +319,52 @@ public class NetworkDiscovery {
             }
         }
         return (text != null && text.length > 0 ? text : DNSRecord.EMPTY_TXT);
+    }
+
+    public void showServiceCollector() {
+        List<ServiceInfo> infolist = Arrays.asList(mJmDNS.list(TYPE, DNSConstants.SERVICE_INFO_TIMEOUT));
+        int cnt = 1;
+        Iterator<ServiceInfo> iter = infolist.iterator();
+        ServiceInfo element = null;
+        while (iter.hasNext()) {
+            element = (ServiceInfo) iter.next();
+            logger.info(cnt++ + ":");
+            logger.info(this.getAbstractServiceInfo(element).toString());
+        }
+    }
+
+    public void printServiceInfoList() {
+        int cnt = 1;
+        Iterator<AbsServiceInfo> iter = mServiceInfoList.iterator();
+        AbsServiceInfo element = null;
+        while (iter.hasNext()) {
+            element = (AbsServiceInfo) iter.next();
+            logger.info(cnt++ + "、" + element.toString());
+        }
+    }
+    private InetAddress getInetAddress(){
+        // get a list of all network interfaces
+        Enumeration<NetworkInterface> networkInterfaces;
+        try {
+            networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                Enumeration<InetAddress> addressEnum = networkInterface.getInetAddresses();
+//                List<InetAddress> addresses = new ArrayList<InetAddress>();
+                while (addressEnum.hasMoreElements()) {
+                    InetAddress address = addressEnum.nextElement();
+                    if(address instanceof java.net.Inet4Address && !address.isLoopbackAddress()){
+//                        logger.info(address.getHostName() + ":" + address.getHostAddress());
+                        return address;
+                    }
+//                    addresses.add(address);
+                }
+            }
+        } catch (SocketException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 

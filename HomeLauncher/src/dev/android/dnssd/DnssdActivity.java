@@ -3,7 +3,8 @@ package dev.android.dnssd;
 import java.util.List;
 import java.util.logging.Logger;
 
-import dev.android.dnssd.NetworkDiscovery.AbsServiceInfo;
+import org.ibp.webde.R;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,49 +27,80 @@ import android.widget.Toast;
 @SuppressLint("NewApi")
 public class DnssdActivity extends Activity {
     public static final String TAG = "DnssdDiscovery";
-    public Logger logger = Logger.getLogger(DnssdActivity.class.getName());
+    public static Logger logger = Logger.getLogger(DnssdActivity.class.getName());
     android.os.Handler handler = new android.os.Handler();
+    public static DnssdActivity instance;
+    public static int PORT = 9090;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        instance = this;
     }
 
     public LoggerView loggerView;
     public NsdChatUserList userListView;
-    private NetworkDiscovery nds;
-    private final int LOGGERVIEW = 0, NSDCHATUSERLIST = 1;
+    private NetworkDiscovery nds = null;
+    private final int LOGGERVIEW = 0, NSDCHATUSERLIST = 1, NSDCHATVIEW = 2;
     public int curView = LOGGERVIEW;
     public void showLoggerView(){
-        if (loggerView == null) {
-            loggerView = new LoggerView(this);
-        }
         setContentView(loggerView);
         this.registerForContextMenu(loggerView);
         curView = LOGGERVIEW;     
     }
     public void showNstChatUserList(){
         if (userListView == null) {
-            userListView = new NsdChatUserList();
+            userListView = new NsdChatUserList(this);
         }
-//        setContentView(loggerView);
-        Toast.makeText(this, "NsdChatUserList未完成", Toast.LENGTH_SHORT).show();
+        if(nds != null){
+            userListView.updateAdapter(nds.getServiceInfoList());                
+        }
+        setContentView(userListView);
         curView = NSDCHATUSERLIST;
     }
     public void nofityStateChange(List<AbsServiceInfo> mServiceInfoList){
         if(curView == NSDCHATUSERLIST){
             userListView.updateAdapter(mServiceInfoList);
+            logger.info("in function nofityStateChange, " + mServiceInfoList.size());
         }
+    }
+    private NsdChatView chatView;
+    private NsdChatConnection connection;
+    public void showNsdChatViewFromUserList(AbsServiceInfo serviceInfo){
+        this.setContentView(R.layout.nsdchat_view);
+        if(connection == null){
+            connection = new NsdChatConnection();
+        }
+        chatView = null;
+        chatView = new NsdChatView(connection);
+        connection.startClient(serviceInfo.getName(), serviceInfo.getAddress(), serviceInfo.getPort());
+        curView = NSDCHATVIEW;
+    }
+    public void showNsdChatViewFromOptionMenu(){
+        this.setContentView(R.layout.nsdchat_view);
+        if(connection == null){
+            connection = new NsdChatConnection();
+        }
+        chatView = null;
+        chatView = new NsdChatView(connection);
+        //"xifeiwu", "192.168.160.176", 6666
+        connection.startServer();
+        curView = NSDCHATVIEW;
     }
     @Override
     protected void onResume() {
+        //loggerView must initial anyway.
+        if (loggerView == null) {
+            loggerView = new LoggerView(this, null);
+        }
         switch(curView){
         case LOGGERVIEW:
             showLoggerView();
             break;
         case NSDCHATUSERLIST:
+        case NSDCHATVIEW:
             showNstChatUserList();
             break;
         }
@@ -96,7 +129,30 @@ public class DnssdActivity extends Activity {
         super.onPause();
     }
 
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            switch(this.curView){
+            case NSDCHATVIEW:
+                if(connection != null){
+                    connection.tearDown();
+                }
+                this.showNstChatUserList();
+                break;
+            case NSDCHATUSERLIST:
+                this.showLoggerView();
+                break;
+            case LOGGERVIEW:
+                this.onDestroy();
+                System.exit(0);
+                break;
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
     public void mAlertDialog(String title, String message, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negetiveListener){//退出确认
         AlertDialog.Builder ad = new AlertDialog.Builder(this);//context
         ad.setTitle(title);
@@ -106,7 +162,6 @@ public class DnssdActivity extends Activity {
         ad.show();
     }
     
-//    private final int ACTION_WIFI_SETTINGS = 0;
     public boolean checkWifiState(){
         boolean isWifiEnabled = false;
         WifiManager wifi = (WifiManager) this.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -159,7 +214,7 @@ public class DnssdActivity extends Activity {
         menu.add(0, OTHER_OPERATION, 0, "用户列表");
         return true;
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO Auto-generated method stub
@@ -171,14 +226,14 @@ public class DnssdActivity extends Activity {
         case REGISTER_SERVICE:
             Toast.makeText(this, "发布服务", Toast.LENGTH_SHORT).show();
             String[] props = new String[]{"Platform=HammerHead", "string"};
-            nds.startServer("Android-hammerhead", 6666, props);
+            nds.startServer("Android-hammerhead", PORT, props);
+            this.showNsdChatViewFromOptionMenu();
             break;
         case UNREGISTER_SERVICE:
             Toast.makeText(this, "注销服务", Toast.LENGTH_SHORT).show();
             nds.stopServer();
             break;
         case OTHER_OPERATION:
-//            Toast.makeText(this, "用户列表，进入NsdChatUserList类。", Toast.LENGTH_SHORT).show();
             showNstChatUserList();
             break;
         }

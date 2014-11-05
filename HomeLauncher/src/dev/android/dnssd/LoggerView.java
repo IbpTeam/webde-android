@@ -1,27 +1,35 @@
 package dev.android.dnssd;
 
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
-
+/**
+ * 
+ * @author xifei
+ * notice: the value of screenW
+ */
 public class LoggerView extends SurfaceView implements Callback, Runnable {
     public Logger logger = Logger.getLogger(LoggerView.class.getName());
     private SurfaceHolder sfh;
     private Paint paint;
     private Canvas canvas;
 
-    public LoggerView(DnssdActivity context) {
+    public LoggerView(Context context, AttributeSet attrs) {
         // TODO Auto-generated constructor stub　　
-        super(context);
+        super(context, attrs);
         sfh = this.getHolder();
         sfh.addCallback(this);
         paint = new Paint();
@@ -29,7 +37,13 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize(20);
         paint.setAntiAlias(true);
-        logger.setLevel(Level.OFF);
+        DisplayMetrics metrics = new DisplayMetrics();        
+        DnssdActivity.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenW = metrics.heightPixels;
+        screenH = metrics.widthPixels;
+//        screenW = 1000;
+
+        logger.info("size of screen: " + this.screenW + "*" + this.screenH);
     }
 
     private int di, dp, dpx, dpy;
@@ -37,7 +51,6 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
     public void myDraw() {
         canvas = sfh.lockCanvas();
         canvas.drawColor(Color.LTGRAY);
-//        canvas.drawText(timeStr, 10, 10, paint);
         for (di = 0; di <  vecLength; di++) {
             dstr = subStrVec.elementAt(di);
             dp = subPosVec.elementAt(di);
@@ -160,11 +173,10 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         } else {
             subPosVec = new Vector<Integer>();
         }
-        // subColor = new Vector<Character>();
         vecLength = 0;
         appendToSubVec(mainStr);
     }
-    public void appendToSubVec(String mainStr) {
+    private void appendToSubVec(String mainStr) {
         int i, strLen = mainStr.length();
         logger.info("strLen: "+strLen);
 
@@ -185,11 +197,6 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
                 substr = mainStr.substring(start, end);
                 subStrVec.add(substr);
                 vecLength++;
-//                if (vecLength == 1) {
-//                    px = (int) ((screenW - (end - start) * paint.getTextSize()) / 2);
-//                    py = (int) (vecLength * paint.getTextSize());
-//                    subPosVec.add((px << 16) | py);
-//                }
                 start = end + 1;
                 i++;
                 curLen = (i < strLen) ? 2 * paint.getTextSize() : 0;
@@ -199,11 +206,9 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
                 continue;
             }
             curLen += chLen[i];
-            logger.info(i+": "+chLen[i]);
             if (curLen > screenW) {
                 i--;
                 end = i;
-                logger.info("substring2: " + start + "and " + end);
                 substr = mainStr.substring(start, end);
                 subStrVec.add(substr);
                 vecLength++;
@@ -217,9 +222,7 @@ public class LoggerView extends SurfaceView implements Callback, Runnable {
         //收尾工作
         if ((curLen > 0)) {
             end = i;
-            logger.info("substring3: " + start + "and " + end);
             substr = mainStr.substring(start, end);
-            logger.info("substr: " + substr);
             subStrVec.add(substr);
             vecLength++;
             start = end;
