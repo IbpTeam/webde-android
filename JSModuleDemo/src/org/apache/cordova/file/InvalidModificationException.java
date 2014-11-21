@@ -15,22 +15,16 @@
        KIND, either express or implied.  See the License for the
        specific language governing permissions and limitations
        under the License.
- */
+*/
 
-package study.cordova;
 
-import android.os.Bundle;
-import org.apache.cordova.*;
+package org.apache.cordova.file;
 
-public class CordovaApp extends CordovaActivity
-{
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        super.init();
-        // Set by <content src="index.html" /> in config.xml
-        String launchUrl = "file:///android_asset/www/file.html";
-        loadUrl(launchUrl);
+@SuppressWarnings("serial")
+public class InvalidModificationException extends Exception {
+
+    public InvalidModificationException(String message) {
+        super(message);
     }
+
 }
