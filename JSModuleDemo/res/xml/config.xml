@@ -26,4 +26,7 @@
         <param name="android-package" value="org.apache.cordova.file.FileUtils" />
         <param name="onload" value="true" />
     </feature>
+    <feature name="Socket">
+        <param name="android-package" value="com.tlantic.plugins.socket.SocketPlugin" />
+    </feature>
 </widget>
