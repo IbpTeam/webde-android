@@ -44,6 +44,7 @@
         reader.onloadend = function(evt) {
             console.log("Read as text");
             console.log(evt.target.result);
+            setResultInDOM(evt.target.result);
         };
         reader.readAsText(file);
     }
@@ -51,12 +52,17 @@
     function fail(evt) {
         // console.log(evt.target.error.code);
         console.log("read fail.");
+        setResultInDOM("read fail.\n Please Ensure That: File readme.txt in dir / and have the right permission.");
     }
-
+    
+    function setResultInDOM(result){
+            document.getElementById("result").textContent = result;
+    }
     </script>
   </head>
   <body>
     <h1>Example</h1>
-    <p>Read File</p>
+    <p>Result of Read File: </p>
+    <p id="result">Read File</p>
   </body>
 </html>
