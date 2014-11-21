@@ -20,9 +20,9 @@ cordova.define("org.apache.cordova.file.requestFileSystem", function(require, ex
 */
 
 var argscheck = require('cordova/argscheck'),
-    FileError = require('./FileError'),
-    FileSystem = require('./FileSystem'),
-    exec = require('cordova/exec');
+  FileError = require('./FileError'),
+  FileSystem = require('./FileSystem'),
+  exec = require('cordova/exec');
 var fileSystems = require('./fileSystems');
 
 /**
@@ -33,33 +33,33 @@ var fileSystems = require('./fileSystems');
  * @param errorCallback  invoked if error occurs retrieving file system
  */
 var requestFileSystem = function(type, size, successCallback, errorCallback) {
-    argscheck.checkArgs('nnFF', 'requestFileSystem', arguments);
-    var fail = function(code) {
-        errorCallback && errorCallback(new FileError(code));
-    };
+  argscheck.checkArgs('nnFF', 'requestFileSystem', arguments);
+  var fail = function(code) {
+    errorCallback && errorCallback(new FileError(code));
+  };
 
-    if (type < 0) {
-        fail(FileError.SYNTAX_ERR);
-    } else {
-        // if successful, return a FileSystem object
-        var success = function(file_system) {
-            if (file_system) {
-                if (successCallback) {
-                    fileSystems.getFs(file_system.name, function(fs) {
-                        if (!fs) {
-                            fs = new FileSystem(file_system.name, file_system.root);
-                        }
-                        successCallback(fs);
-                    });
-                }
+  if (type < 0) {
+    fail(FileError.SYNTAX_ERR);
+  } else {
+    // if successful, return a FileSystem object
+    var success = function(file_system) {
+      if (file_system) {
+        if (successCallback) {
+          fileSystems.getFs(file_system.name, function(fs) {
+            if (!fs) {
+              fs = new FileSystem(file_system.name, file_system.root);
             }
-            else {
-                // no FileSystem object returned
-                fail(FileError.NOT_FOUND_ERR);
-            }
-        };
-        exec(success, fail, "File", "requestFileSystem", [type, size]);
-    }
+            successCallback(fs);
+          });
+        }
+      }
+      else {
+        // no FileSystem object returned
+        fail(FileError.NOT_FOUND_ERR);
+      }
+    };
+    exec(success, fail, "File", "requestFileSystem", [type, size]);
+  }
 };
 
 module.exports = requestFileSystem;

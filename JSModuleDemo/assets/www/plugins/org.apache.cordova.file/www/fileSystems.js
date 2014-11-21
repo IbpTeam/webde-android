@@ -21,7 +21,7 @@ cordova.define("org.apache.cordova.file.fileSystems", function(require, exports,
 
 // Overridden by Android, BlackBerry 10 and iOS to populate fsMap.
 module.exports.getFs = function(name, callback) {
-    callback(null);
+  callback(null);
 };
 
 });
