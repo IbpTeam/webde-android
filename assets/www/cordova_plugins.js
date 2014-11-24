@@ -264,6 +264,13 @@ module.exports = [
         "clobbers": [
             "window.tlantic.plugins.socket"
         ]
+    },
+    {
+        "file": "plugins/ibp.plugin.helloworld/www/HelloWorldJS.js",
+        "id": "ibp.plugin.helloworld.helloworld",
+        "clobbers": [
+            "HelloWorldJS"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -275,9 +282,9 @@ module.exports.metadata =
     "org.apache.cordova.contacts": "0.2.14",
     "org.apache.cordova.camera": "0.3.3",
     "org.apache.cordova.file": "1.3.1",
-    "org.ibp.plugin.echo": "0.0.1",
     "org.apache.cordova.device": "0.2.12",
-    "com.tlantic.plugins.socket": "0.3.2"
+    "com.tlantic.plugins.socket": "0.3.2",
+    "ibp.plugin.helloworld": "0.0.2"
 }
 // BOTTOM OF METADATA
 });

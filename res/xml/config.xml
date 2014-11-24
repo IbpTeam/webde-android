@@ -29,4 +29,7 @@
     <feature name="Socket">
         <param name="android-package" value="com.tlantic.plugins.socket.SocketPlugin" />
     </feature>
+    <feature name="HelloWorldJava">
+        <param name="android-package" value="ibp.plugin.HelloWorldJava" />
+    </feature>
 </widget>
