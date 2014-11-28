@@ -51,11 +51,11 @@
         <script type="text/javascript" charset="utf-8" src="intelxdk.js"></script>
         <script type="text/javascript" charset="utf-8" src="xhr.js"></script>
         -->
-        <script type="text/javascript" charset="utf-8" src="./appframework.js"></script>
         <!--
+        <script type="text/javascript" charset="utf-8" src="./appframework.js"></script>
+        -->
         <script type="text/javascript" charset="utf-8" src="./jquery-2.1.1.js"></script>
         <script type="text/javascript" charset="utf-8" src="./jq.appframework.js"></script>
-        -->
         <!-- include af.desktopBrowsers.js on desktop browsers only -->
         <script>
             function loadedPanel(what) {
@@ -188,7 +188,10 @@
             <footer id="footer_nsd">
                 <a href='#panel_nsd' class='icon user'>发现服务</a>
             </footer>
-
+            <footer id="panel_nsd_talk_footer">
+                <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
+                <a class="button" style="float:right" onclick="updateLogView()">发送</a>
+            </footer>
             <!-- this is the default left side nav menu.  If you do not want any, do not include these -->
             <nav id="nav_main">
                 <div class='title'>
@@ -264,25 +267,25 @@
                 <div class="panel" id="panel_nsd" title="在线服务列表" data-tab="navbar_nsd" data-nav="none">                    
                     <ul class="list">
                         <li>
-                            <a href="#panel_nsd_logview" data-transition="fade">
+                            <a href="#panel_nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username1</b><br>Placeholder text for this list item 1. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_logview" data-transition="pop">
+                            <a href="#panel_nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username2</b><br>Placeholder text for this list item 2. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_logview" data-transition="up">
+                            <a href="#panel_nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/female_user_icon.svg" />
                                 <div class="list-text"><b>username3</b><br>Placeholder text for this list item 3. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_logview" data-transition="down">
+                            <a href="#panel_nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username4</b><br>Placeholder text for this list item 4. This sections can modified for your need.</div>
                             </a>
@@ -291,8 +294,8 @@
                 </div>
             </div>
 
-            <div class="panel" id="panel_nsd_logview" style="border:green 1px solid" title="聊天" data-footer='none'>
-                    <ul id="panel_nsd_logview_history">
+            <div class="panel" id="panel_nsd_talk" style="border:green 1px solid" title="聊天" data-footer='panel_nsd_talk_footer'>
+                    <ul>
                         <li>
                             Jack
                         </li>
@@ -306,10 +309,6 @@
                             Larry
                         </li>
                     </ul>
-                    <div id="panel_nsd_logview_form" style="border:red 1px solid; position:absolute; bottom:0px; left:0px; right:0px">
-                        <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
-                        <a class="button" style="float:right" onclick="updateLogView()">发送</a>
-                    </div>
             </div>
             
             <!-- bottom navbar. Add additional tabs here -->
