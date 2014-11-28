@@ -51,11 +51,12 @@
         <script type="text/javascript" charset="utf-8" src="intelxdk.js"></script>
         <script type="text/javascript" charset="utf-8" src="xhr.js"></script>
         -->
-        <!--
+        <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" charset="utf-8" src="./appframework.js"></script>
-        -->
+        <!--
         <script type="text/javascript" charset="utf-8" src="./jquery-2.1.1.js"></script>
         <script type="text/javascript" charset="utf-8" src="./jq.appframework.js"></script>
+        -->
         <!-- include af.desktopBrowsers.js on desktop browsers only -->
         <script>
             function loadedPanel(what) {
@@ -178,7 +179,6 @@
             <div id="header">
                 <a href="javascript:$.ui.toggleLeftSideMenu()" class="button" style="float:right">Toggle Nav</a>
             </div>
-            -->
 
             <header id="common_header">
                 <h1>common header</h1>
@@ -188,35 +188,68 @@
             <footer id="footer_nsd">
                 <a href='#panel_nsd' class='icon user'>发现服务</a>
             </footer>
-            <footer id="panel_nsd_talk_footer">
-                <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
-                <a class="button" style="float:right" onclick="updateLogView()">发送</a>
-            </footer>
+            -->
             <!-- this is the default left side nav menu.  If you do not want any, do not include these -->
-            <nav id="nav_main">
-                <div class='title'>
-                    Navigator
-                </div>
-                <ul>
-                    <li >
-                        <a class="icon home" href="#panel_home">Home</a>
-                    </li>
-                    <li >
-                        <a class="icon bug" href="#panel_debug">Debug</a>
-                    </li>
-                    <li >
-                        <a class="icon user" href="#panel_nsd">发现服务</a>
-                    </li>
-                </ul>
-            </nav>
             
             <div id="content">
-                <!-- here is where you can add your panels -->
+                <!-- 首页 -->
                 <div class="panel" id="panel_home" title="首页" data-tab="navbar_home" data-nav="none">
                     目前实现三个页面：首页、测试、发现服务。
                 </div>
 
-                <div class="panel" id="panel_debug" title="测试" data-tab="navbar_debug">
+                <!-- 在线服务列表 -->
+                <div class="panel" id="panel_nsd" title="在线服务列表" data-tab="navbar_nsd" data-nav="none">                    
+                    <ul class="list">
+                        <li>
+                            <a href="#panel_nsd_talk" data-transition="up">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username1</b><br>Placeholder text for this list item 1. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_talk" data-transition="up">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username2</b><br>Placeholder text for this list item 2. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_talk" data-transition="up">
+                                <img class="list-image" src="data/female_user_icon.svg" />
+                                <div class="list-text"><b>username3</b><br>Placeholder text for this list item 3. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_talk" data-transition="up">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username4</b><br>Placeholder text for this list item 4. This sections can modified for your need.</div>
+                            </a>
+                        </li>                
+                    </ul>
+                </div>
+
+                <div class="panel" id="panel_nsd_talk" title="聊天" data-footer='panel_nsd_talk_footer'>
+                    <ul>
+                        <li>
+                            Jack
+                        </li>
+                        <li>
+                            Lucy
+                        </li>
+                        <li>
+                            John
+                        </li>
+                        <li>
+                            Larry
+                        </li>
+                    </ul>
+                    <footer id="panel_nsd_talk_footer">
+                        <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
+                        <a class="button" style="float:right" onclick="updateLogView()">发送</a>
+                    </footer>
+                </div>
+
+                <!-- UI测试 -->
+                <div class="panel" id="panel_debug" title="UI测试" data-tab="navbar_debug">
                     This is a picture show
                     <ul class="list inset">
                         <li class="icon user">
@@ -262,61 +295,94 @@
                     <input type="checkbox" name="slider" id="slider" class="toggle">
                     <label for="slider" data-on="Yes" data-off="No"> <span></span> </label>
                     <a class="button icon home green">Home</a>
+                                     
+                    <!-- <nav id="nav_debug">
+                        <div class='title'>
+                            Debug
+                        </div>
+                        <ul>
+                            <li >
+                                <a class="icon home" href="#panel_home">Home</a>
+                            </li>
+                            <li >
+                                <a class="icon bug" href="#panel_debug">Debug</a>
+                            </li>
+                            <li >
+                                <a class="icon user" href="#panel_nsd">发现服务</a>
+                            </li>
+                        </ul>
+                    </nav> -->
                 </div>
+                
 
-                <div class="panel" id="panel_nsd" title="在线服务列表" data-tab="navbar_nsd" data-nav="none">                    
+                <!-- 设备接口 -->
+                <div class="panel" id="panel_device" title="设备接口" data-tab="navbar_device">
+                    <h3>Hybrid App Development</h3>
+                    <p>本地接口测试</p>
                     <ul class="list">
-                        <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
-                                <img class="list-image" src="data/male_user_icon.svg" />
-                                <div class="list-text"><b>username1</b><br>Placeholder text for this list item 1. This sections can modified for your need.</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
-                                <img class="list-image" src="data/male_user_icon.svg" />
-                                <div class="list-text"><b>username2</b><br>Placeholder text for this list item 2. This sections can modified for your need.</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
-                                <img class="list-image" src="data/female_user_icon.svg" />
-                                <div class="list-text"><b>username3</b><br>Placeholder text for this list item 3. This sections can modified for your need.</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
-                                <img class="list-image" src="data/male_user_icon.svg" />
-                                <div class="list-text"><b>username4</b><br>Placeholder text for this list item 4. This sections can modified for your need.</div>
-                            </a>
-                        </li>                
+                        <li><a href="#panel_nativecallback" id="nativecallback">nativecallback</a></li>
+                        <li><a href="#intelxdk" id="xdk">intel.xdk</a></li>
                     </ul>
+                    <!-- <nav id="nav_main">
+                        <div class='title'>
+                            Navigator
+                        </div>
+                        <ul>
+                            <li >
+                                <a class="icon home" href="#panel_home">Home</a>
+                            </li>
+                            <li >
+                                <a class="icon bug" href="#panel_debug">Debug</a>
+                            </li>
+                            <li >
+                                <a class="icon user" href="#panel_nsd">发现服务</a>
+                            </li>
+                        </ul>
+                    </nav> -->
                 </div>
+                <div class="panel" id="panel_nativecallback" title="nativecallback" data-footer="none">
+                    <h3>需要安装插件ibp.plugin.hellocallback</h3>
+                    <a class="button icon check red" onclick="startTimer();">startTimer</a>
+                    <a class="button icon close green" onclick="stopTimer();">stopTimer</a>
+                    <script type="text/javascript">
+                      function startTimer() {
+                        HelloCallback.start(
+                          function(msgfromnative){
+                            console.log(msgfromnative);
+                            document.getElementById("curtime").textContent = msgfromnative;
+                          },
+                          function(msgfromnative){
+                            console.log(msgfromnative);
+                            document.getElementById("curtime").textContent = msgfromnative;
+                          });
+                          console.log("in function startTimer.");
+                      }
+                      function stopTimer() {
+                        HelloCallback.stop(
+                          function(msgfromnative){
+                            console.log(msgfromnative);
+                            document.getElementById("curtime").textContent = msgfromnative;
+                          },
+                          function(msgfromnative){
+                            console.log(msgfromnative);
+                            document.getElementById("curtime").textContent = msgfromnative;
+                          });
+                          console.log("in function stopTimer.");
+                      };
+                    </script>
+                    <div id="curtime"></div>
+                </div>
+                
+                
             </div>
 
-            <div class="panel" id="panel_nsd_talk" style="border:green 1px solid" title="聊天" data-footer='panel_nsd_talk_footer'>
-                    <ul>
-                        <li>
-                            Jack
-                        </li>
-                        <li>
-                            Lucy
-                        </li>
-                        <li>
-                            John
-                        </li>
-                        <li>
-                            Larry
-                        </li>
-                    </ul>
-            </div>
-            
             <!-- bottom navbar. Add additional tabs here -->
             <div id="navbar">
                 <div class="horzRule"></div>
-                <a href="#panel_home" id="navbar_home" class="icon home">home</a>
-                <a href="#panel_debug" id="navbar_debug" class="icon bug mini">Debug</a>
-                <a href="#panel_nsd" id="navbar_nsd" class="icon user mini">发现服务</a>
+                <a id="navbar_home" href="#panel_home" class="icon home">首页</a>
+                <a id="navbar_nsd" href="#panel_nsd" class="icon user">发现服务</a>
+                <a id="navbar_debug" href="#panel_debug" class="icon bug">UI测试</a>
+                <a id="navbar_device" href="#panel_device" class="icon camera mini">设备接口</a>
             </div>
         </div>
     </body>
