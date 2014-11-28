@@ -271,6 +271,13 @@ module.exports = [
         "clobbers": [
             "HelloWorldJS"
         ]
+    },
+    {
+        "file": "plugins/ibp.plugin.hellocallback/www/HelloCallback.js",
+        "id": "ibp.plugin.hellocallback.hellocallback",
+        "clobbers": [
+            "HelloCallback"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -284,8 +291,9 @@ module.exports.metadata =
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.device": "0.2.12",
     "com.tlantic.plugins.socket": "0.3.2",
-    "ibp.plugin.helloworld": "0.0.2",
-    "com.perak.plugin.Disco": "1.0.0"
+    "com.perak.plugin.Disco": "1.0.0",
+    "ibp.plugin.helloworld": "0.0.3",
+    "ibp.plugin.hellocallback": "0.0.1"
 }
 // BOTTOM OF METADATA
 });
