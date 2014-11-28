@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<!--HTML5 doctype-->
+<html>
+
+    <head>
+        <script>
+            (function() {
+                if ("-ms-user-select" in document.documentElement.style && navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                    var msViewportStyle = document.createElement("style");
+                    msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
+                    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+                }
+            })();
+        </script>
+
+        <title>App Framework Kitchen Sink</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="stylesheet" type="text/css" href="css/icons.css" />
+
+        <!--
+        <link rel="stylesheet" type="text/css" href="css/af.ui.css" title="default" />
+        -->
+        <link rel="stylesheet" type="text/css" href="css/main.css"  />
+        <link rel="stylesheet" type="text/css" href="css/appframework.css"  />
+        <link rel="stylesheet" type="text/css" href="css/lists.css"  />
+        <link rel="stylesheet" type="text/css" href="css/forms.css"  />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css"  />
+        <link rel="stylesheet" type="text/css" href="css/badges.css"  />
+        <link rel="stylesheet" type="text/css" href="css/grid.css"  />
+
+        <link rel="stylesheet" type="text/css" href="css/android.css"  />
+        <link rel="stylesheet" type="text/css" href="css/win8.css"  />
+        <link rel="stylesheet" type="text/css" href="css/bb.css"  />
+        <link rel="stylesheet" type="text/css" href="css/ios.css"  />
+        <link rel="stylesheet" type="text/css" href="css/ios7.css"  />
+        <link rel="stylesheet" type="text/css" href="css/tizen.css"  />
+        <link rel="stylesheet" type="text/css" href="css/firefox.css"  />
+
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.actionsheet.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.popup.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.scroller.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.selectBox.css"  />
+        
+        <link rel="stylesheet" type="text/css" href="custom.css"  />
+
+        <!-- uncomment for intel.xdk apps
+        <script type="text/javascript" charset="utf-8" src="intelxdk.js"></script>
+        <script type="text/javascript" charset="utf-8" src="xhr.js"></script>
+        -->
+        <script type="text/javascript" charset="utf-8" src="./jq.appframework.js"></script>
+        <!-- include af.desktopBrowsers.js on desktop browsers only -->
+        <script>
+            function loadedPanel(what) {
+                //We are going to set the badge as the number of li elements inside the target
+                $.ui.updateBadge("#aflink", $("#af").find("li").length);
+            }
+
+            function unloadedPanel(what) {
+                console.log("unloaded " + what.id);
+            }
+
+            if (!((window.DocumentTouch && document instanceof DocumentTouch) || 'ontouchstart' in window)) {
+                var script = document.createElement("script");
+                script.src = "plugins/af.desktopBrowsers.js";
+                var tag = $("head").append(script);
+                //$.os.desktop=true;
+            }
+
+            //  $.feat.nativeTouchScroll=true;
+
+        </script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.actionsheet.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.css3animate.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.passwordBox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.scroller.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.selectBox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.touchEvents.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.touchLayer.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.popup.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="./ui/appframework.ui.js"></script>
+        <!-- <script type="text/javascript" charset="utf-8" src="./ui/transitions/all.js"></script> -->
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/fade.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/flip.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/pop.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slide.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slideDown.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slideUp.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.slidemenu.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.8tiles.js"></script>
+        <script type="text/javascript" charset="utf-8" src="custom.js"></script>
+
+        <script type="text/javascript">
+            /* This function runs once the page is loaded, but intel.xdk is not yet active */
+            //$.ui.animateHeaders=false;
+            var search = document.location.search.toLowerCase().replace("?", "");
+            //if(!search)
+            $.ui.useOSThemes = true;
+            $.ui.overlayStatusbar = true;
+            // for ios7 only to add header padding to overlay the statusbar
+            // $.ui.resetScrollers=true;
+            if (search.length > 0)//Android fix has too many buggy issues on iOS - can't preview with $.os.android
+            {
+
+                $.ui.useOSThemes = true;
+                if (search == "win8")
+                    $.os.ie = true;
+                else if (search == "firefox")
+                    $.os.fennec = "true"
+                $.ui.ready(function() {
+                    $("#afui").get(0).className = search;
+                });
+            }
+
+            var webRoot = "./";
+            // $.os.android=true;
+            $.ui.autoLaunch = false;
+            $.ui.openLinksNewTab = false;
+            $.ui.splitview = false;
+
+            $(document).ready(function() {
+                $.ui.launch();
+            });
+
+            /* This code is used to run as soon as intel.xdk activates */
+            var onDeviceReady = function() {
+                $.ui.launch();
+                intel.xdk.device.setRotateOrientation("portrait");
+                intel.xdk.device.setAutoRotate(false);
+                webRoot = intel.xdk.webRoot + "";
+                //hide splash screen
+                intel.xdk.device.hideSplashScreen();
+                $.ui.blockPageScroll();
+                //block the page from scrolling at the header/footer
+            };
+            document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
+
+            function showHide(obj, objToHide) {
+                var el = $("#" + objToHide)[0];
+
+                if (obj.className == "expanded") {
+                    obj.className = "collapsed";
+                } else {
+                    obj.className = "expanded";
+                }
+                $(el).toggle();
+
+            }
+
+            if ($.os.android || $.os.ie || search == "android") {
+                $.ui.ready(function() {
+                    $("#main .list").append("<li><a id='toggleAndroidTheme'>Toggle Theme Color</a></li>");
+                    var $el = $("#afui");
+                    $("#toggleAndroidTheme").bind("click", function(e) {
+                        if ($el.hasClass("light"))
+                            $el.removeClass("light");
+                        else
+                            $el.addClass("light");
+                    });
+                });
+            }
+        </script>
+
+    </head>
+
+    <body>
+        <div id="afui">
+            <!-- this is the header div at the top -->
+            <!--
+            <div id="header">
+                <a href="javascript:$.ui.toggleLeftSideMenu()" class="button" style="float:right">Toggle Nav</a>
+            </div>
+            -->
+
+            <header id="common_header">
+                <h1>common header</h1>
+                <a class="button" style="float:right;" class="icon home"></a>
+            </header>
+
+            <footer id="footer_nsd">
+                <a href='#panel_nsd' class='icon user'>发现服务</a>
+            </footer>
+
+            <!-- this is the default left side nav menu.  If you do not want any, do not include these -->
+            <nav id="nav_main">
+                <div class='title'>
+                    Navigator
+                </div>
+                <ul>
+                    <li >
+                        <a class="icon home" href="#panel_home">Home</a>
+                    </li>
+                    <li >
+                        <a class="icon bug" href="#panel_debug">Debug</a>
+                    </li>
+                    <li >
+                        <a class="icon user" href="#panel_nsd">发现服务</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div id="content">
+                <!-- here is where you can add your panels -->
+                <div class="panel" id="panel_home" title="首页" data-tab="navbar_home" data-nav="none">
+                    目前实现三个页面：首页、测试、发现服务。
+                </div>
+
+                <div class="panel" id="panel_debug" title="测试" data-tab="navbar_debug">
+                    This is a picture show
+                    <ul class="list inset">
+                        <li class="icon user">
+                            Jack
+                        </li>
+                        <li class="icon user">
+                            Lucy
+                        </li>
+                        <li>
+                            John
+                        </li>
+                        <li>
+                            Larry
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            Jack
+                        </li>
+                        <li>
+                            Lucy
+                        </li>
+                        <li>
+                            John
+                        </li>
+                        <li>
+                            Larry
+                        </li>
+                    </ul>
+                    <!-- checkbox -->
+                    <input type="checkbox" name="confirm" id="confirm">
+                    <label for="confirm">Do you agree to the terms?</label>
+                    <br>
+                    <!-- radio button-->
+                    <input type="radio" name="gender" value='Male' id="Male" >
+                    <label for="Male">Male</label>
+                    <input type="radio" name="gender" value='Female' id="Female" >
+                    <label for="Female">Female</label>
+                    <br>
+                    <br>
+                    <!-- Toggle/Slider-->
+                    <textarea>Do you agree to the terms?</textarea>
+                    <input type="checkbox" name="slider" id="slider" class="toggle">
+                    <label for="slider" data-on="Yes" data-off="No"> <span></span> </label>
+                    <a class="button icon home green">Home</a>
+                </div>
+
+                <div class="panel" id="panel_nsd" title="在线服务列表" data-tab="navbar_nsd" data-nav="none">                    
+                    <ul class="list">
+                        <li>
+                            <a href="#panel_nsd_logview" data-transition="fade">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username1</b><br>Placeholder text for this list item 1. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_logview" data-transition="pop">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username2</b><br>Placeholder text for this list item 2. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_logview" data-transition="up">
+                                <img class="list-image" src="data/female_user_icon.svg" />
+                                <div class="list-text"><b>username3</b><br>Placeholder text for this list item 3. This sections can modified for your need.</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#panel_nsd_logview" data-transition="down">
+                                <img class="list-image" src="data/male_user_icon.svg" />
+                                <div class="list-text"><b>username4</b><br>Placeholder text for this list item 4. This sections can modified for your need.</div>
+                            </a>
+                        </li>                
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel" id="panel_nsd_logview" style="border:green 1px solid" title="聊天" data-footer='none'>
+                    <ul id="panel_nsd_logview_history">
+                        <li>
+                            Jack
+                        </li>
+                        <li>
+                            Lucy
+                        </li>
+                        <li>
+                            John
+                        </li>
+                        <li>
+                            Larry
+                        </li>
+                    </ul>
+                    <div id="panel_nsd_logview_form" style="border:red 1px solid; position:absolute; bottom:0px; left:0px; right:0px">
+                        <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
+                        <a class="button" style="float:right" onclick="updateLogView()">发送</a>
+                    </div>
+            </div>
+            
+            <!-- bottom navbar. Add additional tabs here -->
+            <div id="navbar">
+                <div class="horzRule"></div>
+                <a href="#panel_home" id="navbar_home" class="icon home">home</a>
+                <a href="#panel_debug" id="navbar_debug" class="icon bug mini">Debug</a>
+                <a href="#panel_nsd" id="navbar_nsd" class="icon user mini">发现服务</a>
+            </div>
+        </div>
+    </body>
+</html>

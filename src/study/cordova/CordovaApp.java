@@ -30,8 +30,10 @@ public class CordovaApp extends CordovaActivity
         super.onCreate(savedInstanceState);
         super.init();
         // Set by <content src="index.html" /> in config.xml
-//        String launchUrl = "file:///android_asset/www/file.html";
-        String launchUrl = "file:///android_asset/www/nsdchat.html";
+        String launchUrl;
+//        launchUrl = "file:///android_asset/www/file.html";
+//        launchUrl = "file:///android_asset/www/nsdchat.html";
+        launchUrl = "http://192.168.160.176:8000/study.html?ios7";
         loadUrl(launchUrl);
     }
 }

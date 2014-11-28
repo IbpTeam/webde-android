@@ -1,0 +1,8 @@
+#afui .list li {padding:10px 10px 10px 10px}
+#afui .list li .list-image {float:left;width:50px;height:50px}
+#afui .list li .list-text {margin-left:60px;min-height:50px}
+
+#afui .panel #panel_nsd_logview_form textarea{
+    padding:8px 12px;
+    margin:8px 0;
+}
