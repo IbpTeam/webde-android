@@ -98,11 +98,11 @@ public class NsdHelper {
             }
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                sendNotification("onServiceResolved", NsdServiceInfoToJSON(serviceInfo).toString());
                 String oldName = serviceInfo.getServiceName();
                 String newName = oldName.replace("\\032", " ");
 //                mContext.show("oldName: " + oldName + " * " + "newName: " + newName );
                 serviceInfo.setServiceName(newName);                
+                sendNotification("onServiceResolved", NsdServiceInfoToJSON(serviceInfo).toString());
                 reWriteServerInfo(serviceInfo);
             }
         };
@@ -292,4 +292,3 @@ public class NsdHelper {
         mHandler.sendMessage(message);
     }
 }
-

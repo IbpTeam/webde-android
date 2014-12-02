@@ -26,7 +26,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" }) 
@@ -164,8 +163,9 @@ public class NsdChatPlugin extends CordovaPlugin {
         }
     }
     
-    public void onResolveService(View v){
+    public void resolveService(View v){
         mNsdHelper.resolveServerInfo();
     }
 }
+
 

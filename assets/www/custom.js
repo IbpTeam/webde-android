@@ -8,6 +8,10 @@ function updateLogView(){
     }else{
         alert("内容不能为空");
     }
+    $(panel_nsd_talk_history).on("click", "a", function(){
+      console.log('e.currentTarget');
+      console.log(e.currentTarget);
+    });
 }
 
 cordova.define("af.hellocallback", function(require, exports, module) {
@@ -48,24 +52,36 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
   var AfNsdChat = function() {};
   var panel_nsdchat_content = $('#content #panel_nsdchat #panel_nsdchat_content');
+  // function void 
   AfNsdChat.prototype.initNsd = function() {
     NsdChat.initNsd(
       function(msgfromnative){
         console.log(msgfromnative);
+        console.log(msgfromnative.data);
         switch(msgfromnative.type){
-          case 'success':
+          case 'onServiceFound':
+            $(panel_nsdchat_content).append($('<p></p>').html(JSON.parse(msgfromnative.data).name));
+          break;
+          case 'onServiceLost':
+            $(panel_nsdchat_content).append($('<p></p>').html(JSON.parse(msgfromnative.data).name));
+          break;
+          case 'onServiceResolved'://JSON.stringify
+            $(panel_nsdchat_content).append($('<p></p>').html(JSON.parse(msgfromnative.data).name));
+          break;
+          case 'onResolveFailed':
             $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
           break;
+          case 'success':
           case 'error':
             $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
           break;
           default:
-            $(panel_nsdchat_content).append($('<p></p>').html(JSON.stringify(msgfromnative.data)));
+            $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
           break;
         }
       },
       function(msgfromnative){
-        console.log(msgfromnative);
+        // console.log(msgfromnative);
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
   };
@@ -73,14 +89,13 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   AfNsdChat.prototype.stopNsd = function() {
     NsdChat.stopNsd(
       function(msgfromnative){
-        console.log(msgfromnative);
+        // console.log(msgfromnative);
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       },
       function(msgfromnative){
-        console.log(msgfromnative);
+        // console.log(msgfromnative);
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
-    // console.log("in function stopNsd.");
   };
   
   AfNsdChat.prototype.startDiscovery = function() {
@@ -91,16 +106,13 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       function(msgfromnative){
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
-      // console.log("in function startDiscovery.");
   };
   AfNsdChat.prototype.stopDiscovery = function() {
     NsdChat.stopDiscovery(
       function(msgfromnative){
-        // console.log(msgfromnative);
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       },
       function(msgfromnative){
-        // console.log(msgfromnative);
         $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
   };
@@ -125,7 +137,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       });
   };
   AfNsdChat.prototype.scrollToBottom = function(){
-    $.ui.scrollToBottom('#panel_nsdchat');//$(panel_nsdchat_content
+    $.ui.scrollToBottom('#panel_nsdchat');
   };
   AfNsdChat.prototype.clearContent = function(){
     $.ui.updatePanel('#panel_nsdchat',"");
@@ -138,5 +150,10 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   channel.onPluginsReady.subscribe(function() {
       window.AfNsdChat = cordova.require('af.nsdchat');
       window.AfHelloCallback = cordova.require('af.hellocallback');
+      
+      var panel_nsd_userlist = $('#afui #content #panel_nsd').find('ul');
+      $(panel_nsd_userlist).on("click", "a", function(){
+        console.log('this', this);
+      });
   });
 })();
