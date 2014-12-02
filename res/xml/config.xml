@@ -38,4 +38,7 @@
     <feature name="HelloCallback">
         <param name="android-package" value="ibp.plugin.hellocallback.HelloCallback" />
     </feature>
+    <feature name="NsdChatPlugin">
+        <param name="android-package" value="ibp.plugin.nsdchat.NsdChatPlugin" />
+    </feature>
 </widget>
