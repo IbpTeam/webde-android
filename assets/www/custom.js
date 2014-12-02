@@ -40,6 +40,10 @@ cordova.define("af.hellocallback", function(require, exports, module) {
   var afHelloCallback = new AfHelloCallback();  
   module.exports = afHelloCallback;
 });
+
+/**
+ * module af.nsdchat for nsdchat show.
+ */
 cordova.define("af.nsdchat", function(require, exports, module) {
   var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
   var AfNsdChat = function() {};
@@ -48,51 +52,84 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     NsdChat.initNsd(
       function(msgfromnative){
         console.log(msgfromnative);
-        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative.data));
+        switch(msgfromnative.type){
+          case 'success':
+            $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+          break;
+          case 'error':
+            $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+          break;
+          default:
+            $(panel_nsdchat_content).append($('<p></p>').html(JSON.stringify(msgfromnative.data)));
+          break;
+        }
       },
       function(msgfromnative){
         console.log(msgfromnative);
-        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative.data));
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
-    console.log("in function initNsd.");
-    $(panel_nsdchat_content).append($('<p></p>').html('initNsd'));
   };
+  
   AfNsdChat.prototype.stopNsd = function() {
-    console.log("in function stopNsd.");
+    NsdChat.stopNsd(
+      function(msgfromnative){
+        console.log(msgfromnative);
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      },
+      function(msgfromnative){
+        console.log(msgfromnative);
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      });
+    // console.log("in function stopNsd.");
   };
+  
   AfNsdChat.prototype.startDiscovery = function() {
     NsdChat.startDiscovery(
       function(msgfromnative){
-        console.log(msgfromnative);
-        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative.data.name));
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       },
       function(msgfromnative){
-        console.log(msgfromnative);//JSON.stringify(msgfromnative)
-        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative.data.name));
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
       });
-      console.log("in function startDiscovery.");
+      // console.log("in function startDiscovery.");
   };
   AfNsdChat.prototype.stopDiscovery = function() {
-    console.log("in function stopDiscovery.");
-    $(panel_nsdchat_content).append($('<p></p>').html('stopDiscovery'));
+    NsdChat.stopDiscovery(
+      function(msgfromnative){
+        // console.log(msgfromnative);
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      },
+      function(msgfromnative){
+        // console.log(msgfromnative);
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      });
   };
   AfNsdChat.prototype.registerService = function() {
-    console.log("in function registerService.");
-    $(panel_nsdchat_content).append($('<p></p>').html('registerService'));
+    serviceInfo = ['nsd-android-test', '8000'];
+    NsdChat.registerService(
+      function(msgfromnative){
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      },
+      function(msgfromnative){
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      },
+      serviceInfo);
   };
   AfNsdChat.prototype.unRegisterService = function() {
-    console.log("in function unRegisterService.");
-    $(panel_nsdchat_content).append($('<p></p>').html('unRegisterService'));
+    NsdChat.unRegisterService(
+      function(msgfromnative){
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      },
+      function(msgfromnative){
+        $(panel_nsdchat_content).append($('<p></p>').html(msgfromnative));
+      });
   };
-  function objToString (obj) {
-    var tabjson=[];
-    for (var p in obj) {
-        if (obj.hasOwnProperty(p)) {
-            tabjson.push('"'+p +'"'+ ':' + obj[p]);
-        }
-    };
-    return '{'+tabjson.join(',')+'}';
-}
+  AfNsdChat.prototype.scrollToBottom = function(){
+    $.ui.scrollToBottom('#panel_nsdchat');//$(panel_nsdchat_content
+  };
+  AfNsdChat.prototype.clearContent = function(){
+    $.ui.updatePanel('#panel_nsdchat',"");
+  };
   var afNsdChat = new AfNsdChat();  
   module.exports = afNsdChat;
 });
