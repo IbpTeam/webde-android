@@ -232,8 +232,7 @@ public class NsdHelper {
             info = (NsdServiceInfo) iter.next();
             sb.append(cnt + ". " + NsdServiceInfoToJSON(info) + "\n");
             cnt++;
-        }
-        sendNotification("showServerInfo", sb.toString());
+        }//sendNotification("showServerInfo", sb.toString());
     }
 
     private int indexcnt = 0;

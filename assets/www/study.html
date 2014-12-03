@@ -179,33 +179,33 @@
    
             <div id="content">
                 <!-- 首页 -->
-                <div class="panel" id="panel_home" title="首页" data-tab="navbar_home" >
+                <div class="panel" id="home" title="首页" data-tab="navbar_home" >
                     目前实现三个页面：首页、测试、发现服务。
                 </div>
 
                 <!-- 在线服务列表 -->
-                <div class="panel" id="panel_nsd" title="在线服务列表" data-tab="navbar_nsd" >                    
+                <div class="panel" id="nsd" title="在线服务列表" data-tab="navbar_nsd" >                    
                     <ul class="list">
                         <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
+                            <a href="#nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username1</b><br>Placeholder text for this list item 1. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
+                            <a href="#nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username2</b><br>Placeholder text for this list item 2. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
+                            <a href="#nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username3</b><br>Placeholder text for this list item 3. This sections can modified for your need.</div>
                             </a>
                         </li>
                         <li>
-                            <a href="#panel_nsd_talk" data-transition="up">
+                            <a href="#nsd_talk" data-transition="up">
                                 <img class="list-image" src="data/male_user_icon.svg" />
                                 <div class="list-text"><b>username4</b><br>Placeholder text for this list item 4. This sections can modified for your need.</div>
                             </a>
@@ -213,7 +213,7 @@
                     </ul>
                 </div>
 
-                <div class="panel" id="panel_nsd_talk" title="聊天" data-footer='panel_nsd_talk_footer' data-nav="nav_nsdchat">
+                <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer' data-nav="nav_nsdchat">
                     <ul>
                         <li>
                             Jack
@@ -228,14 +228,14 @@
                             Larry
                         </li>
                     </ul>
-                    <footer id="panel_nsd_talk_footer">
+                    <footer id="nsd_talk_footer">
                         <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
                         <a class="button" style="float:right" onclick="updateLogView()">发送</a>
                     </footer>
                 </div>
 
                 <!-- UI测试 -->
-                <div class="panel" id="panel_debug" title="UI测试" data-tab="navbar_debug">
+                <div class="panel" id="debug" title="UI测试" data-tab="navbar_debug">
                     This is a picture show
                     <ul class="list inset">
                         <li class="icon user">
@@ -285,19 +285,18 @@
                 
 
                 <!-- 设备接口 -->
-                <div class="panel" id="panel_device" title="设备接口" data-tab="navbar_device" >
+                <div class="panel" id="device" title="设备接口" data-tab="navbar_device" >
                     <h3>Hybrid App Development</h3>
                     <p>本地接口测试</p>
                     <ul class="list">
-                        <li><a href="#panel_hellocallback" id="hellocallback">hellocallback</a></li>
-                        <li><a href="#panel_nsdchat" id="nsdchat">nsdchat</a></li>
+                        <li><a href="#device_hellocallback">hellocallback</a></li>
+                        <li><a href="#device_nsdchat">nsdchat</a></li>
                     </ul>
                 </div>
-                <div class="panel" id="panel_hellocallback" title="hellocallback" data-footer="none" data-nav='nav_hellocallback'>
-                    <div id='panel_hellocallback_content'></div>
+                <div class="panel" id="device_hellocallback" title="hellocallback" data-footer="none" data-nav='nav_hellocallback'>
+                    <div id='device_hellocallback_content'></div>
                 </div>
-                <div class="panel" id="panel_nsdchat" title="nsdchat" data-footer="none" data-nav="nav_nsdchat">
-                    <div id='panel_nsdchat_content'></div>
+                <div class="panel" id="device_nsdchat" title="nsdchat" data-footer="none" data-nav="nav_nsdchat">
                 </div>
                 
             </div>
@@ -305,10 +304,10 @@
             <!-- bottom navbar. Add additional tabs here -->
             <div id="navbar">
                 <div class="horzRule"></div>
-                <a id="navbar_home" href="#panel_home" class="icon home">首页</a>
-                <a id="navbar_nsd" href="#panel_nsd" class="icon user">发现服务</a>
-                <a id="navbar_debug" href="#panel_debug" class="icon bug">UI测试</a>
-                <a id="navbar_device" href="#panel_device" class="icon camera mini">设备接口</a>
+                <a id="navbar_home" href="#home" class="icon home">首页</a>
+                <a id="navbar_nsd" href="#nsd" class="icon user">发现服务</a>
+                <a id="navbar_debug" href="#debug" class="icon bug">UI测试</a>
+                <a id="navbar_device" href="#device" class="icon camera mini">设备接口</a>
             </div>
             <!-- nav main -->
             <nav id="nav_main">
@@ -317,13 +316,13 @@
                 </div>
                 <ul>
                     <li >
-                        <a class="icon home" href="#panel_home">Home</a>
+                        <a class="icon home" href="#home">Home</a>
                     </li>
                     <li >
-                        <a class="icon bug" href="#panel_debug">Debug</a>
+                        <a class="icon bug" href="#debug">Debug</a>
                     </li>
                     <li >
-                        <a class="icon user" href="#panel_nsd">发现服务</a>
+                        <a class="icon user" href="#nsd">发现服务</a>
                     </li>
                 </ul>
             </nav>
@@ -340,6 +339,9 @@
                     </li>
                     <li>
                         <a class="button icon check" onclick="AfNsdChat.startDiscovery();">startDiscovery</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsdChat.showDeviceList();">showDeviceList</a>
                     </li>
                     <li>
                         <a class="button icon check" onclick="AfNsdChat.stopDiscovery();">stopDiscovery</a>

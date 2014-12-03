@@ -103,15 +103,15 @@ public class NsdChatPlugin extends CordovaPlugin {
     private void sendJSONObjectByHandler(CallbackContext callbackContext, String type, String data){
         JSONObject obj = new JSONObject();
         try {
-            obj.put("type", type);
-            obj.put("data", data);
+            obj.put("type", new String(type));
+            obj.put("data", new String(data));
         } catch(JSONException e1) {
         }
         PluginResult result;
         if("error" == type){
-            result = new PluginResult(PluginResult.Status.ERROR, data);
+            result = new PluginResult(PluginResult.Status.ERROR, obj);
         }else{
-            result = new PluginResult(PluginResult.Status.OK, data);            
+            result = new PluginResult(PluginResult.Status.OK, obj);            
         }
         result.setKeepCallback(true);
         callbackContext.sendPluginResult(result);        
@@ -129,7 +129,7 @@ public class NsdChatPlugin extends CordovaPlugin {
     private void stopDiscovery(CallbackContext callbackContext){
         if((null != mNsdHelper) && (null != mHandler)){
             mNsdHelper.stopDiscovery();
-            callbackContext.success("In  stopDiscovery");
+            callbackContext.success("In stopDiscovery");
         }else{
             callbackContext.error("Please init NSD first.");            
         }
