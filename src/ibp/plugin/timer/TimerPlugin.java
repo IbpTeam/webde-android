@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,4 +112,23 @@ public class TimerPlugin extends CordovaPlugin {
             }
         }   
     };
+
+    public void onPause(boolean multitasking) {
+        flag = false;
+        activityStates("onPause");
+    }
+    public void onResume(boolean multitasking) {
+        th = new Thread(timecnt);
+        flag = true;
+        th.start();
+        activityStates("onResume");
+    }
+    public void onDestroy() {
+        flag = false;
+        activityStates("onDestroy");        
+    }
+    private void activityStates(String state){
+        Log.d("TimerPlugin", state);
+        Toast.makeText(cordova.getActivity(), state, Toast.LENGTH_SHORT).show();
+    }
 }

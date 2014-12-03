@@ -70,7 +70,7 @@ public class NsdHelper {
             @Override
             public void onServiceLost(NsdServiceInfo service) {
                 sendNotification("onServiceLost", NsdServiceInfoToJSON(service).toString());
-                removeServerInfo(service);  
+                removeServerInfo(service);
             }
             @Override
             public void onDiscoveryStopped(String serviceType) {
@@ -100,7 +100,6 @@ public class NsdHelper {
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 String oldName = serviceInfo.getServiceName();
                 String newName = oldName.replace("\\032", " ");
-//                mContext.show("oldName: " + oldName + " * " + "newName: " + newName );
                 serviceInfo.setServiceName(newName);                
                 sendNotification("onServiceResolved", NsdServiceInfoToJSON(serviceInfo).toString());
                 reWriteServerInfo(serviceInfo);
@@ -112,7 +111,6 @@ public class NsdHelper {
         mRegistrationListener = new NsdManager.RegistrationListener() {
             @Override
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
-//                mServiceName = NsdServiceInfo.getServiceName();
                 sendNotification("onServiceRegistered", NsdServiceInfoToJSON(NsdServiceInfo).toString());
             }
             @Override
@@ -252,17 +250,19 @@ public class NsdHelper {
     public void resolveInfoByName(String name){
         int index = 0;
         NsdServiceInfo element = null;
-//        boolean isExist = false;
         while(index < mServerInfoList.size()){
             if(mServerInfoList.get(index).getServiceName().equals(name)){
                 element = mServerInfoList.get(index);
-//                isExist = true;
                 break;
             }
             index++;
         }
         if (null != element) {
-            mNsdManager.resolveService(element, mResolveListener);
+            if(element.getHost() == null){
+                mNsdManager.resolveService(element, mResolveListener);
+            }else{
+                sendNotification("resolveInfoByName", "No Need To Resolve.");
+            }
         }
     }
     

@@ -14,37 +14,6 @@ function updateLogView(){
     });
 }
 
-cordova.define("af.hellocallback", function(require, exports, module) {
-  var HelloCallback = cordova.require('ibp.plugin.hellocallback.hellocallback');
-  var AfHelloCallback = function() {};   
-  AfHelloCallback.prototype.startTimer = function () {
-    HelloCallback.start(
-      function(msgfromnative){
-        console.log(msgfromnative);
-        $('#content #hellocallback #hellocallback_content').html(msgfromnative);
-      },
-      function(msgfromnative){
-        console.log(msgfromnative);
-        $('#content #hellocallback #hellocallback_content').html(msgfromnative);
-      });
-      console.log("in function startTimer.");
-  };
-  AfHelloCallback.prototype.stopTimer = function () {
-    HelloCallback.stop(
-      function(msgfromnative){
-        console.log(msgfromnative);
-        $('#content #hellocallback #hellocallback_content').html(msgfromnative);
-      },
-      function(msgfromnative){
-        console.log(msgfromnative);
-        $('#content #hellocallback #hellocallback_content').html(msgfromnative);
-      });
-      console.log("in function stopTimer.");
-  };
-  var afHelloCallback = new AfHelloCallback();  
-  module.exports = afHelloCallback;
-});
-
 cordova.define("af.timer", function(require, exports, module) {
   var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
   var device_timer = $('#content #device_timer');
@@ -85,6 +54,7 @@ cordova.define("af.timer", function(require, exports, module) {
  */
 cordova.define("af.nsdchat", function(require, exports, module) {
   var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
+  // used for content show.
   var device_nsdchat = $('#content #device_nsdchat');
   var content = $('<div></div>');
   if($(device_nsdchat).find('.afScrollPanel')){
@@ -96,6 +66,73 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     console.log(info);
     $(content).append($('<p></p>').html(info));
   }
+  // used for userlist
+  var nsd_userlist = $('#content #nsd ul.list');
+  function appendUser(name, txt){
+    var af_a = $.create('a', {
+    'href':'#nsd_talk',
+    'data-transition':'up',
+    }).on('click', function(){
+        // alert($(this).parent().attr('name'));
+        NsdChat.resolveService(
+          function(msgfromnative){
+            log(msgfromnative);
+          },
+          function(msgfromnative){
+            log(msgfromnative);
+          },
+          $(this).parent().attr('name')
+      );
+    });
+    $.create('img', {
+        className:'list-image',
+        'src':'data/male_user_icon.svg',
+    }).appendTo($(af_a));
+    $.create('div', {
+        className:'list-text',
+    }).html(
+        '<b>' + name + '</b><br>' + txt
+    ).appendTo($(af_a));
+    $(nsd_userlist).append($('<li>').attr('name', name).append($(af_a)));
+  }
+  function overWriteUser(device){
+    var users = $(nsd_userlist).find('li');
+    for(var i=0; i < users.length; i++){
+      if($(users[i]).attr('name') === device.name){
+        break;
+      }
+    }
+    var list_text = $(users[i]).find('.list-text');
+    if(list_text){
+      $(list_text).html('<b>' + device.name + '</b><br>' + device.host); 
+    } 
+  }
+  function rmUserByName(name){
+    var users = $(nsd_userlist).find('li');
+    var findUser = false;
+    for(var i=0; i < users.length; i++){
+      // console.log($(users[i]).attr('name'));
+      if($(users[i]).attr('name') === name){
+        findUser = true;
+        $(users[i]).remove();
+        break;
+      }
+    }
+  }
+  function rmAllUsers(){
+    var users = $(nsd_userlist).find('li');
+    for(var i=0; i < users.length; i++){
+      $(users[i]).remove();
+    }    
+  }
+  // appendUser("hello", "I am Hello.");
+  // appendUser('username1', 'Placeholder text for this list item 1. This sections can modified for your need.');
+  // appendUser('username2', 'Placeholder text for this list item 2. This sections can modified for your need.');
+  // appendUser('username3', 'Placeholder text for this list item 3. This sections can modified for your need.');
+  // appendUser('username4', 'Placeholder text for this list item 4. This sections can modified for your need.');
+  // rmUserByName('username3');
+  
+  // used for store device info list
   var deviceList = new Object();
   function addADevice(device){
     var isDeviceExist = false;
@@ -110,7 +147,24 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       log("Error: " + device.name + " has exist.");
     }else{
       deviceList[device.name] = device;
+      appendUser(device.name, '用户：' + device.name);
     }
+  }
+  function overWriteADevice(device){
+    var isDeviceExist = false;
+    for(id in deviceList){
+      obj = deviceList[id];
+      if(obj.name == device.name){
+        isDeviceExist = true;
+        break;
+      }
+    }
+    deviceList[device.name] = device;
+    if(isDeviceExist){
+      overWriteUser(device);
+    }else{
+      appendUser(device.name, '用户：' + device.name);
+    }    
   }
   function removeADevice(device){
     var obj;
@@ -118,6 +172,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       obj = deviceList[id];
       if(obj.name == device.name){
         delete deviceList[id];
+        rmUserByName(device.name);
         return true;
       }
     }
@@ -126,15 +181,9 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   function clearDeviceList(){
     for(id in deviceList){
       delete deviceList[id];
-    }    
+    }
+    rmAllUsers();
   }
-  
-  var AfNsdChat = function() {};
-  AfNsdChat.prototype.showDeviceList = function(){
-    for(id in deviceList){
-      log(JSON.stringify(deviceList[id]));
-    }    
-  };
   function logObj(obj){
     for(id in obj){
       if((typeof obj[id]) === object){
@@ -144,6 +193,13 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       }
     }
   }
+  
+  var AfNsdChat = function() {};
+  AfNsdChat.prototype.showDeviceList = function(){
+    for(id in deviceList){
+      log(JSON.stringify(deviceList[id]));
+    }    
+  };
   AfNsdChat.prototype.initNsd = function() {
     NsdChat.initNsd(
       function(msgfromnative){
@@ -158,6 +214,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
           break;
           case 'onServiceResolved'://JSON.stringify
             log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+            overWriteADevice(JSON.parse(msgfromnative.data));
           break;
           case 'onResolveFailed':
             log(msgfromnative.type + ": " + msgfromnative.data);
@@ -239,11 +296,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   channel.onPluginsReady.subscribe(function() {
     window.AfTimer = cordova.require('af.timer');
     window.AfNsdChat = cordova.require('af.nsdchat');
-    window.AfHelloCallback = cordova.require('af.hellocallback');
-    var nsd_userlist = $('#afui #content #nsd').find('ul');
-    $(nsd_userlist).on("click", "a", function(){
-      console.log('this', this);
-    });
+
   });
   channel.onPause.subscribe(function() {
     console.log('onPause');

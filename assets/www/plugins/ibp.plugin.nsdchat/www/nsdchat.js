@@ -1,6 +1,10 @@
-cordova.define("ibp.plugin.nsdchat.nsdchat", function(require, exports, module) { var NsdChat = function() {};
+cordova.define("ibp.plugin.nsdchat.nsdchat", function(require, exports, module) { 
+var NsdChat = function() {};
 NsdChat.prototype.initNsd = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "initNsd", []);
+};
+NsdChat.prototype.stopNsd = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "stopNsd", []);
 };
 NsdChat.prototype.startDiscovery = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "startDiscovery", []);
@@ -14,10 +18,9 @@ NsdChat.prototype.registerService = function(successCallback, errorCallback, ser
 NsdChat.prototype.unRegisterService = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "unRegisterService", []);
 };
-NsdChat.prototype.stopNsd = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "stopNsd", []);
+NsdChat.prototype.resolveService = function(successCallback, errorCallback, username) {
+    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "resolveService", [username]);
 };
-  
 var NsdChat = new NsdChat();  
 module.exports = NsdChat;
 

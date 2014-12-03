@@ -24,9 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" }) 
 public class NsdChatPlugin extends CordovaPlugin {
@@ -45,6 +48,9 @@ public class NsdChatPlugin extends CordovaPlugin {
             pluginResult.setKeepCallback(true);
             callbackContext.sendPluginResult(pluginResult);
             break;
+        case "stopNsd":
+            stopNsd(callbackContext);
+            break;
         case "startDiscovery":
             this.startDiscovery(callbackContext);
             break;
@@ -59,8 +65,8 @@ public class NsdChatPlugin extends CordovaPlugin {
         case "unRegisterService":
             this.unRegisterService(callbackContext);
             break;
-        case "stopNsd":
-            stopNsd(callbackContext);
+        case "resolveService":
+            this.resolveService(callbackContext, args.getString(0));
             break;
         }
         return true;
@@ -92,15 +98,15 @@ public class NsdChatPlugin extends CordovaPlugin {
                     mNsdHelper = new NsdHelper(cordova.getActivity(), mHandler);
                     mNsdHelper.initializeNsd();
                 }
-                sendJSONObjectByHandler(cbc, "success", "Initialize NSD successful."); 
+                sendByHandler(cbc, "success", "Initialize NSD successful."); 
             }else{
-                sendJSONObjectByHandler(cbc, "error", "Nsd Has been Initialized.");      
+                sendByHandler(cbc, "error", "Nsd Has been Initialized.");      
             }
         } catch(Exception e) {
-            sendJSONObjectByHandler(cbc, "error", "Exception: " + e);
+            sendByHandler(cbc, "error", "Exception: " + e);
         }        
     }
-    private void sendJSONObjectByHandler(CallbackContext callbackContext, String type, String data){
+    private void sendByHandler(CallbackContext callbackContext, String type, String data){
         JSONObject obj = new JSONObject();
         try {
             obj.put("type", new String(type));
@@ -115,6 +121,14 @@ public class NsdChatPlugin extends CordovaPlugin {
         }
         result.setKeepCallback(true);
         callbackContext.sendPluginResult(result);        
+    }
+    private void sendByHandler(String type, String data){
+        Bundle messageBundle = new Bundle();
+        messageBundle.putString("type", type);
+        messageBundle.putString("msg", data);
+        Message message = new Message();
+        message.setData(messageBundle);
+        mHandler.sendMessage(message);
     }
     
     private void startDiscovery(CallbackContext callbackContext){
@@ -163,8 +177,38 @@ public class NsdChatPlugin extends CordovaPlugin {
         }
     }
     
-    public void resolveService(View v){
-        mNsdHelper.resolveServerInfo();
+    public void resolveService(CallbackContext callbackContext, String name){
+        Log.d("device name: ", name);
+        mNsdHelper.resolveInfoByName(name);
+        callbackContext.success("In resolveService. device name: " + name);
+    }
+    
+    public void onPause(boolean multitasking) {
+        activityStates("onPause");
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            this.sendByHandler("Notice", "stopNsd in onPause, Please initNsd first.");
+            mNsdHelper.unRegisterService();
+            mNsdHelper.stopDiscovery();
+            mNsdHelper = null;
+            mHandler = null;
+        }
+    }
+    public void onResume(boolean multitasking) {
+        activityStates("onResume");
+    }
+    public void onDestroy() {
+        activityStates("onDestroy");
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            this.sendByHandler("Notice", "stopNsd in onDestroy, Please initNsd first.");
+            mNsdHelper.unRegisterService();
+            mNsdHelper.stopDiscovery();
+            mNsdHelper = null;
+            mHandler = null;
+        } 
+    }
+    private void activityStates(String state){
+        Log.d("TimerPlugin", state);
+//        Toast.makeText(cordova.getActivity(), state, Toast.LENGTH_SHORT).show();
     }
 }
 
