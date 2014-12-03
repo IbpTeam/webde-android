@@ -35,10 +35,10 @@
     <feature name="HelloWorldJava">
         <param name="android-package" value="ibp.plugin.helloworld.HelloWorldJava" />
     </feature>
-    <feature name="HelloCallback">
-        <param name="android-package" value="ibp.plugin.hellocallback.HelloCallback" />
-    </feature>
     <feature name="NsdChatPlugin">
         <param name="android-package" value="ibp.plugin.nsdchat.NsdChatPlugin" />
+    </feature>
+    <feature name="TimerPlugin">
+        <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
     </feature>
 </widget>

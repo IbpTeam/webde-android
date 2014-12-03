@@ -45,12 +45,46 @@ cordova.define("af.hellocallback", function(require, exports, module) {
   module.exports = afHelloCallback;
 });
 
+cordova.define("af.timer", function(require, exports, module) {
+  var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
+  var device_timer = $('#content #device_timer');
+  var content = $('<div></div>');
+  if($(device_timer).find('.afScrollPanel')){
+    $(device_timer).find('.afScrollPanel').append($(content));
+  }else{
+    $(device_timer).append($(content));
+  }
+  function log(info){
+    console.log(info);
+    $(content).html($('<p></p>').html(info).html());//$('<p></p>').html(info)
+  }
+  var AfTimer = function() {};   
+  AfTimer.prototype.startTimer = function () {
+    TimerPlugin.start(
+      function(msgfromnative){
+        log(msgfromnative.data);
+      },
+      function(msgfromnative){
+        log(msgfromnative.data);
+      });
+  };
+  AfTimer.prototype.stopTimer = function () {
+    TimerPlugin.stop(
+      function(msgfromnative){
+        log(msgfromnative);
+      },
+      function(msgfromnative){
+        log(msgfromnative);
+      });
+  };
+  var afTimer = new AfTimer();  
+  module.exports = afTimer;
+});
 /**
  * module af.nsdchat for nsdchat show.
  */
 cordova.define("af.nsdchat", function(require, exports, module) {
   var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
-  var AfNsdChat = function() {};
   var device_nsdchat = $('#content #device_nsdchat');
   var content = $('<div></div>');
   if($(device_nsdchat).find('.afScrollPanel')){
@@ -58,11 +92,15 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   }else{
     $(device_nsdchat).append($(content));
   }
+  function log(info){
+    console.log(info);
+    $(content).append($('<p></p>').html(info));
+  }
   var deviceList = new Object();
   function addADevice(device){
     var isDeviceExist = false;
     for(id in deviceList){
-      obj = deviceList[id]
+      obj = deviceList[id];
       if(obj.name == device.name){
         isDeviceExist = true;
         break;
@@ -90,15 +128,13 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       delete deviceList[id];
     }    
   }
+  
+  var AfNsdChat = function() {};
   AfNsdChat.prototype.showDeviceList = function(){
     for(id in deviceList){
       log(JSON.stringify(deviceList[id]));
     }    
   };
-  function log(info){
-    console.log(info);
-    $(content).append($('<p></p>').html(info));
-  }
   function logObj(obj){
     for(id in obj){
       if((typeof obj[id]) === object){
@@ -193,7 +229,6 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     $.ui.scrollToBottom('#device_nsdchat');
   };
   AfNsdChat.prototype.clearContent = function(){
-    // $.ui.updatePanel('#device_nsdchat',"");
     $(content).html('');
   };
   var afNsdChat = new AfNsdChat();  
@@ -202,12 +237,21 @@ cordova.define("af.nsdchat", function(require, exports, module) {
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
-      window.AfNsdChat = cordova.require('af.nsdchat');
-      window.AfHelloCallback = cordova.require('af.hellocallback');
-      
-      var nsd_userlist = $('#afui #content #nsd').find('ul');
-      $(nsd_userlist).on("click", "a", function(){
-        console.log('this', this);
-      });
+    window.AfTimer = cordova.require('af.timer');
+    window.AfNsdChat = cordova.require('af.nsdchat');
+    window.AfHelloCallback = cordova.require('af.hellocallback');
+    var nsd_userlist = $('#afui #content #nsd').find('ul');
+    $(nsd_userlist).on("click", "a", function(){
+      console.log('this', this);
+    });
+  });
+  channel.onPause.subscribe(function() {
+    console.log('onPause');
+  });
+  channel.onResume.subscribe(function() {
+    console.log('onResume');
+  });
+  channel.onDestroy.subscribe(function() {
+    console.log('onDestroy');
   });
 })();

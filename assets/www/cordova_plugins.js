@@ -273,17 +273,17 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/ibp.plugin.hellocallback/www/HelloCallback.js",
-        "id": "ibp.plugin.hellocallback.hellocallback",
-        "clobbers": [
-            "HelloCallback"
-        ]
-    },
-    {
         "file": "plugins/ibp.plugin.nsdchat/www/nsdchat.js",
         "id": "ibp.plugin.nsdchat.nsdchat",
         "clobbers": [
             "NsdChat"
+        ]
+    },
+    {
+        "file": "plugins/ibp.plugin.timer/www/Timer.js",
+        "id": "ibp.plugin.timer.timer",
+        "clobbers": [
+            "Timer"
         ]
     }
 ];
@@ -300,8 +300,8 @@ module.exports.metadata =
     "com.tlantic.plugins.socket": "0.3.2",
     "com.perak.plugin.Disco": "1.0.0",
     "ibp.plugin.helloworld": "0.0.3",
-    "ibp.plugin.hellocallback": "0.0.1",
-    "ibp.plugin.nsdchat": "0.0.1"
+    "ibp.plugin.nsdchat": "0.0.1",
+    "ibp.plugin.timer": "0.0.2"
 }
 // BOTTOM OF METADATA
 });

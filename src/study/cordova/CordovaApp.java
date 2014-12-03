@@ -38,9 +38,12 @@ public class CordovaApp extends CordovaActivity
 //        launchUrl = "file:///android_asset/www/nsdchat.html";
         launchUrl = "http://192.168.160.176:8000/study.html?ios7";
 //        launchUrl = "file:///android_asset/webui/study.html?ios7";
-        appView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存      
+        appView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存
+//        this.appView.enableRemoteDebugging();
         loadUrl(launchUrl);
     }
+    
+    
     private final int START_DISCOVER = 0, STOP_DISCOVER = 1, LIST_SERVICE_INFO = 2, RESOLVE_SERVICE = 3,
             REGISTER_SERVICE = 4, UNREGISTER_SERVICE = 5, CLEAR_SCREEN = 6;
     @Override
