@@ -1,6 +1,7 @@
 function updateLogView(){
     var nsd_talk_history = $('#afui #content #nsd_talk').find('ul');
-    var nsd_talk_footer = $('#afui #nsd_talk_footer').find('textarea');
+    var nsd_talk_footer_textarea = $('#afui #navbar #nsd_talk_footer textarea');
+    var nsd_talk_footer_submit = $('#afui #navbar #nsd_talk_footer a');
     var content = nsd_talk_footer.val();
     if(content.length){
         nsd_talk_history.append($('<li></li>').html(content));
@@ -54,6 +55,7 @@ cordova.define("af.timer", function(require, exports, module) {
  */
 cordova.define("af.nsdchat", function(require, exports, module) {
   var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
+  
   // used for content show.
   var device_nsdchat = $('#content #device_nsdchat');
   var content = $('<div></div>');
@@ -66,6 +68,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     console.log(info);
     $(content).append($('<p></p>').html(info));
   }
+  
   // used for userlist
   var nsd_userlist = $('#content #nsd ul.list');
   function appendUser(name, txt){
@@ -83,6 +86,8 @@ cordova.define("af.nsdchat", function(require, exports, module) {
           },
           $(this).parent().attr('name')
       );
+      localStorage.setItem("name", "namea");
+      // $('#afui #content #nsd_talk').find('ul').html(localStorage.getItem('name'));
     });
     $.create('img', {
         className:'list-image',
@@ -125,13 +130,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       $(users[i]).remove();
     }    
   }
-  // appendUser("hello", "I am Hello.");
-  // appendUser('username1', 'Placeholder text for this list item 1. This sections can modified for your need.');
-  // appendUser('username2', 'Placeholder text for this list item 2. This sections can modified for your need.');
-  // appendUser('username3', 'Placeholder text for this list item 3. This sections can modified for your need.');
-  // appendUser('username4', 'Placeholder text for this list item 4. This sections can modified for your need.');
-  // rmUserByName('username3');
-  
+
   // used for store device info list
   var deviceList = new Object();
   function addADevice(device){
@@ -194,7 +193,9 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     }
   }
   
+  // used for Class AfNsdChat defination.
   var AfNsdChat = function() {};
+
   AfNsdChat.prototype.showDeviceList = function(){
     for(id in deviceList){
       log(JSON.stringify(deviceList[id]));
@@ -242,6 +243,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
         log(msgfromnative);
       });
       clearDeviceList();
+      this.clearContent();
   };
   
   AfNsdChat.prototype.startDiscovery = function() {
@@ -308,3 +310,29 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     console.log('onDestroy');
   });
 })();
+  function showNsdTalk(panel){
+    var nsd_talk = $(panel);
+    var history = nsd_talk.find('ul');
+    var footerId = nsd_talk.attr('data-footer');
+    var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
+    var submit = $('#afui #navbar').find('#' + footerId).find('a');
+    console.log('in fucntion showNsdTalk, panel:', panel);
+    console.log('in fucntion showNsdTalk, footerId:', footerId);
+    console.log('in fucntion showNsdTalk, history:', history);
+    console.log('in fucntion showNsdTalk, textarea:', textarea);
+    console.log('in fucntion showNsdTalk, submit:', submit); 
+    submit.onclick(function(){
+      var content = textarea.val();
+      if(content.length){
+          history.append($('<li></li>').html(content));
+          textarea.val('');
+      }else{
+          alert("内容不能为空");
+      }     
+    });
+    // console.log('in fucntion showNsdTalk, panel:', panel);
+    // console.log('in fucntion showNsdTalk, footer:', footer);
+    // console.log('in fucntion showNsdTalk, history:', history);
+    // console.log('in fucntion showNsdTalk, textarea:', textarea);
+    // console.log('in fucntion showNsdTalk, submit:', submit); 
+  };

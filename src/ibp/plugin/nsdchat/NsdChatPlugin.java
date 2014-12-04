@@ -28,8 +28,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" }) 
 public class NsdChatPlugin extends CordovaPlugin {
@@ -211,5 +209,3 @@ public class NsdChatPlugin extends CordovaPlugin {
 //        Toast.makeText(cordova.getActivity(), state, Toast.LENGTH_SHORT).show();
     }
 }
-
-

@@ -157,6 +157,7 @@ public class NsdHelper {
         if(isDiscoverServicesStarted && mDiscoveryListener != null){
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
         }
+//        mNsdManager = null;
         mServerInfoList.clear();
         isDiscoverServicesStarted = false;
     }
