@@ -1,5 +1,6 @@
 package com.perak.plugin;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
@@ -9,7 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class NsdHelper {
+@SuppressLint("NewApi") public class NsdHelper {
 
     Context mContext;
     private Handler mHandler;

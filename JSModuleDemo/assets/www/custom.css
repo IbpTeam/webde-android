@@ -1,0 +1,8 @@
+#afui #nsd .list li {padding:10px 10px 10px 10px}
+#afui #nsd .list li .list-image {float:left;width:50px;height:50px}
+#afui #nsd .list li .list-text {margin-left:60px;min-height:50px}
+
+#afui #navbar #nsd_talk_footer textarea{
+    padding:8px 12px;
+    margin:8px 0;
+}
