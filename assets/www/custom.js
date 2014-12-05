@@ -1,20 +1,3 @@
-function updateLogView(){
-    var nsd_talk_history = $('#afui #content #nsd_talk').find('ul');
-    var nsd_talk_footer_textarea = $('#afui #navbar #nsd_talk_footer textarea');
-    var nsd_talk_footer_submit = $('#afui #navbar #nsd_talk_footer a');
-    var content = nsd_talk_footer.val();
-    if(content.length){
-        nsd_talk_history.append($('<li></li>').html(content));
-        nsd_talk_footer.val('');
-    }else{
-        alert("内容不能为空");
-    }
-    $(nsd_talk_history).on("click", "a", function(){
-      console.log('e.currentTarget');
-      console.log(e.currentTarget);
-    });
-}
-
 cordova.define("af.timer", function(require, exports, module) {
   var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
   var device_timer = $('#content #device_timer');
@@ -321,7 +304,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     console.log('in fucntion showNsdTalk, history:', history);
     console.log('in fucntion showNsdTalk, textarea:', textarea);
     console.log('in fucntion showNsdTalk, submit:', submit); 
-    submit.onclick(function(){
+    submit.click(function(){
       var content = textarea.val();
       if(content.length){
           history.append($('<li></li>').html(content));
@@ -330,9 +313,4 @@ cordova.define("af.nsdchat", function(require, exports, module) {
           alert("内容不能为空");
       }     
     });
-    // console.log('in fucntion showNsdTalk, panel:', panel);
-    // console.log('in fucntion showNsdTalk, footer:', footer);
-    // console.log('in fucntion showNsdTalk, history:', history);
-    // console.log('in fucntion showNsdTalk, textarea:', textarea);
-    // console.log('in fucntion showNsdTalk, submit:', submit); 
   };
