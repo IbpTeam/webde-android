@@ -1,5 +1,4 @@
-cordova.define("ibp.plugin.nsdchat.nsdchat", function(require, exports, module) { 
-var NsdChat = function() {};
+cordova.define("ibp.plugin.nsdchat.nsdchat", function(require, exports, module) { var NsdChat = function() {};
 NsdChat.prototype.initNsd = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "initNsd", []);
 };
@@ -23,5 +22,6 @@ NsdChat.prototype.resolveService = function(successCallback, errorCallback, user
 };
 var NsdChat = new NsdChat();  
 module.exports = NsdChat;
+
 
 });
