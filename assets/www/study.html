@@ -267,11 +267,14 @@
                     <ul class="list">
                         <li><a href="#device_timer">Timer</a></li>
                         <li><a href="#device_nsdchat">Nsdchat</a></li>
+                        <li><a href="#device_camera">Camera</a></li>
                     </ul>
                 </div>
                 <div class="panel" id="device_timer" title="Timer" data-footer="none" data-nav='nav_timer'>
                 </div>
                 <div class="panel" id="device_nsdchat" title="Nsdchat" data-footer="none" data-nav="nav_nsdchat">
+                </div>
+                <div class="panel" id="device_camera" title="Camera" data-footer="none" data-nav="nav_camera">
                 </div>
                 
             </div>
@@ -298,6 +301,19 @@
                     </li>
                     <li >
                         <a class="icon user" href="#nsd">发现服务</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav id="nav_timer">
+                <div class='title'>
+                    <h3>需要安装插件ibp.plugin.timer</h3>
+                </div>
+                <ul>
+                    <li>
+                        <a class="button icon check" onclick="AfTimer.startTimer();">startTimer</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
                     </li>
                 </ul>
             </nav>
@@ -335,16 +351,16 @@
                     </li>
                 </ul>
             </nav>
-            <nav id="nav_timer">
+            <nav id="nav_camera">
                 <div class='title'>
-                    <h3>需要安装插件ibp.plugin.timer</h3>
+                    <h3>需要安装插件org.apache.cordova.camera</h3>
                 </div>
                 <ul>
                     <li>
-                        <a class="button icon check" onclick="AfTimer.startTimer();">startTimer</a>
+                        <a class="button icon camera" onclick="AfCamera.startCamera();">Camera</a>
                     </li>
                     <li>
-                        <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
+                        <a class="button icon picture" onclick="AfCamera.cameraGallery();" class="buttonStyle">Gallery</a><br/>
                     </li>
                 </ul>
             </nav>

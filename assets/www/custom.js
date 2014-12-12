@@ -276,12 +276,78 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   var afNsdChat = new AfNsdChat();  
   module.exports = afNsdChat;
 });
+
+cordova.define("af.camera", function(require, exports, module) {
+  // var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
+  var device_camera = $('#content #device_camera');
+  var content = $('<div></div>');
+  if(device_camera.find('.afScrollPanel')){
+    device_camera.find('.afScrollPanel').append($(content));
+  }else{
+    device_camera.append($(content));
+  }
+  // content.html(<div id="camera-image" class="ui-body ui-body-b" style="background-size:100%;min-height:250px"></div>);
+
+  var camera_image = $.create("div", {
+    id : "camera-image",
+    className : "ui-body ui-body-b",
+  }).css({
+    "background-size" : "100%",
+    "min-height" : "250px"
+  }); 
+  content.append(camera_image);
+// log(navigator.camera);
+  function log(info){
+    console.log(info);
+    $(content).append($('<p></p>').html(info));
+  }
+  var AfCamera = function() {};
+  
+  /* Camera */
+  AfCamera.prototype.startCamera = function () {
+      var onSuccess = function(url) {
+      //    $('#camera-image').html("<img src="+url+" width='250' />");
+          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+          $('#camera-image').css("background-repeat", "no-repeat");
+          $('#camera-image').css("width", "250px");
+      };
+      var onFail = function() {
+          alert('Error');
+      };
+      navigator.camera.getPicture(onSuccess, onFail, {
+          quality: 50,
+      //    destinationType: navigator.camera.DestinationType.FILE_URL,    
+          destinationType: navigator.camera.DestinationType.DATA_URL
+      });
+  };
+  
+  AfCamera.prototype.cameraGallery = function cameraGallery() {        
+      var onSuccess = function(url) {
+      //    $('#camera-image').html("<img src="+url+" width='250' />");
+          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+          $('#camera-image').css("background-repeat", "no-repeat");
+          $('#camera-image').css("width", "250px");
+      };
+      var onFail = function() {
+          alert('Error');
+      };
+      navigator.camera.getPicture(onSuccess, onFail, {
+          quality: 50,
+      //    destinationType: navigator.camera.DestinationType.FILE_URL,
+          destinationType: navigator.camera.DestinationType.DATA_URL,
+          sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+      });
+  };
+  var afCamera = new AfCamera();
+  module.exports = afCamera;
+});
+
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     window.AfTimer = cordova.require('af.timer');
     window.AfNsdChat = cordova.require('af.nsdchat');
-
+    window.AfCamera = cordova.require('af.camera');
   });
   channel.onPause.subscribe(function() {
     console.log('onPause');
