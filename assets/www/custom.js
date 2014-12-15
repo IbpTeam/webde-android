@@ -37,7 +37,7 @@ cordova.define("af.timer", function(require, exports, module) {
  * module af.nsdchat for nsdchat show.
  */
 cordova.define("af.nsdchat", function(require, exports, module) {
-  var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
+  // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
   
   // used for content show.
   var device_nsdchat = $('#content #device_nsdchat');
@@ -60,17 +60,17 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     'data-transition':'up',
     }).on('click', function(){
         // alert($(this).parent().attr('name'));
-        NsdChat.resolveService(
+        window.NsdChat.resolveService(
           function(msgfromnative){
-            log(msgfromnative);
+            log("in resolveService success." + msgfromnative);
+            // $.ui.addContentDiv()
           },
           function(msgfromnative){
             log(msgfromnative);
           },
           $(this).parent().attr('name')
       );
-      localStorage.setItem("name", "namea");
-      // $('#afui #content #nsd_talk').find('ul').html(localStorage.getItem('name'));
+      localStorage.setItem("name", $(this).parent().attr('name'));
     });
     $.create('img', {
         className:'list-image',
@@ -166,15 +166,6 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     }
     rmAllUsers();
   }
-  function logObj(obj){
-    for(id in obj){
-      if((typeof obj[id]) === object){
-        logObj(obj[id]);
-      }else{
-        log(id + ": " + obj[id] + " - " + (typeof obj[id]));
-      }
-    }
-  }
   
   // used for Class AfNsdChat defination.
   var AfNsdChat = function() {};
@@ -185,7 +176,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     }    
   };
   AfNsdChat.prototype.initNsd = function() {
-    NsdChat.initNsd(
+    window.NsdChat.initNsd(
       function(msgfromnative){
         switch(msgfromnative.type){
           case 'onServiceFound':
@@ -197,7 +188,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
             removeADevice(JSON.parse(msgfromnative.data));
           break;
           case 'onServiceResolved'://JSON.stringify
-            log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+            log(msgfromnative.type + ": " + msgfromnative.data);
             overWriteADevice(JSON.parse(msgfromnative.data));
           break;
           case 'onResolveFailed':
@@ -218,7 +209,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   };
   
   AfNsdChat.prototype.stopNsd = function() {
-    NsdChat.stopNsd(
+    window.NsdChat.stopNsd(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -230,7 +221,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   };
   
   AfNsdChat.prototype.startDiscovery = function() {
-    NsdChat.startDiscovery(
+    window.NsdChat.startDiscovery(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -239,7 +230,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       });
   };
   AfNsdChat.prototype.stopDiscovery = function() {
-    NsdChat.stopDiscovery(
+    window.NsdChat.stopDiscovery(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -249,7 +240,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   };
   AfNsdChat.prototype.registerService = function() {
     serviceInfo = ['nsd-android-test', '8000'];
-    NsdChat.registerService(
+    window.NsdChat.registerService(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -259,7 +250,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       serviceInfo);
   };
   AfNsdChat.prototype.unRegisterService = function() {
-    NsdChat.unRegisterService(
+    window.NsdChat.unRegisterService(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -359,6 +350,7 @@ cordova.define("af.camera", function(require, exports, module) {
     console.log('onDestroy');
   });
 })();
+/*
   function showNsdTalk(panel){
     var nsd_talk = $(panel);
     var history = nsd_talk.find('ul');
@@ -380,3 +372,15 @@ cordova.define("af.camera", function(require, exports, module) {
       }     
     });
   };
+  
+  
+  function logObj(obj){
+    for(id in obj){
+      if((typeof obj[id]) === object){
+        logObj(obj[id]);
+      }else{
+        log(id + ": " + obj[id] + " - " + (typeof obj[id]));
+      }
+    }
+  }
+  */
