@@ -41,10 +41,10 @@ public class NsdChatPlugin extends CordovaPlugin {
         switch (action) {
         case "initNsd":
             this.initNsd(callbackContext);
-            PluginResult.Status status = PluginResult.Status.NO_RESULT;
-            PluginResult pluginResult = new PluginResult(status);
-            pluginResult.setKeepCallback(true);
-            callbackContext.sendPluginResult(pluginResult);
+//            PluginResult.Status status = PluginResult.Status.NO_RESULT;
+//            PluginResult pluginResult = new PluginResult(status);
+//            pluginResult.setKeepCallback(true);
+//            callbackContext.sendPluginResult(pluginResult);
             break;
         case "stopNsd":
             stopNsd(callbackContext);
@@ -97,30 +97,17 @@ public class NsdChatPlugin extends CordovaPlugin {
                     mNsdHelper = new NsdHelper(cordova.getActivity(), mHandler);
                     mNsdHelper.initializeNsd();
                 }
-                sendByHandler(cbc, "success", "Initialize NSD successful.");
+                PluginResult result = new PluginResult(PluginResult.Status.OK, "initNsd: success.");
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
             } else {
-                sendByHandler(cbc, "error", "Nsd Has been Initialized.");
+                PluginResult result = new PluginResult(PluginResult.Status.ERROR, "initNsd: Nsd Has been Initialized.");
+                callbackContext.sendPluginResult(result);
             }
         } catch (Exception e) {
-            sendByHandler(cbc, "error", "Exception: " + e);
+            PluginResult result = new PluginResult(PluginResult.Status.ERROR, "initNsd Exception: " + e);
+            callbackContext.sendPluginResult(result);
         }
-    }
-
-    private void sendByHandler(CallbackContext callbackContext, String type, String data) {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("type", new String(type));
-            obj.put("data", new String(data));
-        } catch (JSONException e1) {
-        }
-        PluginResult result;
-        if ("error" == type) {
-            result = new PluginResult(PluginResult.Status.ERROR, obj);
-        } else {
-            result = new PluginResult(PluginResult.Status.OK, obj);
-        }
-        result.setKeepCallback(true);
-        callbackContext.sendPluginResult(result);
     }
 
     private void sendByHandler(String type, String data) {
@@ -130,42 +117,6 @@ public class NsdChatPlugin extends CordovaPlugin {
         Message message = new Message();
         message.setData(messageBundle);
         mHandler.sendMessage(message);
-    }
-
-    private void startDiscovery(CallbackContext callbackContext) {
-        if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.startDiscovery();
-            callbackContext.success("In startDiscovery");
-        } else {
-            callbackContext.error("Please init NSD first.");
-        }
-    }
-
-    private void stopDiscovery(CallbackContext callbackContext) {
-        if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.stopDiscovery();
-            callbackContext.success("In stopDiscovery");
-        } else {
-            callbackContext.error("Please init NSD first.");
-        }
-    }
-
-    private void registerService(CallbackContext callbackContext, String name, int port) {
-        if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.registerService(name, port);
-            callbackContext.success("In registerService: " + name + ":" + port);
-        } else {
-            callbackContext.error("Please init NSD first.");
-        }
-    }
-
-    private void unRegisterService(CallbackContext callbackContext) {
-        if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.unRegisterService();
-            callbackContext.success("In unRegisterService: " + serverName + ":" + serverPort);
-        } else {
-            callbackContext.error("Please init NSD first.");
-        }
     }
 
     private void stopNsd(CallbackContext callbackContext) {
@@ -179,17 +130,66 @@ public class NsdChatPlugin extends CordovaPlugin {
             callbackContext.error("Nsd has stopped.");
         }
     }
+    private void isNSDInitialized(CallbackContext callbackContext){
+        if((null != mNsdHelper) && (null != mHandler)){
+            callbackContext.success("true");
+        }else{
+            callbackContext.success("false");
+        }
+    }
+
+    private void startDiscovery(CallbackContext callbackContext) {
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.startDiscovery();
+            callbackContext.success("In startDiscovery");
+        } else {
+            callbackContext.error("Please init NSD first.");
+        }
+    }
+    private void stopDiscovery(CallbackContext callbackContext) {
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.stopDiscovery();
+            callbackContext.success("In stopDiscovery");
+        } else {
+            callbackContext.error("Please init NSD first.");
+        }
+    }
+    private void isDiscoverServicesStarted(CallbackContext callbackContext){
+        if(mNsdHelper.isDiscoverServicesStarted){
+            callbackContext.success("true");
+        }else{
+            callbackContext.success("false");
+        }
+    }
+
+    private void registerService(CallbackContext callbackContext, String name, int port) {
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.setRegisterServiceCB(callbackContext);
+            mNsdHelper.registerService(name, port);
+        }
+        else {
+            callbackContext.error("Plugin registerService: Please init NSD first.");
+        }
+    }
+    private void unRegisterService(CallbackContext callbackContext) {
+        if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.setRegisterServiceCB(callbackContext);
+            mNsdHelper.unRegisterService();
+        } else {
+            callbackContext.error("Plugin unRegisterService: Please init NSD first.");
+        }
+    }
 
     public void resolveService(CallbackContext callbackContext, String name) {
-        Log.d("device name: ", name);
+//        Log.d("device name: ", name);
+        mNsdHelper.setResolveServiceCB(callbackContext);
         mNsdHelper.resolveInfoByName(name);
-        callbackContext.success("In resolveService. device name: " + name);
+//        callbackContext.success("In resolveService. device name: " + name);
     }
 
     public void onPause(boolean multitasking) {
-        activityStates("onPause");
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("Notice", "stopNsd in onPause, Please initNsd first.");
+            this.sendByHandler("onPause", "stopNsd in onPause.");
             mNsdHelper.unRegisterService();
             mNsdHelper.stopDiscovery();
             mNsdHelper = null;
@@ -198,23 +198,16 @@ public class NsdChatPlugin extends CordovaPlugin {
     }
 
     public void onResume(boolean multitasking) {
-        activityStates("onResume");
+        this.sendByHandler("onResume", "in fucntion onResume.");
     }
 
     public void onDestroy() {
-        activityStates("onDestroy");
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("Notice", "stopNsd in onDestroy, Please initNsd first.");
+            this.sendByHandler("onDestroy", "stopNsd in onDestroy.");
             mNsdHelper.unRegisterService();
             mNsdHelper.stopDiscovery();
             mNsdHelper = null;
             mHandler = null;
         }
-    }
-
-    private void activityStates(String state) {
-        Log.d("TimerPlugin", state);
-        // Toast.makeText(cordova.getActivity(), state,
-        // Toast.LENGTH_SHORT).show();
     }
 }

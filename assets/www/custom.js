@@ -38,6 +38,10 @@ cordova.define("af.timer", function(require, exports, module) {
  */
 cordova.define("af.nsdchat", function(require, exports, module) {
   // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
+  if(!window.NsdChat){
+    alert("object window.NsdChat does not exist.");
+    return;
+  }
   
   // used for content show.
   var device_nsdchat = $('#content #device_nsdchat');
@@ -62,7 +66,9 @@ cordova.define("af.nsdchat", function(require, exports, module) {
         // alert($(this).parent().attr('name'));
         window.NsdChat.resolveService(
           function(msgfromnative){
-            log("in resolveService success." + msgfromnative);
+            // log(msgfromnative.type + ": " + msgfromnative.data);
+            log(msgfromnative);
+            overWriteADevice(JSON.parse(msgfromnative.data));
             // $.ui.addContentDiv()
           },
           function(msgfromnative){
@@ -178,28 +184,28 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   AfNsdChat.prototype.initNsd = function() {
     window.NsdChat.initNsd(
       function(msgfromnative){
-        switch(msgfromnative.type){
-          case 'onServiceFound':
-            log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
-            addADevice(JSON.parse(msgfromnative.data));
-          break;
-          case 'onServiceLost':
-            log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
-            removeADevice(JSON.parse(msgfromnative.data));
-          break;
-          case 'onServiceResolved'://JSON.stringify
-            log(msgfromnative.type + ": " + msgfromnative.data);
-            overWriteADevice(JSON.parse(msgfromnative.data));
-          break;
-          case 'onResolveFailed':
-            log(msgfromnative.type + ": " + msgfromnative.data);
-          break;
-          case 'success':
-          case 'error':
-            log(msgfromnative.type + ": " + msgfromnative.data);
-          break;
-          default:
-            log(msgfromnative.type + ": " + msgfromnative.data);
+        if((typeof msgfromnative) === "string"){
+        }
+        switch(typeof msgfromnative){
+          case "object":
+            switch(msgfromnative.type){
+              case 'onServiceFound':
+                log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+                addADevice(JSON.parse(msgfromnative.data));
+              break;
+              case 'onServiceLost':
+                log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+                removeADevice(JSON.parse(msgfromnative.data));
+              break;
+              // case 'onServiceResolved'://JSON.stringify
+              // break;
+              default:
+                log(msgfromnative.type + ": " + msgfromnative.data);
+              break;
+            }
+            break;
+          case "string":
+            log(msgfromnative);
           break;
         }
       },
