@@ -62,7 +62,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     var af_a = $.create('<a>').on('click', function(e){
         window.NsdChat.resolveService(
           function(msgfromnative){
-            log(msgfromnative);
+            log(JSON.stringify(msgfromnative));
             var id = "nsd_talk_" + msgfromnative.address.replace(/\./g, '_') + '_' + msgfromnative.port;
             if(! $('#' + id).length){
               $.ui.addContentDiv(id, "Connect To " + msgfromnative.address + ":" + msgfromnative.port,
@@ -72,6 +72,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
               // $('#' + id).get(0).setAttribute("data-modal", "true");
             }
             $.ui.loadContent('#' + id, false, false, "up");
+            overWriteUser(msgfromnative);
           },
           function(msgfromnative){
             log(msgfromnative);
@@ -102,7 +103,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     }
     var list_text = $(users[i]).find('.list-text');
     if(list_text){
-      $(list_text).html('<b>' + device.name + '</b><br>' + device.host); 
+      $(list_text).html('<b>' + device.name + '</b><br>' + device.address + ":" + devcie.port); 
     } 
   }
   function rmUserByName(name){
@@ -179,7 +180,6 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   
   // used for Class AfNsdChat defination.
   var AfNsdChat = function() {};
-
   AfNsdChat.prototype.showDeviceList = function(){
     for(id in deviceList){
       log(JSON.stringify(deviceList[id]));
@@ -198,6 +198,9 @@ cordova.define("af.nsdchat", function(require, exports, module) {
               case 'onServiceLost':
                 log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
                 removeADevice(JSON.parse(msgfromnative.data));
+              break;
+              case 'onPause':              
+                clearDeviceList();
               break;
               default:
                 log(msgfromnative.type + ": " + msgfromnative.data);
@@ -243,6 +246,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       function(msgfromnative){
         log(msgfromnative);
       });
+      clearDeviceList();
   };
   AfNsdChat.prototype.registerService = function() {
     serviceInfo = ['nsd-android-test', '8000'];

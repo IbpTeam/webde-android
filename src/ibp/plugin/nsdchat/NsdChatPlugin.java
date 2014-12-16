@@ -142,16 +142,17 @@ public class NsdChatPlugin extends CordovaPlugin {
 
     private void startDiscovery(CallbackContext callbackContext) {
         if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.setServiceDiscoveryCB(callbackContext);
             mNsdHelper.startDiscovery();
-            callbackContext.success("In startDiscovery");
+//            callbackContext.success("In startDiscovery");
         } else {
             callbackContext.error("Please init NSD first.");
         }
     }
     private void stopDiscovery(CallbackContext callbackContext) {
         if ((null != mNsdHelper) && (null != mHandler)) {
+            mNsdHelper.setServiceDiscoveryCB(callbackContext);
             mNsdHelper.stopDiscovery();
-            callbackContext.success("In stopDiscovery");
         } else {
             callbackContext.error("Please init NSD first.");
         }

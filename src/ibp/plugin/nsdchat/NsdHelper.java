@@ -60,12 +60,6 @@ public class NsdHelper {
     public void initializeDiscoveryListener() {
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
             @Override
-            public void onDiscoveryStarted(String regType) {
-                sendNotification("onDiscoveryStarted", "Service discovery started");
-                isDiscoverServicesStarted = true;
-            }
-
-            @Override
             public void onServiceFound(NsdServiceInfo service) {
                 addServiceInfo(service);
             }
@@ -76,20 +70,25 @@ public class NsdHelper {
             }
 
             @Override
+            public void onDiscoveryStarted(String regType) {
+                serviceDiscoveryCB.success("onDiscoveryStarted: start Discovery success.");
+                isDiscoverServicesStarted = true;
+            }
+            @Override
+            public void onStartDiscoveryFailed(String serviceType, int errorCode) {
+                serviceDiscoveryCB.error("onStartDiscoveryFailed: " + errorCode);
+                mNsdManager.stopServiceDiscovery(this);
+            }
+            
+            @Override
             public void onDiscoveryStopped(String serviceType) {
-                sendNotification("onDiscoveryStopped", serviceType);
+                serviceDiscoveryCB.success("onDiscoveryStopped: stop Discovery success.");
                 isDiscoverServicesStarted = false;
             }
 
             @Override
-            public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                sendNotification("onStartDiscoveryFailed", "Error code: " + errorCode);
-                mNsdManager.stopServiceDiscovery(this);
-            }
-
-            @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                sendNotification("onStopDiscoveryFailed", "Error code: " + errorCode);
+                serviceDiscoveryCB.success("onStopDiscoveryFailed: " + errorCode);
                 mNsdManager.stopServiceDiscovery(this);
             }
         };
@@ -144,6 +143,10 @@ public class NsdHelper {
         };
     }
 
+    private CallbackContext serviceDiscoveryCB;
+    public void setServiceDiscoveryCB(CallbackContext callbackContext){
+        serviceDiscoveryCB = callbackContext;        
+    }
     public boolean isDiscoverServicesStarted = false;
     public void startDiscovery() {
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
@@ -152,6 +155,8 @@ public class NsdHelper {
     public void stopDiscovery() {
         if (isDiscoverServicesStarted && mDiscoveryListener != null) {
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+        }else{
+            serviceDiscoveryCB.success("stopDiscovery: ServiceDiscovery has stopped.");
         }
         mServiceInfoList.clear();
     }
