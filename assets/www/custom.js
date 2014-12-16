@@ -33,6 +33,7 @@ cordova.define("af.timer", function(require, exports, module) {
   var afTimer = new AfTimer();  
   module.exports = afTimer;
 });
+
 /**
  * module af.nsdchat for nsdchat show.
  */
@@ -42,14 +43,16 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     alert("object window.NsdChat does not exist.");
     return;
   }
-  
+  var NSDUserList = function(){
+    
+  }
   // used for content show.
-  var device_nsdchat = $('#content #device_nsdchat');
+  var device_nsd = $('#content #device_nsd');
   var content = $('<div></div>');
-  if($(device_nsdchat).find('.afScrollPanel')){
-    $(device_nsdchat).find('.afScrollPanel').append($(content));
+  if($(device_nsd).find('.afScrollPanel')){
+    $(device_nsd).find('.afScrollPanel').append($(content));
   }else{
-    $(device_nsdchat).append($(content));
+    $(device_nsd).append($(content));
   }
   function log(info){
     console.log(info);
@@ -60,24 +63,28 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   var nsd_userlist = $('#content #nsd ul.list');
   function appendUser(name, txt){
     var af_a = $.create('<a>').on('click', function(e){
-        window.NsdChat.resolveService(
-          function(msgfromnative){
-            log(JSON.stringify(msgfromnative));
-            var id = "nsd_talk_" + msgfromnative.address.replace(/\./g, '_') + '_' + msgfromnative.port;
-            if(! $('#' + id).length){
-              $.ui.addContentDiv(id, "Connect To " + msgfromnative.address + ":" + msgfromnative.port,
-                msgfromnative.address);
-              $('#' + id).get(0).setAttribute("data-footer", "nsd_talk_footer");
-              // $('#' + id).get(0).setAttribute("data-transition", "up");
-              // $('#' + id).get(0).setAttribute("data-modal", "true");
-            }
-            $.ui.loadContent('#' + id, false, false, "up");
-            overWriteUser(msgfromnative);
-          },
-          function(msgfromnative){
-            log(msgfromnative);
-          },
-          $(this).parent().attr('name')
+      if(null !== needResolve){
+        
+      }
+      window.NsdChat.resolveService(
+        function(msgfromnative){
+          log(JSON.stringify(msgfromnative));
+          var id = "nsd_talk_" + msgfromnative.address.replace(/\./g, '_') + '_' + msgfromnative.port;
+          if(! $('#' + id).length){
+            $.ui.addContentDiv(id, "Connect To " + msgfromnative.address + ":" + msgfromnative.port,
+              msgfromnative.address);
+            $('#' + id).get(0).setAttribute("data-footer", "nsd_talk_footer");
+            // $('#' + id).get(0).setAttribute("data-transition", "up");
+            // $('#' + id).get(0).setAttribute("data-modal", "true");
+          }
+          $.ui.loadContent('#' + id, false, false, "up");
+          // overWriteUser(msgfromnative);
+          overWriteADevice(msgfromnative);
+        },
+        function(msgfromnative){
+          log(msgfromnative);
+        },
+        $(this).parent().attr('name')
       );
       localStorage.setItem("name", $(this).parent().attr('name'));
       e.preventDefault();
@@ -103,7 +110,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     }
     var list_text = $(users[i]).find('.list-text');
     if(list_text){
-      $(list_text).html('<b>' + device.name + '</b><br>' + device.address + ":" + devcie.port); 
+      $(list_text).html('<b>' + device.name + '</b><br>' + device.address + ":" + device.port); 
     } 
   }
   function rmUserByName(name){
@@ -123,6 +130,20 @@ cordova.define("af.nsdchat", function(require, exports, module) {
     for(var i=0; i < users.length; i++){
       $(users[i]).remove();
     }    
+  }
+  function needResolve(name){
+    var device = null;
+    var obj = null;
+    for(id in deviceList){
+      obj = deviceList[id];
+      if(obj.name == name){
+        if ((null != obj.address) && (0 != obj.port)){
+          device = obj;
+          break;
+        }
+      }
+    }
+    return device;
   }
 
   // used for store device info list
@@ -269,7 +290,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
       });
   };
   AfNsdChat.prototype.scrollToBottom = function(){
-    $.ui.scrollToBottom('#device_nsdchat');
+    $.ui.scrollToBottom('#device_nsd');
   };
   AfNsdChat.prototype.clearContent = function(){
     $(content).html('');
