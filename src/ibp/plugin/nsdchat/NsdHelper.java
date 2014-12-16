@@ -139,7 +139,7 @@ public class NsdHelper {
                 String newName = oldName.replace("\\032", " ");
                 serviceInfo.setServiceName(newName);
                 reWriteServiceInfo(serviceInfo);
-                registerServiceCB.success(NsdServiceInfoToJSON(serviceInfo));
+                resolveServiceCB.success(NsdServiceInfoToJSON(serviceInfo));
             }
         };
     }
@@ -169,9 +169,10 @@ public class NsdHelper {
         mNsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, mRegistrationListener);
     }
     public void unRegisterService() {
-        mNsdManager.unregisterService(mRegistrationListener);
+        if(isServiceRegistered){
+            mNsdManager.unregisterService(mRegistrationListener);
+        }
     }
-
 
     private CallbackContext resolveServiceCB;
     public void setResolveServiceCB(CallbackContext callbackContext){
@@ -192,7 +193,8 @@ public class NsdHelper {
                 mNsdManager.resolveService(element, mResolveListener);
             } else {
 //                sendNotification("resolveInfoByName", "No Need To Resolve.");
-                resolveServiceCB.error("resolveInfoByName: " + "No Need To Resolve.");
+                //"resolveInfoByName: " + "No Need To Resolve."
+                resolveServiceCB.success(NsdServiceInfoToJSON(element));
             }
         }
     }
@@ -221,7 +223,7 @@ public class NsdHelper {
         map.put("name", name);
         map.put("type", type);
         map.put("address", (host == null) ? "null" : host.getHostAddress());
-        map.put("port", (host == null) ? "null" : port);
+        map.put("port", (host == null) ? 0 : port);
         JSONObject jsonObj = new JSONObject(map);
         return jsonObj;
     }

@@ -59,17 +59,19 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   // used for userlist
   var nsd_userlist = $('#content #nsd ul.list');
   function appendUser(name, txt){
-    var af_a = $.create('a', {
-    'href':'#nsd_talk',
-    'data-transition':'up',
-    }).on('click', function(){
-        // alert($(this).parent().attr('name'));
+    var af_a = $.create('<a>').on('click', function(e){
         window.NsdChat.resolveService(
           function(msgfromnative){
-            // log(msgfromnative.type + ": " + msgfromnative.data);
             log(msgfromnative);
-            overWriteADevice(JSON.parse(msgfromnative.data));
-            // $.ui.addContentDiv()
+            var id = "nsd_talk_" + msgfromnative.address.replace(/\./g, '_') + '_' + msgfromnative.port;
+            if(! $('#' + id).length){
+              $.ui.addContentDiv(id, "Connect To " + msgfromnative.address + ":" + msgfromnative.port,
+                msgfromnative.address);
+              $('#' + id).get(0).setAttribute("data-footer", "nsd_talk_footer");
+              // $('#' + id).get(0).setAttribute("data-transition", "up");
+              // $('#' + id).get(0).setAttribute("data-modal", "true");
+            }
+            $.ui.loadContent('#' + id, false, false, "up");
           },
           function(msgfromnative){
             log(msgfromnative);
@@ -77,6 +79,8 @@ cordova.define("af.nsdchat", function(require, exports, module) {
           $(this).parent().attr('name')
       );
       localStorage.setItem("name", $(this).parent().attr('name'));
+      e.preventDefault();
+      e.stopPropagation();
     });
     $.create('img', {
         className:'list-image',
@@ -184,8 +188,6 @@ cordova.define("af.nsdchat", function(require, exports, module) {
   AfNsdChat.prototype.initNsd = function() {
     window.NsdChat.initNsd(
       function(msgfromnative){
-        if((typeof msgfromnative) === "string"){
-        }
         switch(typeof msgfromnative){
           case "object":
             switch(msgfromnative.type){
@@ -197,8 +199,6 @@ cordova.define("af.nsdchat", function(require, exports, module) {
                 log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
                 removeADevice(JSON.parse(msgfromnative.data));
               break;
-              // case 'onServiceResolved'://JSON.stringify
-              // break;
               default:
                 log(msgfromnative.type + ": " + msgfromnative.data);
               break;
@@ -210,7 +210,7 @@ cordova.define("af.nsdchat", function(require, exports, module) {
         }
       },
       function(msgfromnative){
-        log(msgfromnative.type + ": " + msgfromnative.data);
+        log(msgfromnative);
       });
   };
   

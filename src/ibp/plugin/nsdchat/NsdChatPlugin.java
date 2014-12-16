@@ -111,12 +111,14 @@ public class NsdChatPlugin extends CordovaPlugin {
     }
 
     private void sendByHandler(String type, String data) {
-        Bundle messageBundle = new Bundle();
-        messageBundle.putString("type", type);
-        messageBundle.putString("msg", data);
-        Message message = new Message();
-        message.setData(messageBundle);
-        mHandler.sendMessage(message);
+        if(null != mHandler){
+            Bundle messageBundle = new Bundle();
+            messageBundle.putString("type", type);
+            messageBundle.putString("msg", data);
+            Message message = new Message();
+            message.setData(messageBundle);
+            mHandler.sendMessage(message);
+        }
     }
 
     private void stopNsd(CallbackContext callbackContext) {
