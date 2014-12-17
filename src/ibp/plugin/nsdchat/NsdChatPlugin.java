@@ -35,7 +35,7 @@ public class NsdChatPlugin extends CordovaPlugin {
     public static final String TAG = "NsdChat";
     private String serverName;
     private int serverPort;
-
+    private CallbackContext initNsdCB;
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         switch (action) {
@@ -74,6 +74,7 @@ public class NsdChatPlugin extends CordovaPlugin {
 
     private void initNsd(CallbackContext callbackContext) {
         final CallbackContext cbc = callbackContext;
+        initNsdCB = callbackContext;
         try {
             if (null == mHandler) {
                 mHandler = new Handler() {
@@ -193,7 +194,9 @@ public class NsdChatPlugin extends CordovaPlugin {
     public void onPause(boolean multitasking) {
         if ((null != mNsdHelper) && (null != mHandler)) {
             this.sendByHandler("onPause", "stopNsd in onPause.");
+            mNsdHelper.setRegisterServiceCB(initNsdCB);
             mNsdHelper.unRegisterService();
+            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
             mNsdHelper.stopDiscovery();
             mNsdHelper = null;
             mHandler = null;
@@ -207,7 +210,9 @@ public class NsdChatPlugin extends CordovaPlugin {
     public void onDestroy() {
         if ((null != mNsdHelper) && (null != mHandler)) {
             this.sendByHandler("onDestroy", "stopNsd in onDestroy.");
+            mNsdHelper.setRegisterServiceCB(initNsdCB);
             mNsdHelper.unRegisterService();
+            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
             mNsdHelper.stopDiscovery();
             mNsdHelper = null;
             mHandler = null;

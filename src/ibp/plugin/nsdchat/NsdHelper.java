@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.cordova.CallbackContext;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 @SuppressLint("NewApi")
@@ -156,7 +155,9 @@ public class NsdHelper {
         if (isDiscoverServicesStarted && mDiscoveryListener != null) {
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
         }else{
-            serviceDiscoveryCB.success("stopDiscovery: ServiceDiscovery has stopped.");
+            if(null != serviceDiscoveryCB){
+                serviceDiscoveryCB.success("stopDiscovery: ServiceDiscovery has stopped.");
+            }
         }
         mServiceInfoList.clear();
     }

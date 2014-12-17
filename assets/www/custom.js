@@ -238,6 +238,7 @@ cordova.define("af.nsd", function(require, exports, module) {
                 removeADevice(JSON.parse(msgfromnative.data));
               break;
               case 'onPause':              
+                log(msgfromnative.type + ": " + msgfromnative.data);
                 clearDeviceList();
               break;
               default:
