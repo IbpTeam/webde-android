@@ -38,7 +38,7 @@
     <feature name="TimerPlugin">
         <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
     </feature>
-    <feature name="NsdChatPlugin">
-        <param name="android-package" value="ibp.plugin.nsdchat.NsdChatPlugin" />
+    <feature name="NSDPlugin">
+        <param name="android-package" value="ibp.plugin.nsd.NSDPlugin" />
     </feature>
 </widget>

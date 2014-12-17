@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ibp.plugin.nsdchat;
+package ibp.plugin.nsd;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -30,8 +30,8 @@ import android.os.Message;
 import android.util.Log;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
-public class NsdChatPlugin extends CordovaPlugin {
-    NsdHelper mNsdHelper;
+public class NSDPlugin extends CordovaPlugin {
+    NSDHelper mNsdHelper;
     public static final String TAG = "NsdChat";
     private String serverName;
     private int serverPort;
@@ -41,10 +41,6 @@ public class NsdChatPlugin extends CordovaPlugin {
         switch (action) {
         case "initNsd":
             this.initNsd(callbackContext);
-//            PluginResult.Status status = PluginResult.Status.NO_RESULT;
-//            PluginResult pluginResult = new PluginResult(status);
-//            pluginResult.setKeepCallback(true);
-//            callbackContext.sendPluginResult(pluginResult);
             break;
         case "stopNsd":
             stopNsd(callbackContext);
@@ -95,7 +91,7 @@ public class NsdChatPlugin extends CordovaPlugin {
                     }
                 };
                 if (null == mNsdHelper) {
-                    mNsdHelper = new NsdHelper(cordova.getActivity(), mHandler);
+                    mNsdHelper = new NSDHelper(cordova.getActivity(), mHandler);
                     mNsdHelper.initializeNsd();
                 }
                 PluginResult result = new PluginResult(PluginResult.Status.OK, "initNsd: success.");

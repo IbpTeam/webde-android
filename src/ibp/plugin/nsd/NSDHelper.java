@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ibp.plugin.nsdchat;
+package ibp.plugin.nsd;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -34,7 +34,7 @@ import org.apache.cordova.CallbackContext;
 import org.json.JSONObject;
 
 @SuppressLint("NewApi")
-public class NsdHelper {
+public class NSDHelper {
 
     NsdManager mNsdManager;
     NsdManager.ResolveListener mResolveListener;
@@ -45,7 +45,7 @@ public class NsdHelper {
     public static final String SERVICE_TYPE = "_http._tcp.";
     private Handler mHandler;
 
-    public NsdHelper(Context context, Handler handler) {
+    public NSDHelper(Context context, Handler handler) {
         mHandler = handler;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
@@ -97,27 +97,23 @@ public class NsdHelper {
         mRegistrationListener = new NsdManager.RegistrationListener() {
             @Override
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
-//                sendNotification("onServiceRegistered", NsdServiceInfoToJSON(NsdServiceInfo).toString());
                 registerServiceCB.success(NsdServiceInfoToJSON(NsdServiceInfo));
                 isServiceRegistered = true;
             }
 
             @Override
             public void onRegistrationFailed(NsdServiceInfo arg0, int arg1) {
-//                sendNotification("onRegistrationFailed", NsdServiceInfoToJSON(arg0).toString());
                 registerServiceCB.error("onRegistrationFailed: " + NsdServiceInfoToJSON(arg0).toString());
             }
 
             @Override
             public void onServiceUnregistered(NsdServiceInfo arg0) {
-//                sendNotification("onServiceUnregistered", NsdServiceInfoToJSON(arg0).toString());
                 registerServiceCB.success(NsdServiceInfoToJSON(arg0));
                 isServiceRegistered = false;
             }
 
             @Override
             public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-//                sendNotification("onUnregistrationFailed", "Error code: " + errorCode);
                 registerServiceCB.error("onUnregistrationFailed: " + errorCode);
             }
         };
@@ -127,7 +123,6 @@ public class NsdHelper {
         mResolveListener = new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-//                sendNotification("onResolveFailed", "Error code: " + errorCode);
                 resolveServiceCB.error("onResolveFailed: " + errorCode);
             }
 
@@ -198,27 +193,11 @@ public class NsdHelper {
             if (element.getHost() == null) {
                 mNsdManager.resolveService(element, mResolveListener);
             } else {
-//                sendNotification("resolveInfoByName", "No Need To Resolve.");
                 //"resolveInfoByName: " + "No Need To Resolve."
                 resolveServiceCB.success(NsdServiceInfoToJSON(element));
             }
         }
     }
-
-//    private int indexcnt = 0;
-//    public void resolveServiceInfo() {
-//        if (indexcnt < mServiceInfoList.size()) {
-//            NsdServiceInfo info = mServiceInfoList.get(indexcnt);
-//            if (info.getHost() == null) {
-//                mNsdManager.resolveService(info, mResolveListener);
-//            } else {
-//                sendNotification("resolveServiceInfo", "No Need To Resolve.");
-//            }
-//            indexcnt++;
-//        } else {
-//            indexcnt = 0;
-//        }
-//    }
 
     private JSONObject NsdServiceInfoToJSON(NsdServiceInfo info) {
         String name = info.getServiceName();
@@ -266,7 +245,6 @@ public class NsdHelper {
         } else {
             mServiceInfoList.add(info);
         }
-//        sendNotification("onServiceResolved", NsdServiceInfoToJSON(info).toString());
     }
 
     public void removeServiceInfo(NsdServiceInfo info) {
@@ -296,7 +274,7 @@ public class NsdHelper {
             info = (NsdServiceInfo) iter.next();
             sb.append(cnt + ". " + NsdServiceInfoToJSON(info) + "\n");
             cnt++;
-        }// sendNotification("showServiceInfo", sb.toString());
+        }
     }
 
     public void sendNotification(String type, String msg) {
@@ -307,23 +285,4 @@ public class NsdHelper {
         message.setData(messageBundle);
         mHandler.sendMessage(message);
     }
-/*
-    public void sendNotification(String type, JSONObject jsonObj) {
-        Bundle messageBundle = new Bundle();
-        messageBundle.putString("type", type);
-        messageBundle.putString("msg", jsonObj.toString());
-        Message message = new Message();
-        message.setData(messageBundle);
-        mHandler.sendMessage(message);
-    }
-
-    public void sendNotification(String type, JSONArray jsonArray) {
-        Bundle messageBundle = new Bundle();
-        messageBundle.putString("type", type);
-        messageBundle.putString("msg", jsonArray.toString());
-        Message message = new Message();
-        message.setData(messageBundle);
-        mHandler.sendMessage(message);
-    }
-    */
 }

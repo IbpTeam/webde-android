@@ -39,8 +39,8 @@ cordova.define("af.timer", function(require, exports, module) {
  */
 cordova.define("af.nsd", function(require, exports, module) {
   // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
-  if(!window.NsdChat){
-    alert("object window.NsdChat does not exist.");
+  if(!window.NSD){
+    alert("object window.NSD does not exist.");
     return;
   }
   var NSDChat = function(device){
@@ -87,7 +87,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   NSDUserList.prototype.appendUser = function (name, txt){
     var that = this;
     var af_a = $.create('<a>').on('click', function(e){
-      window.NsdChat.resolveService(
+      window.NSD.resolveService(
         function(msgfromnative){
           log(JSON.stringify(msgfromnative));
           overWriteADevice(msgfromnative);
@@ -224,7 +224,7 @@ cordova.define("af.nsd", function(require, exports, module) {
     }    
   };
   AfNsd.prototype.initNsd = function() {
-    window.NsdChat.initNsd(
+    window.NSD.initNsd(
       function(msgfromnative){
         switch(typeof msgfromnative){
           case "object":
@@ -257,7 +257,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   
   AfNsd.prototype.stopNsd = function() {
-    window.NsdChat.stopNsd(
+    window.NSD.stopNsd(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -269,7 +269,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   
   AfNsd.prototype.startDiscovery = function() {
-    window.NsdChat.startDiscovery(
+    window.NSD.startDiscovery(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -278,7 +278,7 @@ cordova.define("af.nsd", function(require, exports, module) {
       });
   };
   AfNsd.prototype.stopDiscovery = function() {
-    window.NsdChat.stopDiscovery(
+    window.NSD.stopDiscovery(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -289,7 +289,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   AfNsd.prototype.registerService = function() {
     serviceInfo = ['nsd-android-test', '8000'];
-    window.NsdChat.registerService(
+    window.NSD.registerService(
       function(msgfromnative){
         log(msgfromnative);
       },
@@ -299,7 +299,7 @@ cordova.define("af.nsd", function(require, exports, module) {
       serviceInfo);
   };
   AfNsd.prototype.unRegisterService = function() {
-    window.NsdChat.unRegisterService(
+    window.NSD.unRegisterService(
       function(msgfromnative){
         log(msgfromnative);
       },
