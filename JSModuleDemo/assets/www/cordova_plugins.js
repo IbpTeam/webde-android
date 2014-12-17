@@ -280,10 +280,10 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/ibp.plugin.nsdchat/www/nsdchat.js",
-        "id": "ibp.plugin.nsdchat.nsdchat",
+        "file": "plugins/ibp.plugin.nsd/www/nsd.js",
+        "id": "ibp.plugin.nsd.nsd",
         "clobbers": [
-            "NsdChat"
+            "NSD"
         ]
     }
 ];
@@ -301,7 +301,7 @@ module.exports.metadata =
     "com.perak.plugin.Disco": "1.0.0",
     "ibp.plugin.helloworld": "0.0.3",
     "ibp.plugin.timer": "0.0.2",
-    "ibp.plugin.nsdchat": "0.0.1"
+    "ibp.plugin.nsd": "0.0.1"
 }
 // BOTTOM OF METADATA
 });

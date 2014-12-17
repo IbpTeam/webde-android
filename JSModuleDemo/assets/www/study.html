@@ -184,12 +184,12 @@
                 </div>
 
                 <!-- 在线服务列表 -->
-                <div class="panel" id="nsd" title="在线服务列表" data-tab="navbar_nsd"  data-nav="nav_nsdchat">                    
+                <div class="panel" id="nsd" title="在线服务列表" data-tab="navbar_nsd"  data-nav="nav_nsd">
                     <ul class="list">             
                     </ul>
                 </div>
 
-                <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer' data-load='showNsdTalk'>
+                <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer'>
                     <ul>
                         <li>
                             Jack
@@ -212,7 +212,6 @@
 
                 <!-- UI测试 -->
                 <div class="panel" id="debug" title="UI测试" data-tab="navbar_debug">
-                    This is a picture show
                     <ul class="list inset">
                         <li class="icon user">
                             Jack
@@ -227,36 +226,43 @@
                             Larry
                         </li>
                     </ul>
-                    <ul>
-                        <li>
-                            Jack
-                        </li>
-                        <li>
-                            Lucy
-                        </li>
-                        <li>
-                            John
-                        </li>
-                        <li>
-                            Larry
-                        </li>
-                    </ul>
-                    <!-- checkbox -->
-                    <input type="checkbox" name="confirm" id="confirm">
-                    <label for="confirm">Do you agree to the terms?</label>
-                    <br>
-                    <!-- radio button-->
-                    <input type="radio" name="gender" value='Male' id="Male" >
-                    <label for="Male">Male</label>
-                    <input type="radio" name="gender" value='Female' id="Female" >
-                    <label for="Female">Female</label>
-                    <br>
-                    <br>
-                    <!-- Toggle/Slider-->
-                    <textarea>Do you agree to the terms?</textarea>
-                    <input type="checkbox" name="slider" id="slider" class="toggle">
-                    <label for="slider" data-on="Yes" data-off="No"> <span></span> </label>
-                    <a class="button icon home green">Home</a>
+                    <!-- <div>
+                        <input type="checkbox" name="confirm" id="confirm">
+                        <label for="confirm">Do you agree to the terms?</label>
+                        <br>
+                            <input type="radio" name="gender" value='Male' id="Male" >
+                            <label for="Male">Male</label>
+                            <input type="radio" name="gender" value='Female' id="Female" >
+                            <label for="Female">Female</label>
+                        <br>
+                    </div> -->
+                    
+                    <form>
+                        <div>
+                            <label>initNSD</label>
+                            <input id="initNSD" checked="" type="checkbox" name="initNSD" class="toggle">
+                            <label for="initNSD" data-on="ON" data-off="OFF">
+                                 <span></span>
+                            </label>
+                        </div>
+                    </form>
+                    <script type="text/javascript">
+                    $("#initNSD").click(function(){
+                        console.log("in click of initNSD.");
+                        console.log($("#initNSD").prop("checked"));  
+                        console.log($("#initNSD").val());
+                        // this.value = this.checked ? 1 : 0;
+                    });
+                    </script>
+                    
+                    <div class="formGroupHead">Toggle Switches</div>
+                    <form>
+                        <div class="input-group">
+                            <label>Gender</label><input id="toggle1" type="checkbox" name="toggle1" value="1" class="toggle"><label for="toggle1" data-on="On" data-off="Off"><span></span></label>
+                            <input id="toggle2" type="radio" name="toggle2" value="1" class="toggle"><label for="toggle2" data-on="Yes" data-off="No"><span></span></label>
+                            <input id="toggle3" type="radio" name="toggle2" value="1" class="toggle"><label for="toggle3" data-on="Yes" data-off="No"><span></span></label>
+                               </div>
+                    </form>
                 </div>
                 
 
@@ -266,12 +272,15 @@
                     <p>本地接口测试</p>
                     <ul class="list">
                         <li><a href="#device_timer">Timer</a></li>
-                        <li><a href="#device_nsdchat">Nsdchat</a></li>
+                        <li><a href="#device_nsd">Nsdchat</a></li>
+                        <li><a href="#device_camera">Camera</a></li>
                     </ul>
                 </div>
                 <div class="panel" id="device_timer" title="Timer" data-footer="none" data-nav='nav_timer'>
                 </div>
-                <div class="panel" id="device_nsdchat" title="Nsdchat" data-footer="none" data-nav="nav_nsdchat">
+                <div class="panel" id="device_nsd" title="Nsdchat" data-footer="none" data-nav="nav_nsd">
+                </div>
+                <div class="panel" id="device_camera" title="Camera" data-footer="none" data-nav="nav_camera">
                 </div>
                 
             </div>
@@ -301,40 +310,6 @@
                     </li>
                 </ul>
             </nav>
-            <nav id="nav_nsdchat">
-                <div class='title'>
-                    <h3>需要安装插件ibp.plugin.nsdchat</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.initNsd();">initNsd</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.stopNsd();">stopNsd</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.startDiscovery();">startDiscovery</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.showDeviceList();">showDeviceList</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.stopDiscovery();">stopDiscovery</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.registerService();">registerService</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.unRegisterService();">unRegisterService</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.scrollToBottom();">scrollToBottom</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfNsdChat.clearContent();">clearContent</a>
-                    </li>
-                </ul>
-            </nav>
             <nav id="nav_timer">
                 <div class='title'>
                     <h3>需要安装插件ibp.plugin.timer</h3>
@@ -345,6 +320,53 @@
                     </li>
                     <li>
                         <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav id="nav_nsd">
+                <div class='title'>
+                    <h3>需要安装插件ibp.plugin.nsd</h3>
+                </div>
+                <ul>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.initNsd();">initNsd</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.stopNsd();">stopNsd</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.startDiscovery();">startDiscovery</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.showDeviceList();">showDeviceList</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.stopDiscovery();">stopDiscovery</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.registerService();">registerService</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.unRegisterService();">unRegisterService</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.scrollToBottom();">scrollToBottom</a>
+                    </li>
+                    <li>
+                        <a class="button icon check" onclick="AfNsd.clearContent();">clearContent</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav id="nav_camera">
+                <div class='title'>
+                    <h3>需要安装插件org.apache.cordova.camera</h3>
+                </div>
+                <ul>
+                    <li>
+                        <a class="button icon camera" onclick="AfCamera.startCamera();">Camera</a>
+                    </li>
+                    <li>
+                        <a class="button icon picture" onclick="AfCamera.cameraGallery();" class="buttonStyle">Gallery</a><br/>
                     </li>
                 </ul>
             </nav>

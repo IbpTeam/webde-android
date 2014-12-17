@@ -36,7 +36,7 @@ public class CordovaApp extends CordovaActivity
         String launchUrl;
 //        launchUrl = "file:///android_asset/www/file.html";
 //        launchUrl = "file:///android_asset/www/nsdchat.html";
-        launchUrl = "http://192.168.160.176:8000/study.html?ios7";
+        launchUrl = "http://192.168.5.176:8000/study.html?ios7";
 //        launchUrl = "file:///android_asset/webui/study.html?ios7";
         appView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存
 //        this.appView.enableRemoteDebugging();
