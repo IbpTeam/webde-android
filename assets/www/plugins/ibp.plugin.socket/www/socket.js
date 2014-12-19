@@ -1,27 +1,18 @@
-cordova.define("ibp.plugin.socket.socket", function(require, exports, module) { var NsdChat = function() {};
-NsdChat.prototype.initNsd = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "initNsd", []);
+cordova.define("ibp.plugin.socket.socket", function(require, exports, module) {
+var Socket = function() {};
+Socket.prototype.startServerSocket = function(successCallback, errorCallback, port) {
+    cordova.exec(successCallback, errorCallback, "SocketPlugin", "startServerSocket", [port]);
 };
-NsdChat.prototype.stopNsd = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "stopNsd", []);
+Socket.prototype.stopServerSocket = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "SocketPlugin", "stopServerSocket", []);
 };
-NsdChat.prototype.startDiscovery = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "startDiscovery", []);
+Socket.prototype.initHandler = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "SocketPlugin", "initHandler", []);
 };
-NsdChat.prototype.stopDiscovery = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "stopDiscovery", []);
+Socket.prototype.sendMessage = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, "SocketPlugin", "sendMessage", []);
 };
-NsdChat.prototype.registerService = function(successCallback, errorCallback, serviceInfo) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "registerService", serviceInfo);
-};
-NsdChat.prototype.unRegisterService = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "unRegisterService", []);
-};
-NsdChat.prototype.resolveService = function(successCallback, errorCallback, username) {
-    cordova.exec(successCallback, errorCallback, "NsdChatPlugin", "resolveService", [username]);
-};
-var NsdChat = new NsdChat();  
-module.exports = NsdChat;
-
+var SocketModule = new Socket();  
+module.exports = SocketModule;
 
 });

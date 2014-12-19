@@ -55,9 +55,9 @@ cordova.define("af.nsd", function(require, exports, module) {
       // $('#' + id).get(0).setAttribute("data-transition", "up");
       // $('#' + id).get(0).setAttribute("data-modal", "true");
       $.ui.loadContent('#'+id, false, false, "up");
-      var nsd_talk = $('#'+id);
-      var history = nsd_talk.find('ul');
-      var footerId = nsd_talk.attr('data-footer');
+      this.nsd_talk = $('#'+id);
+      this.history = this.nsd_talk.find('ul');
+      var footerId = this.nsd_talk.attr('data-footer');
       var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
       var submit = $('#afui #navbar').find('#' + footerId).find('a');
       // console.log('in fucntion showNsdTalk, footerId:', footerId);
@@ -81,6 +81,13 @@ cordova.define("af.nsd", function(require, exports, module) {
   var NSDUserList = function(){
     this.userlist = $('#content #nsd ul.list');
     this.nsdchatObj = new Object();//do not need to delete when device offline.
+  };
+  NSDUserList.prototype.processMsg = function(msgObj){
+    if(this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
+      this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].appendMsg(msgObj);
+    }else{
+      log("NSDUserList.prototype.processMsg: Panel Does Not Exist.");
+    }
   };
   NSDUserList.prototype.appendUser = function (name, txt){
     var that = this;
@@ -156,6 +163,11 @@ cordova.define("af.nsd", function(require, exports, module) {
     $(device_nsd).append($(content));
   }
   function log(info){
+    switch(typeof info){
+      case "object":
+        info = JSON.stringify(info);
+      break;
+    }
     console.log(info);
     $(content).append($('<p></p>').html(info));
   }
@@ -215,7 +227,10 @@ cordova.define("af.nsd", function(require, exports, module) {
   }
   
   // used for Class AfNsd defination.
-  var AfNsd = function() {};
+  var AfNsd = function(name, port) {
+    this.mName = name;
+    this.mPort = port;
+  };
   AfNsd.prototype.showDeviceList = function(){
     for(id in deviceList){
       log(JSON.stringify(deviceList[id]));
@@ -235,7 +250,7 @@ cordova.define("af.nsd", function(require, exports, module) {
                 log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
                 removeADevice(JSON.parse(msgfromnative.data));
               break;
-              case 'onPause':              
+              case 'onPause':
                 log(msgfromnative.type + ": " + msgfromnative.data);
                 clearDeviceList();
               break;
@@ -286,10 +301,12 @@ cordova.define("af.nsd", function(require, exports, module) {
       clearDeviceList();
   };
   AfNsd.prototype.registerService = function() {
-    serviceInfo = ['nsd-android-test', '8000'];
+    var that = this;
+    serviceInfo = [this.mName, this.mPort];
     window.NSD.registerService(
       function(msgfromnative){
         log(msgfromnative);
+        that.startServerSocket();
       },
       function(msgfromnative){
         log(msgfromnative);
@@ -305,13 +322,44 @@ cordova.define("af.nsd", function(require, exports, module) {
         log(msgfromnative);
       });
   };
+  AfNsd.prototype.startServerSocket = function(){
+    var that = this;
+    window.Socket.startServerSocket(
+      function(msgfromnative){
+        log(msgfromnative);
+        that.initServerHandler();
+      },
+      function(msgfromnative){
+        log(msgfromnative);
+      },
+      that.mPort);    
+  };
+  /**
+    "port":7777
+    "message":"Hi  this is in IMSender test"
+    "to":"rtty123"
+    "time":1418979857244
+    "address":"192.168.5.176"
+    "uuid":"rio1529rio"
+    "from":"cos"
+    "type":"app1"
+   */
+  AfNsd.prototype.initServerHandler = function(){
+    window.Socket.initHandler(
+      function(msgfromnative){
+        log(msgfromnative);
+      },
+      function(msgfromnative){
+        log(msgfromnative);
+      });    
+  };
   AfNsd.prototype.scrollToBottom = function(){
     $.ui.scrollToBottom('#device_nsd');
   };
   AfNsd.prototype.clearContent = function(){
     $(content).html('');
   };
-  var afNsd = new AfNsd();  
+  var afNsd = new AfNsd("nsd-android-test", 7777);  
   module.exports = afNsd;
 });
 
