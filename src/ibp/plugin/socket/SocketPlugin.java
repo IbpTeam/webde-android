@@ -54,6 +54,17 @@ public class SocketPlugin extends CordovaPlugin {
         }
         return true;
     }
+
+    public void onPause(boolean multitasking) {
+        if ((socketConn.getServerSocketState()) && (null != mHandler)) {
+            socketConn.stopServerSocket(null);
+            closeHandler();
+        }
+    }
+
+    public void onResume(boolean multitasking) {
+    }
+    
     private void sendMessage(CallbackContext callbackContext){
         
     }
@@ -72,8 +83,17 @@ public class SocketPlugin extends CordovaPlugin {
                 mHandler = new Handler() {
                     @Override
                     public void handleMessage(Message msg) {
-                        PluginResult result = new PluginResult(PluginResult.Status.OK, (JSONObject)msg.obj);
-                        result.setKeepCallback(true);
+                        PluginResult result = null;
+                        switch(msg.what){
+                        case 0:
+                            result = new PluginResult(PluginResult.Status.OK, (JSONObject)msg.obj);
+                            result.setKeepCallback(true);
+                            break;
+                        case -1:
+                            result = new PluginResult(PluginResult.Status.NO_RESULT);
+                            mHandler = null;
+                            break;
+                        }
                         cbc.sendPluginResult(result);
                     }
                 };
@@ -90,6 +110,13 @@ public class SocketPlugin extends CordovaPlugin {
         if(null != mHandler){
             Message message = new Message();
             message.obj = contentObj;
+            mHandler.sendMessage(message);
+        }
+    }    
+    public void closeHandler() {
+        if(null != mHandler){
+            Message message = new Message();
+            message.what = -1;
             mHandler.sendMessage(message);
         }
     }

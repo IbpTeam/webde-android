@@ -82,11 +82,16 @@ public class SocketConnection {
             logToMainFrame("LOG", "ServerSocket is Not Running.");
             result = new PluginResult(PluginResult.Status.ERROR, "stopServerSocket: ServerSocket is Not Running.");
         }
-        callbackContext.sendPluginResult(result);
+        if(null != callbackContext){
+            callbackContext.sendPluginResult(result);
+        }
     }
     private ServerSocket mServerSocket;
     private Socket remoteSocket;
     private boolean isServerStarted = false;
+    public boolean getServerSocketState(){
+        return isServerStarted;
+    }
 //    private Map<String, Socket> socketPool = new HashMap<String,Socket>();
     private Runnable ServerRunnable = new Runnable() {
         @Override
