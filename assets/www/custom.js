@@ -48,6 +48,7 @@ cordova.define("af.nsd", function(require, exports, module) {
     $.extend(this.device, device);
   };
   NSDChat.prototype.load = function(){
+    var that = this;
     var id = "nsd_talk_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
     if(! $('#'+id).length){
       $.ui.addContentDiv(id, "<p>Connect To " + this.device.address + ":" + this.device.port + "</p><ul></ul>", this.device.address);
@@ -63,11 +64,12 @@ cordova.define("af.nsd", function(require, exports, module) {
       // console.log('in fucntion showNsdTalk, footerId:', footerId);
       // console.log('in fucntion showNsdTalk, history:', history);
       // console.log('in fucntion showNsdTalk, textarea:', textarea);
-      // console.log('in fucntion showNsdTalk, submit:', submit); 
-      submit.click(function(){
+      // console.log('in fucntion showNsdTalk, submit:', submit);
+      submit.unbind("click");
+      submit.bind("click", function(){
         var content = textarea.val();
         if(content.length){
-            history.append($('<li></li>').html(content));
+            that.history.append($('<li></li>').html(content));
             textarea.val('');
         }else{
             alert("内容不能为空");
@@ -77,6 +79,9 @@ cordova.define("af.nsd", function(require, exports, module) {
       $.ui.loadContent('#'+id, false, false, "up");
     }
   };
+  NSDChat.prototype.processMsg = function(msgObj){
+    this.history.append($('<li></li>').html(msgObj.message));
+  };
 
   var NSDUserList = function(){
     this.userlist = $('#content #nsd ul.list');
@@ -84,7 +89,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   NSDUserList.prototype.processMsg = function(msgObj){
     if(this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
-      this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].appendMsg(msgObj);
+      this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgObj);
     }else{
       log("NSDUserList.prototype.processMsg: Panel Does Not Exist.");
     }
@@ -162,12 +167,13 @@ cordova.define("af.nsd", function(require, exports, module) {
   }else{
     $(device_nsd).append($(content));
   }
-  function log(info){
+  function myLog(info, prefix){
     switch(typeof info){
       case "object":
         info = JSON.stringify(info);
       break;
     }
+    info = "prefix: " + info;
     console.log(info);
     $(content).append($('<p></p>').html(info));
   }
@@ -185,7 +191,7 @@ cordova.define("af.nsd", function(require, exports, module) {
       }
     }
     if(isDeviceExist){
-      log("Error: " + device.name + " has exist.");
+      myLog("Error: " + device.name + " has exist.", "addADevice");
     }else{
       deviceList[device.name] = device;
       afNsdUserList.appendUser(device.name, '用户：' + device.name);
@@ -233,7 +239,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   AfNsd.prototype.showDeviceList = function(){
     for(id in deviceList){
-      log(JSON.stringify(deviceList[id]));
+      myLog(JSON.stringify(deviceList[id]), "AfNsd.prototype.showDeviceList");
     }    
   };
   AfNsd.prototype.initNsd = function() {
@@ -243,39 +249,39 @@ cordova.define("af.nsd", function(require, exports, module) {
           case "object":
             switch(msgfromnative.type){
               case 'onServiceFound':
-                log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+                myLog(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name, "AfNsd.prototype.initNsd");
                 addADevice(JSON.parse(msgfromnative.data));
               break;
               case 'onServiceLost':
-                log(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name);
+                myLog(msgfromnative.type + ": " + JSON.parse(msgfromnative.data).name, "AfNsd.prototype.initNsd");
                 removeADevice(JSON.parse(msgfromnative.data));
               break;
               case 'onPause':
-                log(msgfromnative.type + ": " + msgfromnative.data);
+                myLog(msgfromnative.type + ": " + msgfromnative.data, "AfNsd.prototype.initNsd");
                 clearDeviceList();
               break;
               default:
-                log(msgfromnative.type + ": " + msgfromnative.data);
+                myLog(msgfromnative.type + ": " + msgfromnative.data, "AfNsd.prototype.initNsd");
               break;
             }
             break;
           case "string":
-            log(msgfromnative);
+            myLog(msgfromnative, "AfNsd.prototype.initNsd");
           break;
         }
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.initNsd");
       });
   };
   
   AfNsd.prototype.stopNsd = function() {
     window.NSD.stopNsd(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.stopNsd");
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.stopNsd");
       });
       clearDeviceList();
       this.clearContent();
@@ -284,19 +290,19 @@ cordova.define("af.nsd", function(require, exports, module) {
   AfNsd.prototype.startDiscovery = function() {
     window.NSD.startDiscovery(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.startDiscovery");
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.startDiscovery");
       });
   };
   AfNsd.prototype.stopDiscovery = function() {
     window.NSD.stopDiscovery(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.stopDiscovery");
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.stopDiscovery");
       });
       clearDeviceList();
   };
@@ -305,32 +311,32 @@ cordova.define("af.nsd", function(require, exports, module) {
     serviceInfo = [this.mName, this.mPort];
     window.NSD.registerService(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.registerService");
         that.startServerSocket();
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.registerService");
       },
       serviceInfo);
   };
   AfNsd.prototype.unRegisterService = function() {
     window.NSD.unRegisterService(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.unRegisterService");
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.unRegisterService");
       });
   };
   AfNsd.prototype.startServerSocket = function(){
     var that = this;
     window.Socket.startServerSocket(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
         that.initServerHandler();
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
       },
       that.mPort);    
   };
@@ -347,10 +353,17 @@ cordova.define("af.nsd", function(require, exports, module) {
   AfNsd.prototype.initServerHandler = function(){
     window.Socket.initHandler(
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
+        switch(typeof msgfromnative){
+          case "object":
+            afNsdUserList.processMsg(msgfromnative);
+          break;
+          case "string":
+          break;
+        }
       },
       function(msgfromnative){
-        log(msgfromnative);
+        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
       });    
   };
   AfNsd.prototype.scrollToBottom = function(){
@@ -446,29 +459,6 @@ cordova.define("af.camera", function(require, exports, module) {
   });
 })();
 /*
-  function showNsdTalk(panel){
-    var nsd_talk = $(panel);
-    var history = nsd_talk.find('ul');
-    var footerId = nsd_talk.attr('data-footer');
-    var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
-    var submit = $('#afui #navbar').find('#' + footerId).find('a');
-    console.log('in fucntion showNsdTalk, panel:', panel);
-    console.log('in fucntion showNsdTalk, footerId:', footerId);
-    console.log('in fucntion showNsdTalk, history:', history);
-    console.log('in fucntion showNsdTalk, textarea:', textarea);
-    console.log('in fucntion showNsdTalk, submit:', submit); 
-    submit.click(function(){
-      var content = textarea.val();
-      if(content.length){
-          history.append($('<li></li>').html(content));
-          textarea.val('');
-      }else{
-          alert("内容不能为空");
-      }     
-    });
-  };
-  
-  
   function logObj(obj){
     for(id in obj){
       if((typeof obj[id]) === object){
