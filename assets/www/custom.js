@@ -80,7 +80,7 @@ cordova.define("af.nsd", function(require, exports, module) {
     }
   };
   NSDChat.prototype.processMsg = function(msgObj){
-    this.history.append($('<li></li>').html(msgObj.message));
+    this.history.append($('<li></li>').html(msgObj.from + ":" + msgObj.message));
   };
 
   var NSDUserList = function(){
@@ -88,10 +88,10 @@ cordova.define("af.nsd", function(require, exports, module) {
     this.nsdchatObj = new Object();//do not need to delete when device offline.
   };
   NSDUserList.prototype.processMsg = function(msgObj){
-    if(this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
-      this.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgObj);
+    if(this.nsdchatObj[msgObj.address+'.'+msgObj.port]){
+      this.nsdchatObj[msgObj.address+'.'+msgObj.port].processMsg(msgObj);
     }else{
-      log("NSDUserList.prototype.processMsg: Panel Does Not Exist.");
+      myLog("Panel Does Not Exist.", "NSDUserList.prototype.processMsg");
     }
   };
   NSDUserList.prototype.appendUser = function (name, txt){
@@ -99,7 +99,7 @@ cordova.define("af.nsd", function(require, exports, module) {
     var af_a = $.create('<a>').on('click', function(e){
       window.NSD.resolveService(
         function(msgfromnative){
-          log(JSON.stringify(msgfromnative));
+          myLog(JSON.stringify(msgfromnative), "NSDUserList.prototype.appendUser");
           overWriteADevice(msgfromnative);
           if(!that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
             that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port] = new NSDChat(msgfromnative);
@@ -107,7 +107,7 @@ cordova.define("af.nsd", function(require, exports, module) {
           that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].load();
         },
         function(msgfromnative){
-          log(msgfromnative);
+          myLog(msgfromnative, "NSDUserList.prototype.appendUser");
         },
         $(this).parent().attr('name')
       );
@@ -173,7 +173,7 @@ cordova.define("af.nsd", function(require, exports, module) {
         info = JSON.stringify(info);
       break;
     }
-    info = "prefix: " + info;
+    info = prefix + ": " + info;
     console.log(info);
     $(content).append($('<p></p>').html(info));
   }
@@ -276,9 +276,11 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   
   AfNsd.prototype.stopNsd = function() {
+    var that = this;
     window.NSD.stopNsd(
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.stopNsd");
+        that.startServerSocket();
       },
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.stopNsd");
@@ -320,25 +322,15 @@ cordova.define("af.nsd", function(require, exports, module) {
       serviceInfo);
   };
   AfNsd.prototype.unRegisterService = function() {
+    var that = this;
     window.NSD.unRegisterService(
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.unRegisterService");
+        that.stopServerSocket();
       },
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.unRegisterService");
       });
-  };
-  AfNsd.prototype.startServerSocket = function(){
-    var that = this;
-    window.Socket.startServerSocket(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
-        that.initServerHandler();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
-      },
-      that.mPort);    
   };
   /**
     "port":7777
@@ -364,6 +356,29 @@ cordova.define("af.nsd", function(require, exports, module) {
       },
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
+      });    
+  };
+  AfNsd.prototype.startServerSocket = function(){
+    var that = this;
+    window.Socket.startServerSocket(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
+        that.initServerHandler();
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
+      },
+      that.mPort);    
+  };
+  AfNsd.prototype.stopServerSocket = function(){
+    var that = this;
+    window.Socket.stopServerSocket(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfNsd.prototype.stopServerSocket");
+        that.initServerHandler();
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfNsd.prototype.stopServerSocket");
       });    
   };
   AfNsd.prototype.scrollToBottom = function(){
