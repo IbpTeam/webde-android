@@ -46,7 +46,7 @@ cordova.define("af.nsd", function(require, exports, module) {
   var NSDChat = function(device){
     this.device = {};
     $.extend(this.device, device);
-  }
+  };
   NSDChat.prototype.load = function(){
     var id = "nsd_talk_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
     if(! $('#'+id).length){
@@ -73,17 +73,15 @@ cordova.define("af.nsd", function(require, exports, module) {
             alert("内容不能为空");
         }     
       });
-
     } else {      
       $.ui.loadContent('#'+id, false, false, "up");
     }
-
-  }
+  };
 
   var NSDUserList = function(){
     this.userlist = $('#content #nsd ul.list');
     this.nsdchatObj = new Object();//do not need to delete when device offline.
-  }
+  };
   NSDUserList.prototype.appendUser = function (name, txt){
     var that = this;
     var af_a = $.create('<a>').on('click', function(e){
@@ -115,7 +113,7 @@ cordova.define("af.nsd", function(require, exports, module) {
         '<b>' + name + '</b><br>' + txt
     ).appendTo($(af_a));
     this.userlist.append($('<li>').attr('name', name).append($(af_a)));
-  }
+  };
   NSDUserList.prototype.overWriteUser = function (device){
     var users = this.userlist.find('li');
     for(var i=0; i < users.length; i++){
@@ -127,7 +125,7 @@ cordova.define("af.nsd", function(require, exports, module) {
     if(list_text){
       $(list_text).html('<b>' + device.name + '</b><br>' + device.address + ":" + device.port); 
     } 
-  }
+  };
   NSDUserList.prototype.rmUserByName = function (name){
     var users = this.userlist.find('li');
     var findUser = false;
@@ -139,13 +137,13 @@ cordova.define("af.nsd", function(require, exports, module) {
       }
     }
     return findUser;
-  }
+  };
   NSDUserList.prototype.rmAllUsers = function (){
     var users = this.userlist.find('li');
     for(var i=0; i < users.length; i++){
       $(users[i]).remove();
     }    
-  }
+  };
   var afNsdUserList = new NSDUserList();  
 
 
