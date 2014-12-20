@@ -30,6 +30,7 @@ import android.os.Message;
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
 public class SocketPlugin extends CordovaPlugin {
     private SocketConnection socketConn;
+    private String mName;
     private int mPort = 0;
     public SocketPlugin(){
         socketConn = new SocketConnection(this);
@@ -39,7 +40,8 @@ public class SocketPlugin extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         switch (action) {
         case "startServerSocket":
-            mPort = args.getInt(0);
+            mName = args.getString(0);
+            mPort = args.getInt(1);
             this.startServerSocket(callbackContext, mPort);
             break;
         case "stopServerSocket":
@@ -70,12 +72,33 @@ public class SocketPlugin extends CordovaPlugin {
 
     public void onResume(boolean multitasking) {
     }
-    
+    /**
+     * origMsg: [name, address, port, message]
+     * @param callbackContext
+     * @param origMsg
+     */
     private void sendMessage(CallbackContext callbackContext, JSONArray origMsg){
-        JSONObject msgObj = new JSONObject();
-        msgObj.put("message", origMsg.getString(0));
-        msgObj.put("type", "app1");
-        socketConn.sendMessage(address, port, msgObj);
+        try {
+            JSONObject msgObj = new JSONObject();
+            String dstName = origMsg.getString(0);
+            String address = origMsg.getString(1);
+            int port = origMsg.getInt(2);
+            String message = origMsg.getString(3);
+            if(null != mName){
+                msgObj.put("from", mName);
+            }
+            msgObj.put("to", dstName);
+            msgObj.put("message", message);
+            msgObj.put("type", "app1");
+            if(socketConn.sendMessage(address, port, msgObj)){
+                callbackContext.success("Plugin.sendMessage success");
+            }else{
+                callbackContext.error("Plugin.sendMessage error");
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     private void startServerSocket(CallbackContext callbackContext, int port){
 //        initHandler(callbackContext);

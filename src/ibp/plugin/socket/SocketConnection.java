@@ -200,7 +200,9 @@ public class SocketConnection {
     }    
     public boolean sendMessage(String address, int port, JSONObject msgObj) throws JSONException {
         boolean isOK = false;
-        msgObj.put("from", this.mAddress);
+        if(!msgObj.has("from")){
+            msgObj.put("from", this.mAddress);
+        }
         msgObj.put("uuid", this.mAddress);
         msgObj.put("time", System.currentTimeMillis());
         JSONObject objToSend = new JSONObject();
