@@ -134,6 +134,9 @@ public class SocketConnection {
         try {
             input = getReader(socket);
             String message = input.readLine();
+            if(null == message){
+                return null;
+            }
             JSONObject msgObjFromRemote = new JSONObject(message);
             if(msgObjFromRemote.has("type") && (msgObjFromRemote.getString("type").equals("SentEnFirst"))){
                 mMsgObj.put("content", msgObjFromRemote.getString("content"));                
@@ -199,6 +202,7 @@ public class SocketConnection {
         boolean isOK = false;
         msgObj.put("from", this.mAddress);
         msgObj.put("uuid", this.mAddress);
+        msgObj.put("time", System.currentTimeMillis());
         JSONObject objToSend = new JSONObject();
         objToSend.put("type", "SentEnFirst");
         objToSend.put("content", msgObj.toString());

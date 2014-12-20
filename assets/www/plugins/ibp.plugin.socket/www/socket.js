@@ -9,8 +9,8 @@ Socket.prototype.stopServerSocket = function(successCallback, errorCallback) {
 Socket.prototype.initHandler = function(successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, "SocketPlugin", "initHandler", []);
 };
-Socket.prototype.sendMessage = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, "SocketPlugin", "sendMessage", []);
+Socket.prototype.sendMessage = function(successCallback, errorCallback, msgArray) {
+    cordova.exec(successCallback, errorCallback, "SocketPlugin", "sendMessage", msgArray);
 };
 var SocketModule = new Socket();  
 module.exports = SocketModule;

@@ -49,7 +49,7 @@ public class SocketPlugin extends CordovaPlugin {
             this.initHandler(callbackContext);
             break;
         case "sendMessage":
-            this.sendMessage(callbackContext);
+            this.sendMessage(callbackContext, args);
             break;
         }
         return true;
@@ -57,16 +57,25 @@ public class SocketPlugin extends CordovaPlugin {
 
     public void onPause(boolean multitasking) {
         if ((socketConn.getServerSocketState()) && (null != mHandler)) {
-            socketConn.stopServerSocket(null);
-            closeHandler();
+            new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    socketConn.stopServerSocket(null);
+                    closeHandler();                    
+                }                
+            }).start();
         }
     }
 
     public void onResume(boolean multitasking) {
     }
     
-    private void sendMessage(CallbackContext callbackContext){
-        
+    private void sendMessage(CallbackContext callbackContext, JSONArray origMsg){
+        JSONObject msgObj = new JSONObject();
+        msgObj.put("message", origMsg.getString(0));
+        msgObj.put("type", "app1");
+        socketConn.sendMessage(address, port, msgObj);
     }
     private void startServerSocket(CallbackContext callbackContext, int port){
 //        initHandler(callbackContext);

@@ -44,6 +44,9 @@ cordova.define("af.nsd", function(require, exports, module) {
     return;
   }
   var NSDChat = function(device){
+    /**
+     * {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}
+    */
     this.device = {};
     $.extend(this.device, device);
   };
@@ -65,15 +68,19 @@ cordova.define("af.nsd", function(require, exports, module) {
       // console.log('in fucntion showNsdTalk, history:', history);
       // console.log('in fucntion showNsdTalk, textarea:', textarea);
       // console.log('in fucntion showNsdTalk, submit:', submit);
+      function successCb(){
+        
+      }
       submit.unbind("click");
       submit.bind("click", function(){
         var content = textarea.val();
         if(content.length){
-            that.history.append($('<li></li>').html(content));
-            textarea.val('');
+          afNsd.sendMessage([that.device.address, that.device.port, content], successCb, errorCb);
+          that.history.append($('<li></li>').html(content));
+          textarea.val('');
         }else{
-            alert("内容不能为空");
-        }     
+          alert("内容不能为空");
+        }
       });
     } else {      
       $.ui.loadContent('#'+id, false, false, "up");
@@ -159,6 +166,76 @@ cordova.define("af.nsd", function(require, exports, module) {
   var afNsdUserList = new NSDUserList();  
 
 
+/**
+ * AfSocket类，实现Socket通信
+ * 
+ */
+  var AfSocket = function(){
+  };
+  /**
+   * format of msgfromnative
+   * "port":7777
+   * "message":"Hi  this is in IMSender test"
+   * "to":"rtty123"
+   * "time":1418979857244
+   * "address":"192.168.5.176"
+   * "uuid":"rio1529rio"
+   * "from":"cos"
+   * "type":"app1"   
+   */
+  AfSocket.prototype.initServerHandler = function(){
+    window.Socket.initHandler(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.initServerHandler");
+        switch(typeof msgfromnative){
+          case "object":
+            afNsdUserList.processMsg(msgfromnative);
+          break;
+          case "string":
+          break;
+        }
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
+      });    
+  };
+  AfSocket.prototype.startServerSocket = function(){
+    var that = this;
+    window.Socket.startServerSocket(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.startServerSocket");
+        that.initServerHandler();
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.startServerSocket");
+      },
+      that.mPort);    
+  };
+  AfSocket.prototype.stopServerSocket = function(){
+    var that = this;
+    window.Socket.stopServerSocket(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.stopServerSocket");
+        that.initServerHandler();
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.stopServerSocket");
+      });    
+  };
+  AfSocket.prototype.sendMessage = function(message, to, successcb, errorcb){
+    var that = this;
+    window.Socket.sendMessage(
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.sendMessage");
+        successcb();
+      },
+      function(msgfromnative){
+        myLog(msgfromnative, "AfSocket.prototype.sendMessage");
+        errorcb();
+      },
+      [message, to]);
+  };
+  
   // used for content show.
   var device_nsd = $('#content #device_nsd');
   var content = $('<div></div>');
@@ -331,55 +408,6 @@ cordova.define("af.nsd", function(require, exports, module) {
       function(msgfromnative){
         myLog(msgfromnative, "AfNsd.prototype.unRegisterService");
       });
-  };
-  /**
-    "port":7777
-    "message":"Hi  this is in IMSender test"
-    "to":"rtty123"
-    "time":1418979857244
-    "address":"192.168.5.176"
-    "uuid":"rio1529rio"
-    "from":"cos"
-    "type":"app1"
-   */
-  AfNsd.prototype.initServerHandler = function(){
-    window.Socket.initHandler(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
-        switch(typeof msgfromnative){
-          case "object":
-            afNsdUserList.processMsg(msgfromnative);
-          break;
-          case "string":
-          break;
-        }
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
-      });    
-  };
-  AfNsd.prototype.startServerSocket = function(){
-    var that = this;
-    window.Socket.startServerSocket(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
-        that.initServerHandler();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.startServerSocket");
-      },
-      that.mPort);    
-  };
-  AfNsd.prototype.stopServerSocket = function(){
-    var that = this;
-    window.Socket.stopServerSocket(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.stopServerSocket");
-        that.initServerHandler();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.stopServerSocket");
-      });    
   };
   AfNsd.prototype.scrollToBottom = function(){
     $.ui.scrollToBottom('#device_nsd');
