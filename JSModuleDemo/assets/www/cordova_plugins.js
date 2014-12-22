@@ -259,13 +259,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/com.tlantic.plugins.socket/www/socket.js",
-        "id": "com.tlantic.plugins.socket.Socket",
-        "clobbers": [
-            "window.tlantic.plugins.socket"
-        ]
-    },
-    {
         "file": "plugins/ibp.plugin.helloworld/www/HelloWorldJS.js",
         "id": "ibp.plugin.helloworld.helloworld",
         "clobbers": [
@@ -280,10 +273,17 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/ibp.plugin.nsdchat/www/nsdchat.js",
-        "id": "ibp.plugin.nsdchat.nsdchat",
+        "file": "plugins/ibp.plugin.nsd/www/nsd.js",
+        "id": "ibp.plugin.nsd.nsd",
         "clobbers": [
-            "NsdChat"
+            "NSD"
+        ]
+    },
+    {
+        "file": "plugins/ibp.plugin.socket/www/socket.js",
+        "id": "ibp.plugin.socket.socket",
+        "clobbers": [
+            "Socket"
         ]
     }
 ];
@@ -297,11 +297,11 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.3.3",
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.device": "0.2.12",
-    "com.tlantic.plugins.socket": "0.3.2",
     "com.perak.plugin.Disco": "1.0.0",
     "ibp.plugin.helloworld": "0.0.3",
     "ibp.plugin.timer": "0.0.2",
-    "ibp.plugin.nsdchat": "0.0.1"
+    "ibp.plugin.nsd": "0.0.1",
+    "ibp.plugin.socket": "0.0.1"
 }
 // BOTTOM OF METADATA
 });
