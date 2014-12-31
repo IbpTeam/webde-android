@@ -20,11 +20,11 @@ cordova.define("org.apache.cordova.file.FileEntry", function(require, exports, m
 */
 
 var utils = require('cordova/utils'),
-  exec = require('cordova/exec'),
-  Entry = require('./Entry'),
-  FileWriter = require('./FileWriter'),
-  File = require('./File'),
-  FileError = require('./FileError');
+    exec = require('cordova/exec'),
+    Entry = require('./Entry'),
+    FileWriter = require('./FileWriter'),
+    File = require('./File'),
+    FileError = require('./FileError');
 
 /**
  * An interface representing a file on the file system.
@@ -36,7 +36,7 @@ var utils = require('cordova/utils'),
  * {FileSystem} filesystem on which the file resides (readonly)
  */
 var FileEntry = function(name, fullPath, fileSystem, nativeURL) {
-   FileEntry.__super__.constructor.apply(this, [true, false, name, fullPath, fileSystem, nativeURL]);
+     FileEntry.__super__.constructor.apply(this, [true, false, name, fullPath, fileSystem, nativeURL]);
 };
 
 utils.extend(FileEntry, Entry);
@@ -48,15 +48,15 @@ utils.extend(FileEntry, Entry);
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
-  this.file(function(filePointer) {
-    var writer = new FileWriter(filePointer);
+    this.file(function(filePointer) {
+        var writer = new FileWriter(filePointer);
 
-    if (writer.localURL === null || writer.localURL === "") {
-      errorCallback && errorCallback(new FileError(FileError.INVALID_STATE_ERR));
-    } else {
-      successCallback && successCallback(writer);
-    }
-  }, errorCallback);
+        if (writer.localURL === null || writer.localURL === "") {
+            errorCallback && errorCallback(new FileError(FileError.INVALID_STATE_ERR));
+        } else {
+            successCallback && successCallback(writer);
+        }
+    }, errorCallback);
 };
 
 /**
@@ -66,15 +66,15 @@ FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.file = function(successCallback, errorCallback) {
-  var localURL = this.toInternalURL();
-  var win = successCallback && function(f) {
-    var file = new File(f.name, localURL, f.type, f.lastModifiedDate, f.size);
-    successCallback(file);
-  };
-  var fail = errorCallback && function(code) {
-    errorCallback(new FileError(code));
-  };
-  exec(win, fail, "File", "getFileMetadata", [localURL]);
+    var localURL = this.toInternalURL();
+    var win = successCallback && function(f) {
+        var file = new File(f.name, localURL, f.type, f.lastModifiedDate, f.size);
+        successCallback(file);
+    };
+    var fail = errorCallback && function(code) {
+        errorCallback(new FileError(code));
+    };
+    exec(win, fail, "File", "getFileMetadata", [localURL]);
 };
 
 

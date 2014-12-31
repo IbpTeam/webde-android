@@ -29,17 +29,17 @@ cordova.define("org.apache.cordova.file.File", function(require, exports, module
  */
 
 var File = function(name, localURL, type, lastModifiedDate, size){
-  this.name = name || '';
-  this.localURL = localURL || null;
-  this.type = type || null;
-  this.lastModified = lastModifiedDate || null;
-  // For backwards compatibility, store the timestamp in lastModifiedDate as well
-  this.lastModifiedDate = lastModifiedDate || null;
-  this.size = size || 0;
+    this.name = name || '';
+    this.localURL = localURL || null;
+    this.type = type || null;
+    this.lastModified = lastModifiedDate || null;
+    // For backwards compatibility, store the timestamp in lastModifiedDate as well
+    this.lastModifiedDate = lastModifiedDate || null;
+    this.size = size || 0;
 
-  // These store the absolute start and end for slicing the file.
-  this.start = 0;
-  this.end = this.size;
+    // These store the absolute start and end for slicing the file.
+    this.start = 0;
+    this.end = this.size;
 };
 
 /**
@@ -50,29 +50,29 @@ var File = function(name, localURL, type, lastModifiedDate, size){
  * end {Number} The index at which to end the slice (exclusive).
  */
 File.prototype.slice = function(start, end) {
-  var size = this.end - this.start;
-  var newStart = 0;
-  var newEnd = size;
-  if (arguments.length) {
-    if (start < 0) {
-      newStart = Math.max(size + start, 0);
-    } else {
-      newStart = Math.min(size, start);
+    var size = this.end - this.start;
+    var newStart = 0;
+    var newEnd = size;
+    if (arguments.length) {
+        if (start < 0) {
+            newStart = Math.max(size + start, 0);
+        } else {
+            newStart = Math.min(size, start);
+        }
     }
-  }
 
-  if (arguments.length >= 2) {
-    if (end < 0) {
-      newEnd = Math.max(size + end, 0);
-    } else {
-      newEnd = Math.min(end, size);
+    if (arguments.length >= 2) {
+        if (end < 0) {
+            newEnd = Math.max(size + end, 0);
+        } else {
+            newEnd = Math.min(end, size);
+        }
     }
-  }
 
-  var newFile = new File(this.name, this.localURL, this.type, this.lastModified, this.size);
-  newFile.start = this.start + newStart;
-  newFile.end = this.start + newEnd;
-  return newFile;
+    var newFile = new File(this.name, this.localURL, this.type, this.lastModified, this.size);
+    newFile.start = this.start + newStart;
+    newFile.end = this.start + newEnd;
+    return newFile;
 };
 
 
