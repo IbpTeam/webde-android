@@ -6,3 +6,22 @@
     padding:8px 12px;
     margin:8px 0;
 }
+
+/* CSS responsive square grid */        
+.grid-photo {margin:3px -7px;} 
+.grid-photo:after {content:'';display:block;clear:both;}        
+.grid-photo li {position: relative; display:block; float:left; width: 10%; padding-bottom: 10%;}
+.grid-photo .grid-photo-box {position: absolute;left: 3px;right: 3px;top: 3px;bottom: 3px; background-color: rgba(128,128,128,0.2);} 
+.grid-photo img {width:100%;height:100%}
+@media only screen and (max-width : 1024px) {
+    .grid-photo li {width: 12.5%; padding-bottom: 12.5%;}        
+}        
+@media only screen and (max-width : 768px) {
+    .grid-photo li {width: 16.6%; padding-bottom: 16.6%;}        
+}        
+@media only screen and (max-width : 480px) {
+    .grid-photo li {width: 25%; padding-bottom: 25%;}        
+}
+@media only screen and (max-width : 320px) {
+    .grid-photo li {width: 33.3%; padding-bottom: 33.3%;}        
+}
