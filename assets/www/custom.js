@@ -229,11 +229,11 @@ cordova.define("af.nsd", function(require, exports, module) {
   AfSocket.prototype.sendMessage = function(successcb, errorcb, msgArr){
     window.Socket.sendMessage(
       function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.sendMessage");
+        myLog(msgfromnative + " and message to send:" + msgArr, "AfSocket.prototype.sendMessage");
         successcb();
       },
       function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.sendMessage");
+        myLog(msgfromnative + " and message to send:" + msgArr, "AfSocket.prototype.sendMessage");
         errorcb();
       },
       msgArr);
