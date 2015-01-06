@@ -297,7 +297,6 @@ module.exports.metadata =
     "org.apache.cordova.camera": "0.3.3",
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.device": "0.2.12",
-    "com.perak.plugin.Disco": "1.0.0",
     "ibp.plugin.helloworld": "0.0.3",
     "ibp.plugin.timer": "0.0.2",
     "ibp.plugin.nsd": "0.0.1",
