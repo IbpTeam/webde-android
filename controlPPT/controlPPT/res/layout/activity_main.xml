@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/hello_world" />
+     <EditText
+        android:id="@+id/EditText01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_below="@+id/TextView01"
+        android:inputType="textNoSuggestions"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/Button01"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/EditText01"
+        android:onClick="onClick"
+        android:text="Go" />
+  <!--  
+      <WebView 
+        android:id="@+id/webview"
+        android:layout_below="@+id/Button01"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+        -->
+
+        <Button
+            android:id="@+id/qrscan_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Button01"
+            android:gravity="center"
+            android:onClick="launchScanner"
+            android:text="扫描二维码" />
+
+</RelativeLayout>
