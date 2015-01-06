@@ -22,13 +22,13 @@ cordova.define("org.apache.cordova.file.androidFileSystem", function(require, ex
 FILESYSTEM_PROTOCOL = "cdvfile";
 
 module.exports = {
-  __format__: function(fullPath) {
-    if (this.name === 'content') {
-      return 'content:/' + fullPath;
+    __format__: function(fullPath) {
+        if (this.name === 'content') {
+            return 'content:/' + fullPath;
+        }
+        var path = ('/'+this.name+(fullPath[0]==='/'?'':'/')+encodeURI(fullPath)).replace('//','/');
+        return FILESYSTEM_PROTOCOL + '://localhost' + path;
     }
-    var path = ('/'+this.name+(fullPath[0]==='/'?'':'/')+encodeURI(fullPath)).replace('//','/');
-    return FILESYSTEM_PROTOCOL + '://localhost' + path;
-  }
 };
 
 
