@@ -120,10 +120,7 @@ public class NSDPlugin extends CordovaPlugin {
 
     private void stopNsd(CallbackContext callbackContext) {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.unRegisterService();
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            unRegisterServiceAndStopNSD();
             callbackContext.success("In stopNsd.");
         } else {
             callbackContext.error("Nsd has stopped.");
@@ -189,13 +186,8 @@ public class NSDPlugin extends CordovaPlugin {
 
     public void onPause(boolean multitasking) {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("onPause", "stopNsd in onPause.");
-            mNsdHelper.setRegisterServiceCB(initNsdCB);
-            mNsdHelper.unRegisterService();
-            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            this.sendByHandler("onPause", "unRegisterService and stopNSD.");
+            unRegisterServiceAndStopNSD();
         }
     }
 
@@ -205,13 +197,16 @@ public class NSDPlugin extends CordovaPlugin {
 
     public void onDestroy() {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("onDestroy", "stopNsd in onDestroy.");
-            mNsdHelper.setRegisterServiceCB(initNsdCB);
-            mNsdHelper.unRegisterService();
-            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            this.sendByHandler("onDestroy", "unRegisterService and stopNSD.");
+            unRegisterServiceAndStopNSD();
         }
+    }
+    private void unRegisterServiceAndStopNSD(){
+        mNsdHelper.setRegisterServiceCB(initNsdCB);
+        mNsdHelper.unRegisterService();
+        mNsdHelper.setServiceDiscoveryCB(initNsdCB);
+        mNsdHelper.stopDiscovery();
+        mNsdHelper = null;
+        mHandler = null;        
     }
 }
