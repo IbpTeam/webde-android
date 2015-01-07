@@ -246,6 +246,10 @@ cordova.define("af.nsd", function(require, exports, module) {
   var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);
   nsdObj.scrollToBottom = nsdLogObj.scrollToBottom;
   nsdObj.clearContent = nsdLogObj.clearContent;
+  nsdObj.addResolveServiceListener(function(device){
+    var entranceObj = new EntranceClass(device);
+    entranceObj.load();
+  });
   module.exports = nsdObj;
 });
 

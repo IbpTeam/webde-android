@@ -46,7 +46,7 @@ var NsdClass = function(name, port, debug) {
   this._resolveServiceListener = new Array();
   this._registerServiceListener = new Array();
 };
-NsdClass.prototype.setResolveServiceListener = function(cb){
+NsdClass.prototype.addResolveServiceListener = function(cb){
   this._resolveServiceListener.push(cb);
 };
 NsdClass.prototype.removeResolveServiceListener = function(cb){
@@ -60,7 +60,7 @@ NsdClass.prototype.callResolveServiceListener = function(msgfromnative){
     this._resolveServiceListener[index](msgfromnative);
   }
 };
-NsdClass.prototype.setRegisterServiceListener = function(cb){
+NsdClass.prototype.addRegisterServiceListener = function(cb){
   //format: {start:startcb, stop:stopcb}
   this._registerServiceListener.push(cb);
 };
@@ -307,39 +307,56 @@ var EntranceClass = function(device){
   this.device = {};
   $.extend(this.device, device);
 };
-EntranceClass.prototype.load = function(){  
+EntranceClass.prototype.load = function(){
     var that = this;
     var id = "entrance_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
     if(! $('#'+id).length){
-      $.ui.addContentDiv(id, 
-        "<p>Your are Going to communicate with" + this.device.address + ":" + this.device.port 
-        + ". Please Choose an Action Below:</p>",
+      $.ui.addContentDiv(id,
+        "<p>Your are Going to communicate with" + this.device.address + ":" + this.device.port + ". </p>"
+        + "<p>Please Choose an Action Below:</p>"
+        + "<ul class='grid-photo'><ul>",
         this.device.address);
-      // $('#'+id).get(0).setAttribute("data-footer", "nsd_talk_footer");
+      this.entrance = $('#'+id);
+      this.entrance.get(0).setAttribute("data-tab", "none");
+
       $.ui.loadContent('#'+id, false, false, "up");
-      this.nsd_talk = $('#'+id);
-      this.history = this.nsd_talk.find('ul');
-      var footerId = this.nsd_talk.attr('data-footer');
-      var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
-      var submit = $('#afui #navbar').find('#' + footerId).find('a');
-      submit.unbind("click");
-      submit.bind("click", function(){
-        var message = textarea.val();
-        function successCb(){
-          that.history.append($('<li></li>').html("I say: " + message));
-          textarea.val('');          
-        }
-        function errorCb(){
-          that.history.append($('<li></li>').html("Failed to send Message: " + message));
-          textarea.val('');          
-        }
-        if(message.length){
-          afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
-        }else{
-          alert("内容不能为空");
-        }
-      });
+      this.funclist = this.entrance.find('ul');
+      $.create('li', {}).append(
+         $.create('div', {
+            className:'grid-photo-box',
+         }).append(
+          $.create('a', {
+              href:'#item12',
+          }).html("聊天")
+        )
+      ).appendTo(this.funclist);
+      $.create('li', {}).append(
+         $.create('div', {
+            className:'grid-photo-box',
+         }).append(
+          $.create('a', {
+              href:'#item13',
+          }).html("文件浏览")
+        )
+      ).appendTo(this.funclist);
+      // submit.bind("click", function(){
+        // var message = textarea.val();
+        // function successCb(){
+          // that.history.append($('<li></li>').html("I say: " + message));
+          // textarea.val('');          
+        // }
+        // function errorCb(){
+          // that.history.append($('<li></li>').html("Failed to send Message: " + message));
+          // textarea.val('');          
+        // }
+        // if(message.length){
+          // afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
+        // }else{
+          // alert("内容不能为空");
+        // }
+      // });
     } else {
+      $('#'+id).get(0).setAttribute("data-tab", "none");
       $.ui.loadContent('#'+id, false, false, "up");
     }
 };

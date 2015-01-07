@@ -29,16 +29,30 @@
     right: 3px;
     top: 3px;
     bottom: 3px;
-    background-color: rgba(128,128,128,0.2);
-    text-align: center;
+    background-color: rgba(0,238,238,1);
+    text-align: center;  
 }
 .grid-photo .grid-photo-box:active {
     background-color: rgba(255,255,255,1);
-    border: rgba(128,128,128,0.2) 1px solid;
+    border: rgba(0,238,238,0.5) 1px solid;
 }
 .grid-photo .grid-photo-box a{
     line-height: 400%;
     text-decoration:blink; 
     font-weight:bold;
-    color:black;    
+    color:black;
+    vertical-align: middle;
+}
+.grid-photo .grid-photo-box img {width:100%;height:100%}
+@media only screen and (max-width : 1024px) {
+    .grid-photo li {width: 12.5%; padding-bottom: 12.5%;}        
+}        
+@media only screen and (max-width : 768px) {
+    .grid-photo li {width: 16.6%; padding-bottom: 16.6%;}
+}        
+@media only screen and (max-width : 480px) {
+    .grid-photo li {width: 25%; padding-bottom: 25%;}
+}
+@media only screen and (max-width : 320px) {
+    .grid-photo li {width: 33.3%; padding-bottom: 33.3%;}
 }
