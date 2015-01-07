@@ -34,11 +34,46 @@ NsdLogClass.prototype.clearContent = function(){
  * Class NsdClass is used for Network Service Discovery.
  */ 
 var NsdClass = function(name, port, debug) {
+  if(!window.NSDNative){
+    alert("object window.NSD does not exist.");
+    return;
+  }
   this._mName = name;
   this._mPort = port;  
   this._deviceList = new Object();
   this._d = debug;
   this._userlist = $('#content #nsd ul.list');
+  this._resolveServiceListener = new Array();
+  this._registerServiceListener = new Array();
+};
+NsdClass.prototype.setResolveServiceListener = function(cb){
+  this._resolveServiceListener.push(cb);
+};
+NsdClass.prototype.removeResolveServiceListener = function(cb){
+  for(index in this._resolveServiceListener){
+  if(this._resolveServiceListener[index] == cb)
+    this._resolveServiceListener.splice(index, 1);
+  }
+};
+NsdClass.prototype.callResolveServiceListener = function(msgfromnative){
+  for(index in this._resolveServiceListener){
+    this._resolveServiceListener[index](msgfromnative);
+  }
+};
+NsdClass.prototype.setRegisterServiceListener = function(cb){
+  //format: {start:startcb, stop:stopcb}
+  this._registerServiceListener.push(cb);
+};
+NsdClass.prototype.removeRegisterServiceListener = function(cb){
+  for(index in this._registerServiceListener){
+  if(this._registerServiceListener[index] == cb)
+    this._registerServiceListener.splice(index, 1);
+  }
+};
+NsdClass.prototype.callRegisterServiceListener = function(state){
+  for(index in this._registerServiceListener){
+    this._registerServiceListener[index].state();
+  }
 };
 NsdClass.prototype.initNsd = function() {
   //initNsd is used for service discovery, onPause, onDestroy, onResume.
@@ -121,7 +156,8 @@ NsdClass.prototype.registerService = function() {
   window.NSDNative.registerService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
-      afSocket.startServerSocket(serviceInfo);
+      // afSocket.startServerSocket(serviceInfo);
+      that._registerServiceListener(serviceInfo);
     },
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
@@ -210,10 +246,7 @@ NsdClass.prototype.appendUser = function (name, txt){
       function(msgfromnative){
         that._d.myLog(JSON.stringify(msgfromnative), "NSDUserList.prototype.appendUser");
         that.overWriteADevice(msgfromnative);
-        // if(!that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
-          // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port] = new NSDChat(msgfromnative);
-        // }
-        // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].load();
+        that.callResolveServiceListener(msgfromnative);
       },
       function(msgfromnative){
         that._d.myLog(msgfromnative, "NSDUserList.prototype.appendUser");
@@ -265,9 +298,48 @@ NsdClass.prototype.rmAllUsers = function (){
     $(users[i]).remove();
   }    
 };
-// NsdClass.prototype.scrollToBottom = function(){
-  // $.ui.scrollToBottom('#device_nsd');
-// };
-// NsdClass.prototype.clearContent = function(){
-  // $(content).html('');
-// };
+
+var EntranceClass = function(device){
+  /** 
+   * format of device: 
+   * {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}
+   */
+  this.device = {};
+  $.extend(this.device, device);
+};
+EntranceClass.prototype.load = function(){  
+    var that = this;
+    var id = "entrance_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
+    if(! $('#'+id).length){
+      $.ui.addContentDiv(id, 
+        "<p>Your are Going to communicate with" + this.device.address + ":" + this.device.port 
+        + ". Please Choose an Action Below:</p>",
+        this.device.address);
+      // $('#'+id).get(0).setAttribute("data-footer", "nsd_talk_footer");
+      $.ui.loadContent('#'+id, false, false, "up");
+      this.nsd_talk = $('#'+id);
+      this.history = this.nsd_talk.find('ul');
+      var footerId = this.nsd_talk.attr('data-footer');
+      var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
+      var submit = $('#afui #navbar').find('#' + footerId).find('a');
+      submit.unbind("click");
+      submit.bind("click", function(){
+        var message = textarea.val();
+        function successCb(){
+          that.history.append($('<li></li>').html("I say: " + message));
+          textarea.val('');          
+        }
+        function errorCb(){
+          that.history.append($('<li></li>').html("Failed to send Message: " + message));
+          textarea.val('');          
+        }
+        if(message.length){
+          afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
+        }else{
+          alert("内容不能为空");
+        }
+      });
+    } else {
+      $.ui.loadContent('#'+id, false, false, "up");
+    }
+};

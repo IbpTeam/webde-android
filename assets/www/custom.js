@@ -39,10 +39,6 @@ cordova.define("af.timer", function(require, exports, module) {
  */
 cordova.define("af.nsd", function(require, exports, module) {
   // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
-  if(!window.NSD){
-    alert("object window.NSD does not exist.");
-    return;
-  }
   
 /**
  * NSDChat类，用于聊天界面。
@@ -240,25 +236,11 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   var afSocket = new AfSocket();
   
-  // used for content show.
-  // var device_nsd = $('#content #device_nsd');
-  // var content = $('<div></div>');
-  // if($(device_nsd).find('.afScrollPanel')){
-    // $(device_nsd).find('.afScrollPanel').append($(content));
-  // }else{
-    // $(device_nsd).append($(content));
-  // }
-  // function myLog(info, prefix){
-    // switch(typeof info){
-      // case "object":
-        // info = JSON.stringify(info);
-      // break;
-    // }
-    // info = prefix + ": " + info;
-    // console.log(info);
-    // $(content).append($('<p></p>').html(info));
-  // }
   
+        // if(!that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
+          // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port] = new NSDChat(msgfromnative);
+        // }
+        // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].load();
 
   var nsdLogObj = new NsdLogClass();
   var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);

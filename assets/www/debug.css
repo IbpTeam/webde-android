@@ -7,6 +7,21 @@
     margin:8px 0;
 }
 
+#testalign {
+    width: 300px;
+    height: 200px;
+    color:red;
+    text-align: center;
+    /*line-height: 400%;*/
+    /*vertical-align: middle;*/
+    position:relative;
+    /*line-height:200px;*/
+}
+#testalign span{
+    position: absolute;
+    top:50%;
+}
+
 /* CSS responsive square grid */        
 .grid-photo {
     margin:3px -7px;
@@ -41,4 +56,23 @@
     text-decoration:blink; 
     font-weight:bold;
     color:black;    
+}
+/*.grid-photo .grid-photo-box a span{
+    position: absolute;
+    top: 50%;
+    right:auto;
+    left:auto;
+} */
+.grid-photo .grid-photo-box img {width:100%;height:100%}
+@media only screen and (max-width : 1024px) {
+    .grid-photo li {width: 12.5%; padding-bottom: 12.5%;}        
+}        
+@media only screen and (max-width : 768px) {
+    .grid-photo li {width: 16.6%; padding-bottom: 16.6%;}
+}        
+@media only screen and (max-width : 480px) {
+    .grid-photo li {width: 25%; padding-bottom: 25%;}
+}
+@media only screen and (max-width : 320px) {
+    .grid-photo li {width: 33.3%; padding-bottom: 33.3%;}
 }
