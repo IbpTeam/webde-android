@@ -304,59 +304,62 @@ var EntranceClass = function(device){
    * format of device: 
    * {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}
    */
-  this.device = {};
-  $.extend(this.device, device);
+  // this.device = {};
+  // $.extend(this.device, device);
+  if((device.address === null) || (device.port < 0)){
+    alert("device in EntranceClass is error");
+    return;
+  }
+  var id = device.address.replace(/\./g, '_') + '_' + device.port;
+  this.entranceId = "entrance_" + id;
+  $.ui.addContentDiv(this.entranceId,
+    "<p>Your are Going to communicate with" + device.address + ":" + device.port + ". </p>"
+    + "<p>Please Choose an Action Below:</p>"
+    + "<ul class='grid-photo'><ul>",
+    device.address);
+  this.entrance = $('#'+this.entranceId);
+  this.entrance.get(0).setAttribute("data-tab", "none");
+  this.funclist = this.entrance.find('ul');
+  $.create('li', {}).append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {
+          href:'#chat_' + id,
+      }).html("聊天")
+    )
+  ).appendTo(this.funclist);
+  $.create('li', {}).append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {
+          href:'#data_' + id,
+      }).html("文件浏览")
+    )
+  ).appendTo(this.funclist);
 };
 EntranceClass.prototype.load = function(){
-    var that = this;
-    var id = "entrance_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
-    if(! $('#'+id).length){
-      $.ui.addContentDiv(id,
-        "<p>Your are Going to communicate with" + this.device.address + ":" + this.device.port + ". </p>"
-        + "<p>Please Choose an Action Below:</p>"
-        + "<ul class='grid-photo'><ul>",
-        this.device.address);
-      this.entrance = $('#'+id);
-      this.entrance.get(0).setAttribute("data-tab", "none");
-
-      $.ui.loadContent('#'+id, false, false, "up");
-      this.funclist = this.entrance.find('ul');
-      $.create('li', {}).append(
-         $.create('div', {
-            className:'grid-photo-box',
-         }).append(
-          $.create('a', {
-              href:'#item12',
-          }).html("聊天")
-        )
-      ).appendTo(this.funclist);
-      $.create('li', {}).append(
-         $.create('div', {
-            className:'grid-photo-box',
-         }).append(
-          $.create('a', {
-              href:'#item13',
-          }).html("文件浏览")
-        )
-      ).appendTo(this.funclist);
-      // submit.bind("click", function(){
-        // var message = textarea.val();
-        // function successCb(){
-          // that.history.append($('<li></li>').html("I say: " + message));
-          // textarea.val('');          
-        // }
-        // function errorCb(){
-          // that.history.append($('<li></li>').html("Failed to send Message: " + message));
-          // textarea.val('');          
-        // }
-        // if(message.length){
-          // afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
-        // }else{
-          // alert("内容不能为空");
-        // }
-      // });
-    } else {
-      $('#'+id).get(0).setAttribute("data-tab", "none");
-      $.ui.loadContent('#'+id, false, false, "up");
-    }
+  $.ui.loadContent('#'+this.entranceId, false, false, "up");
+    // if(! $('#'+id).length){
+      // // submit.bind("click", function(){
+        // // var message = textarea.val();
+        // // function successCb(){
+          // // that.history.append($('<li></li>').html("I say: " + message));
+          // // textarea.val('');          
+        // // }
+        // // function errorCb(){
+          // // that.history.append($('<li></li>').html("Failed to send Message: " + message));
+          // // textarea.val('');          
+        // // }
+        // // if(message.length){
+          // // afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
+        // // }else{
+          // // alert("内容不能为空");
+        // // }
+      // // });
+    // } else {
+      // // $('#'+id).get(0).setAttribute("data-tab", "none");
+      // $.ui.loadContent('#'+id, false, false, "up");
+    // }
 };

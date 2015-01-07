@@ -196,7 +196,7 @@ public class NSDHelper {
         map.put("name", name);
         map.put("type", type);
         map.put("address", (host == null) ? "null" : host.getHostAddress());
-        map.put("port", (host == null) ? 0 : port);
+        map.put("port", (host == null) ? -1 : port);
         JSONObject jsonObj = new JSONObject(map);
         return jsonObj;
     }

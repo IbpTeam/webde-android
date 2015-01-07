@@ -87,85 +87,6 @@ cordova.define("af.nsd", function(require, exports, module) {
   };
   
 /**
- * NSDUserList类，实现用户列表。
- */
-  // var NSDUserList = function(){
-    // this.userlist = $('#content #nsd ul.list');
-    // this.nsdchatObj = new Object();//do not need to delete when device offline.
-  // };
-  // NSDUserList.prototype.processMsg = function(msgObj){
-    // if(this.nsdchatObj[msgObj.address+'.'+msgObj.port]){
-      // this.nsdchatObj[msgObj.address+'.'+msgObj.port].processMsg(msgObj);
-    // }else{
-      // myLog("Panel Does Not Exist.", "NSDUserList.prototype.processMsg");
-    // }
-  // };
-  // NSDUserList.prototype.appendUser = function (name, txt){
-    // var that = this;
-    // var af_a = $.create('<a>').on('click', function(e){
-      // window.NSD.resolveService(
-        // function(msgfromnative){
-          // myLog(JSON.stringify(msgfromnative), "NSDUserList.prototype.appendUser");
-          // overWriteADevice(msgfromnative);
-          // if(!that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
-            // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port] = new NSDChat(msgfromnative);
-          // }
-          // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].load();
-        // },
-        // function(msgfromnative){
-          // myLog(msgfromnative, "NSDUserList.prototype.appendUser");
-        // },
-        // $(this).parent().attr('name')
-      // );
-      // localStorage.setItem("name", $(this).parent().attr('name'));
-      // e.preventDefault();
-      // e.stopPropagation();
-    // });
-    // $.create('img', {
-        // className:'list-image',
-        // 'src':'data/male_user_icon.svg',
-    // }).appendTo($(af_a));
-    // $.create('div', {
-        // className:'list-text',
-    // }).html(
-        // '<b>' + name + '</b><br>' + txt
-    // ).appendTo($(af_a));
-    // this.userlist.append($('<li>').attr('name', name).append($(af_a)));
-  // };
-  // NSDUserList.prototype.overWriteUser = function (device){
-    // var users = this.userlist.find('li');
-    // for(var i=0; i < users.length; i++){
-      // if(users[i].getAttribute('name') === device.name){
-        // break;
-      // }
-    // }
-    // var list_text = $(users[i]).find('.list-text');
-    // if(list_text){
-      // $(list_text).html('<b>' + device.name + '</b><br>' + device.address + ":" + device.port); 
-    // } 
-  // };
-  // NSDUserList.prototype.rmUserByName = function (name){
-    // var users = this.userlist.find('li');
-    // var findUser = false;
-    // for(var i=0; i < users.length; i++){
-      // if(users[i].getAttribute('name') === name){
-        // findUser = true;
-        // $(users[i]).remove();
-        // break;
-      // }
-    // }
-    // return findUser;
-  // };
-  // NSDUserList.prototype.rmAllUsers = function (){
-    // var users = this.userlist.find('li');
-    // for(var i=0; i < users.length; i++){
-      // $(users[i]).remove();
-    // }    
-  // };
-  // var afNsdUserList = new NSDUserList();  
-
-
-/**
  * AfSocket类，实现Socket通信
  * 
  */
@@ -235,20 +156,26 @@ cordova.define("af.nsd", function(require, exports, module) {
       msgArr);
   };
   var afSocket = new AfSocket();
-  
-  
-        // if(!that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port]){
-          // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port] = new NSDChat(msgfromnative);
-        // }
-        // that.nsdchatObj[msgfromnative.address+'.'+msgfromnative.port].load();
 
   var nsdLogObj = new NsdLogClass();
   var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);
-  nsdObj.scrollToBottom = nsdLogObj.scrollToBottom;
-  nsdObj.clearContent = nsdLogObj.clearContent;
+  nsdObj.scrollToBottom = function(){
+    nsdLogObj.scrollToBottom();
+  };
+  nsdObj.clearContent = function(){
+    nsdLogObj.clearContent();
+  };
   nsdObj.addResolveServiceListener(function(device){
-    var entranceObj = new EntranceClass(device);
-    entranceObj.load();
+    if((device.address === null) || (device.port < 0)){
+      alert("device in EntranceClass is error");
+      return;
+    }
+    var id = device.address.replace(/\./g, '_') + '_' + device.port;
+    var entranceId = "entrance_" + id;
+    if(!$('#'+entranceId).length){      
+      new EntranceClass(device);
+    }    
+    $.ui.loadContent('#'+entranceId, false, false, "up");
   });
   module.exports = nsdObj;
 });
