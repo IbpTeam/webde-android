@@ -32,10 +32,10 @@
     <feature name="TimerPlugin">
         <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
     </feature>
-    <feature name="NSDPlugin">
-        <param name="android-package" value="ibp.plugin.nsd.NSDPlugin" />
-    </feature>
     <feature name="SocketPlugin">
         <param name="android-package" value="ibp.plugin.socket.SocketPlugin" />
+    </feature>
+    <feature name="NSDPlugin">
+        <param name="android-package" value="ibp.plugin.nsd.NSDPlugin" />
     </feature>
 </widget>

@@ -273,17 +273,17 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/ibp.plugin.nsd/www/nsd.js",
-        "id": "ibp.plugin.nsd.nsd",
-        "clobbers": [
-            "NSD"
-        ]
-    },
-    {
         "file": "plugins/ibp.plugin.socket/www/socket.js",
         "id": "ibp.plugin.socket.socket",
         "clobbers": [
             "Socket"
+        ]
+    },
+    {
+        "file": "plugins/ibp.plugin.nsd/www/nsd.js",
+        "id": "ibp.plugin.nsd.nsd",
+        "clobbers": [
+            "NSDNative"
         ]
     }
 ];
@@ -299,8 +299,8 @@ module.exports.metadata =
     "org.apache.cordova.device": "0.2.12",
     "ibp.plugin.helloworld": "0.0.3",
     "ibp.plugin.timer": "0.0.2",
-    "ibp.plugin.nsd": "0.0.1",
-    "ibp.plugin.socket": "0.0.1"
+    "ibp.plugin.socket": "0.0.1",
+    "ibp.plugin.nsd": "0.0.1"
 }
 // BOTTOM OF METADATA
 });
