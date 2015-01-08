@@ -17,7 +17,7 @@
        under the License.
  */
 
-package study.cordova;
+package dev.hybridapp;
 
 import android.os.Bundle;
 import android.view.Menu;
