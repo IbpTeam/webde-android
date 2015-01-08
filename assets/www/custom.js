@@ -37,29 +37,34 @@ cordova.define("af.timer", function(require, exports, module) {
 /**
  * module af.nsd for nsd show.
  */
-cordova.define("af.nsd", function(require, exports, module) {
-  // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
-  
-  var afSocket = new AfSocket();
-
+cordova.define("module.nsd", function(require, exports, module) {
   var nsdLogObj = new NsdLogClass();
+  var socketObj = new SocketClass(nsdLogObj);
   var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);
+  // var funcEntrance;
   nsdObj.scrollToBottom = function(){
     nsdLogObj.scrollToBottom();
   };
   nsdObj.clearContent = function(){
     nsdLogObj.clearContent();
   };
-  var funcEntrance;
+  var _entrances = new Object();
   nsdObj.addResolveServiceListener(function(device){
-    // if((device.address === null) || (device.port < 0)){
-      // alert("device in EntranceClass is error");
-      // return;
-    // }
-    // var id = device.address.replace(/\./g, '_') + '_' + device.port;
-    funcEntrance = new EntranceClass(device);
-    funcEntrance.loadEntrance();
+    if(!_entrances[device.address+'.'+device.port]){
+      _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
+    }
+    _entrances[device.address+'.'+device.port].loadEntrance();
   });
+  var registerCb = {
+    // serviceInfo = [this._mName, this._mPort];
+    start:function(serviceInfo){
+      socketObj.startServerSocket(serviceInfo);
+    },
+    stop:function(){
+      socketObj.stopServerSocket();
+    }
+  };
+  nsdObj.addRegisterServiceListener(registerCb);
   module.exports = nsdObj;
 });
 
@@ -132,7 +137,7 @@ cordova.define("af.camera", function(require, exports, module) {
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     window.AfTimer = cordova.require('af.timer');
-    window.NsdModule = cordova.require('af.nsd');
+    window.NsdModule = cordova.require('module.nsd');
     window.AfCamera = cordova.require('af.camera');
   });
   // channel.onPause.subscribe(function() {

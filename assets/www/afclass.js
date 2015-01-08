@@ -70,9 +70,9 @@ NsdClass.prototype.removeRegisterServiceListener = function(cb){
     this._registerServiceListener.splice(index, 1);
   }
 };
-NsdClass.prototype.callRegisterServiceListener = function(state){
+NsdClass.prototype.callRegisterServiceListener = function(state, serviceInfo){
   for(index in this._registerServiceListener){
-    this._registerServiceListener[index].state();
+    this._registerServiceListener[index][state](serviceInfo);
   }
 };
 NsdClass.prototype.initNsd = function() {
@@ -157,7 +157,7 @@ NsdClass.prototype.registerService = function() {
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
       // afSocket.startServerSocket(serviceInfo);
-      that._registerServiceListener(serviceInfo);
+      that.callRegisterServiceListener("start", serviceInfo);
     },
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
@@ -167,10 +167,12 @@ NsdClass.prototype.registerService = function() {
 };
 NsdClass.prototype.unRegisterService = function() {
   var that = this;
+  serviceInfo = [this._mName, this._mPort];
   window.NSDNative.unRegisterService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.unRegisterService");
-      afSocket.stopServerSocket();
+      // afSocket.stopServerSocket();
+      that.callRegisterServiceListener("stop", serviceInfo);
     },
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.unRegisterService");
@@ -302,7 +304,7 @@ NsdClass.prototype.rmAllUsers = function (){
 /**
  * EntranceClass: entrance for communicate with device
  */
-var EntranceClass = function(device){
+var EntranceClass = function(device, socketObj){
   /** 
    * format of device: 
    * {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}
@@ -317,7 +319,7 @@ var EntranceClass = function(device){
   this._entranceId = "entrance_" + this._id;
   // this._chatId = "chat_" + this._id;
   // this._dataId = "data_" + this._id;
-  this._chat = new ChatClass(device);
+  this._chat = new ChatClass(device, socketObj);
 };
 EntranceClass.prototype.loadEntrance = function(){
   if(!$('#'+this._entranceId).length){      
@@ -365,63 +367,65 @@ EntranceClass.prototype.newEntrance = function(){
 /**
  * ChatClass类，用于聊天界面。
  */
-var ChatClass = function(device){
+var ChatClass = function(device, socketObj){
   /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
   this._device = {};
   $.extend(this._device, device);
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._chatId = "chat_" + this._id;
+  this._socket = socketObj;
+  this._footerId = "nsd_talk_footer";
 };
 ChatClass.prototype.loadChat = function(){
+  var that = this;
   if(!$('#'+this._chatId).length){
     this.newChat();
   }
   $.ui.loadContent(this._chatId, false, false, "fade");
-};
-ChatClass.prototype.newChat = function(){  
-  var that = this;
-  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
-  $('#'+this._chatId).get(0).setAttribute("data-footer", "nsd_talk_footer");
-  // $('#' + id).get(0).setAttribute("data-modal", "true");
   this._chat = $('#'+this._chatId);
   this._history = this._chat.find('ul');
-  var footerId = this._chat.attr('data-footer');
-  var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
-  var submit = $('#afui #navbar').find('#' + footerId).find('a');
-  submit.unbind("click");
-  submit.bind("click", function(){
-    var message = textarea.val();
+  this._textarea = $('#afui #navbar').find('#' + this._footerId).find('textarea');
+  this._submit = $('#afui #navbar').find('#' + this._footerId).find('a');
+  this._submit.unbind("click");
+  this._submit.bind("click", function(){
+    var message = that._textarea.val();
     function successCb(){
       that._history.append($('<li></li>').html("I say: " + message));
-      textarea.val('');          
+      that._textarea.val('');          
     }
     function errorCb(){
       that._history.append($('<li></li>').html("Failed to send Message: " + message));
-      textarea.val('');          
+      that._textarea.val('');          
     }
     if(message.length){
-      afSocket.sendMessage(successCb, errorCb, [that._device.name, that._device.address, that._device.port, message]);
+      that._socket.sendMessage(successCb, errorCb, [that._device.name, that._device.address, that._device.port, message]);
     }else{
       alert("内容不能为空");
     }
-  });  
+  });
+};
+ChatClass.prototype.newChat = function(){  
+  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
+  $('#'+this._chatId).get(0).setAttribute("data-footer", this._footerId);
+  // $('#' + id).get(0).setAttribute("data-modal", "true");
+  this._socket.addReceiveMessageListener(this.processMsg);
 };
 ChatClass.prototype.processMsg = function(msgObj){
   this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
 };
 
 
-
 /**
  * AfSocket类，实现Socket通信
  * 
  */
-var SocketClass = function(){
-  if(!window.Socket){
+var SocketClass = function(debug){
+  if(!window.SocketNative){
     alert("object window.SocketNative does not exist.");
     return;
   }
   this._receiveMessageListener = new Array();
+  this._d = debug;
 };
 SocketClass.prototype.addReceiveMessageListener = function(cb){
   this._receiveMessageListener.push(cb);
@@ -432,9 +436,11 @@ SocketClass.prototype.removeReceiveMessageListener = function(cb){
     this._receiveMessageListener.splice(index, 1);
   }
 };
-NsdClass.prototype.callReceiveMessageListener = function(msgfromnative){
+SocketClass.prototype.callReceiveMessageListener = function(msgfromnative){
   for(index in this._resolveServiceListener){
-    this._receiveMessageListener[index](msgfromnative);
+    if(this._receiveMessageListener[index]){
+      this._receiveMessageListener[index](msgfromnative);
+    }
   }
 };
 /**
@@ -449,54 +455,57 @@ NsdClass.prototype.callReceiveMessageListener = function(msgfromnative){
  * "type":"app1"   
  */
 SocketClass.prototype.initServerHandler = function(){
-  window.Socket.initHandler(
+  var that = this;
+  window.SocketNative.initHandler(
     function(msgfromnative){
-      myLog(msgfromnative, "SocketClass.prototype.initServerHandler");
       switch(typeof msgfromnative){
         case "object":
           // afNsdUserList.processMsg(msgfromnative);
-          callReceiveMessageListener(msgfromnative);
+          that._d.myLog(msgfromnative, "SocketClass.prototype.initServerHandler");
+          that.callReceiveMessageListener(msgfromnative);
         break;
         case "string":
+          that._d.myLog(msgfromnative, "SocketClass.prototype.initServerHandler");
         break;
       }
     },
     function(msgfromnative){
-      myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
+      that._d.myLog(msgfromnative, "SocketClass.prototype.initServerHandler");
     });    
 };
 SocketClass.prototype.startServerSocket = function(serverInfo){
   var that = this;
-  window.Socket.startServerSocket(
+  window.SocketNative.startServerSocket(
     function(msgfromnative){
-      myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
+      that._d.myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
       that.initServerHandler();
     },
     function(msgfromnative){
-      myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
+      that._d.myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
     },
     serverInfo);    
 };
 SocketClass.prototype.stopServerSocket = function(){
   var that = this;
-  window.Socket.stopServerSocket(
+  window.SocketNative.stopServerSocket(
     function(msgfromnative){
-      myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
+      that._d.myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
       // that.initServerHandler();
     },
     function(msgfromnative){
-      myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
+      that._d.myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
     });    
 };
 /**发送消息msgArr，格式：[name, address, port, content]*/
 SocketClass.prototype.sendMessage = function(successcb, errorcb, msgArr){
-  window.Socket.sendMessage(
+  var that = this;
+  window.SocketNative.sendMessage(
     function(msgfromnative){
-      myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
+      that._d.myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
       successcb();
     },
     function(msgfromnative){
-      myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
+      that._d.myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
       errorcb();
     },
     msgArr);
