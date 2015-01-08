@@ -276,7 +276,7 @@ module.exports = [
         "file": "plugins/ibp.plugin.socket/www/socket.js",
         "id": "ibp.plugin.socket.socket",
         "clobbers": [
-            "Socket"
+            "SocketNative"
         ]
     },
     {

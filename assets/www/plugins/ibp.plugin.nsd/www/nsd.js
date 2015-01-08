@@ -20,8 +20,8 @@ NSD.prototype.unRegisterService = function(successCallback, errorCallback) {
 NSD.prototype.resolveService = function(successCallback, errorCallback, username) {
     cordova.exec(successCallback, errorCallback, "NSDPlugin", "resolveService", [username]);
 };
-var NSDModule = new NSD();  
-module.exports = NSDModule;
+var NSDObj = new NSD();  
+module.exports = NSDObj;
 
 
 });
