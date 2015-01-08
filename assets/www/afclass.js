@@ -345,7 +345,7 @@ EntranceClass.prototype.newEntrance = function(){
      }).append(
        $.create('a', {}).html("聊天")
     ).on('click', function(e){
-      console.log("load content: #"+that._chatId);   
+      // console.log("load content: #"+that._chatId);
       that._chat.loadChat();
     })
   ).appendTo(funclist);
@@ -353,16 +353,12 @@ EntranceClass.prototype.newEntrance = function(){
      $.create('div', {
         className:'grid-photo-box',
      }).append(
-      $.create('a', {
-          // href:'#data_' + id,
-      })
-      .html("文件浏览")
-      .on('click', function(e){
-        console.log("load content: #"+that._dataId);
-        e.preventDefault();
-        e.stopPropagation();
-      })
-    )
+      $.create('a', {}).html("文件浏览")
+    ).on('click', function(e){
+      // console.log("load content: #"+that._dataId);
+      // e.preventDefault();
+      // e.stopPropagation();
+    })
   ).appendTo(funclist);
 };
 
@@ -413,4 +409,95 @@ ChatClass.prototype.newChat = function(){
 ChatClass.prototype.processMsg = function(msgObj){
   this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
 };
- 
+
+
+
+/**
+ * AfSocket类，实现Socket通信
+ * 
+ */
+var SocketClass = function(){
+  if(!window.Socket){
+    alert("object window.SocketNative does not exist.");
+    return;
+  }
+  this._receiveMessageListener = new Array();
+};
+SocketClass.prototype.addReceiveMessageListener = function(cb){
+  this._receiveMessageListener.push(cb);
+};
+SocketClass.prototype.removeReceiveMessageListener = function(cb){
+  for(index in this._receiveMessageListener){
+  if(this._receiveMessageListener[index] == cb)
+    this._receiveMessageListener.splice(index, 1);
+  }
+};
+NsdClass.prototype.callReceiveMessageListener = function(msgfromnative){
+  for(index in this._resolveServiceListener){
+    this._receiveMessageListener[index](msgfromnative);
+  }
+};
+/**
+ * format of msgfromnative
+ * "port":7777
+ * "message":"Hi  this is in IMSender test"
+ * "to":"rtty123"
+ * "time":1418979857244
+ * "address":"192.168.5.176"
+ * "uuid":"rio1529rio"
+ * "from":"cos"
+ * "type":"app1"   
+ */
+SocketClass.prototype.initServerHandler = function(){
+  window.Socket.initHandler(
+    function(msgfromnative){
+      myLog(msgfromnative, "SocketClass.prototype.initServerHandler");
+      switch(typeof msgfromnative){
+        case "object":
+          // afNsdUserList.processMsg(msgfromnative);
+          callReceiveMessageListener(msgfromnative);
+        break;
+        case "string":
+        break;
+      }
+    },
+    function(msgfromnative){
+      myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
+    });    
+};
+SocketClass.prototype.startServerSocket = function(serverInfo){
+  var that = this;
+  window.Socket.startServerSocket(
+    function(msgfromnative){
+      myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
+      that.initServerHandler();
+    },
+    function(msgfromnative){
+      myLog(msgfromnative, "SocketClass.prototype.startServerSocket");
+    },
+    serverInfo);    
+};
+SocketClass.prototype.stopServerSocket = function(){
+  var that = this;
+  window.Socket.stopServerSocket(
+    function(msgfromnative){
+      myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
+      // that.initServerHandler();
+    },
+    function(msgfromnative){
+      myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
+    });    
+};
+/**发送消息msgArr，格式：[name, address, port, content]*/
+SocketClass.prototype.sendMessage = function(successcb, errorcb, msgArr){
+  window.Socket.sendMessage(
+    function(msgfromnative){
+      myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
+      successcb();
+    },
+    function(msgfromnative){
+      myLog(msgfromnative + " and message to send:" + msgArr, "SocketClass.prototype.sendMessage");
+      errorcb();
+    },
+    msgArr);
+};

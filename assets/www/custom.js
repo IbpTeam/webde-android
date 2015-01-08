@@ -40,75 +40,6 @@ cordova.define("af.timer", function(require, exports, module) {
 cordova.define("af.nsd", function(require, exports, module) {
   // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
   
-/**
- * AfSocket类，实现Socket通信
- * 
- */
-  var AfSocket = function(){
-  };
-  /**
-   * format of msgfromnative
-   * "port":7777
-   * "message":"Hi  this is in IMSender test"
-   * "to":"rtty123"
-   * "time":1418979857244
-   * "address":"192.168.5.176"
-   * "uuid":"rio1529rio"
-   * "from":"cos"
-   * "type":"app1"   
-   */
-  AfSocket.prototype.initServerHandler = function(){
-    window.Socket.initHandler(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.initServerHandler");
-        switch(typeof msgfromnative){
-          case "object":
-            afNsdUserList.processMsg(msgfromnative);
-          break;
-          case "string":
-          break;
-        }
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfNsd.prototype.initServerHandler");
-      });    
-  };
-  AfSocket.prototype.startServerSocket = function(serverInfo){
-    var that = this;
-    window.Socket.startServerSocket(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.startServerSocket");
-        that.initServerHandler();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.startServerSocket");
-      },
-      serverInfo);    
-  };
-  AfSocket.prototype.stopServerSocket = function(){
-    var that = this;
-    window.Socket.stopServerSocket(
-      function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.stopServerSocket");
-        // that.initServerHandler();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative, "AfSocket.prototype.stopServerSocket");
-      });    
-  };
-  /**发送消息msgArr，格式：[name, address, port, content]*/
-  AfSocket.prototype.sendMessage = function(successcb, errorcb, msgArr){
-    window.Socket.sendMessage(
-      function(msgfromnative){
-        myLog(msgfromnative + " and message to send:" + msgArr, "AfSocket.prototype.sendMessage");
-        successcb();
-      },
-      function(msgfromnative){
-        myLog(msgfromnative + " and message to send:" + msgArr, "AfSocket.prototype.sendMessage");
-        errorcb();
-      },
-      msgArr);
-  };
   var afSocket = new AfSocket();
 
   var nsdLogObj = new NsdLogClass();
@@ -125,14 +56,9 @@ cordova.define("af.nsd", function(require, exports, module) {
       // alert("device in EntranceClass is error");
       // return;
     // }
-    var id = device.address.replace(/\./g, '_') + '_' + device.port;
+    // var id = device.address.replace(/\./g, '_') + '_' + device.port;
     funcEntrance = new EntranceClass(device);
     funcEntrance.loadEntrance();
-    // var entranceId = "entrance_" + id;
-    // if(!$('#'+entranceId).length){      
-      // new EntranceClass(device);
-    // }
-    // $.ui.loadContent('#'+entranceId, false, false, "up");
   });
   module.exports = nsdObj;
 });
