@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">controlPPT</string>
+    <string name="hello_world">\n请输入主机IP</string>
+    <string name="Button01" >Go</string>
+    <string name="qrscan_btn">扫描二维码</string>
+
+</resources>
