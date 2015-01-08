@@ -41,52 +41,6 @@ cordova.define("af.nsd", function(require, exports, module) {
   // var NsdChat = cordova.require('ibp.plugin.nsdchat.nsdchat');
   
 /**
- * NSDChat类，用于聊天界面。
- */
-  var NSDChat = function(device){
-    /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
-    this.device = {};
-    $.extend(this.device, device);
-  };
-  NSDChat.prototype.load = function(){
-    var that = this;
-    var id = "nsd_talk_" + this.device.address.replace(/\./g, '_') + '_' + this.device.port;
-    if(! $('#'+id).length){
-      $.ui.addContentDiv(id, "<p>Connect To " + this.device.address + ":" + this.device.port + "</p><ul></ul>", this.device.address);
-      $('#'+id).get(0).setAttribute("data-footer", "nsd_talk_footer");
-      // $('#' + id).get(0).setAttribute("data-modal", "true");
-      $.ui.loadContent('#'+id, false, false, "up");
-      this.nsd_talk = $('#'+id);
-      this.history = this.nsd_talk.find('ul');
-      var footerId = this.nsd_talk.attr('data-footer');
-      var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
-      var submit = $('#afui #navbar').find('#' + footerId).find('a');
-      submit.unbind("click");
-      submit.bind("click", function(){
-        var message = textarea.val();
-        function successCb(){
-          that.history.append($('<li></li>').html("I say: " + message));
-          textarea.val('');          
-        }
-        function errorCb(){
-          that.history.append($('<li></li>').html("Failed to send Message: " + message));
-          textarea.val('');          
-        }
-        if(message.length){
-          afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
-        }else{
-          alert("内容不能为空");
-        }
-      });
-    } else {
-      $.ui.loadContent('#'+id, false, false, "up");
-    }
-  };
-  NSDChat.prototype.processMsg = function(msgObj){
-    this.history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
-  };
-  
-/**
  * AfSocket类，实现Socket通信
  * 
  */
@@ -165,17 +119,20 @@ cordova.define("af.nsd", function(require, exports, module) {
   nsdObj.clearContent = function(){
     nsdLogObj.clearContent();
   };
+  var funcEntrance;
   nsdObj.addResolveServiceListener(function(device){
-    if((device.address === null) || (device.port < 0)){
-      alert("device in EntranceClass is error");
-      return;
-    }
+    // if((device.address === null) || (device.port < 0)){
+      // alert("device in EntranceClass is error");
+      // return;
+    // }
     var id = device.address.replace(/\./g, '_') + '_' + device.port;
-    var entranceId = "entrance_" + id;
-    if(!$('#'+entranceId).length){      
-      new EntranceClass(device);
-    }    
-    $.ui.loadContent('#'+entranceId, false, false, "up");
+    funcEntrance = new EntranceClass(device);
+    funcEntrance.loadEntrance();
+    // var entranceId = "entrance_" + id;
+    // if(!$('#'+entranceId).length){      
+      // new EntranceClass(device);
+    // }
+    // $.ui.loadContent('#'+entranceId, false, false, "up");
   });
   module.exports = nsdObj;
 });

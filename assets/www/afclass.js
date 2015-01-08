@@ -299,67 +299,118 @@ NsdClass.prototype.rmAllUsers = function (){
   }    
 };
 
+/**
+ * EntranceClass: entrance for communicate with device
+ */
 var EntranceClass = function(device){
   /** 
    * format of device: 
    * {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}
    */
-  // this.device = {};
-  // $.extend(this.device, device);
   if((device.address === null) || (device.port < 0)){
     alert("device in EntranceClass is error");
     return;
   }
-  var id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this.entranceId = "entrance_" + id;
-  $.ui.addContentDiv(this.entranceId,
+  this._device = {};
+  $.extend(this._device, device);  
+  this._id = device.address.replace(/\./g, '_') + '_' + device.port;
+  this._entranceId = "entrance_" + this._id;
+  // this._chatId = "chat_" + this._id;
+  // this._dataId = "data_" + this._id;
+  this._chat = new ChatClass(device);
+};
+EntranceClass.prototype.loadEntrance = function(){
+  if(!$('#'+this._entranceId).length){      
+    this.newEntrance();
+  }
+  $.ui.loadContent('#'+this._entranceId, false, false, "up");
+};
+EntranceClass.prototype.newEntrance = function(){
+  var that = this;
+  var device = this._device;
+  $.ui.addContentDiv(this._entranceId,
     "<p>Your are Going to communicate with" + device.address + ":" + device.port + ". </p>"
     + "<p>Please Choose an Action Below:</p>"
     + "<ul class='grid-photo'><ul>",
-    device.address);
-  this.entrance = $('#'+this.entranceId);
-  this.entrance.get(0).setAttribute("data-tab", "none");
-  this.funclist = this.entrance.find('ul');
-  $.create('li', {}).append(
+    device.name);
+  var entrance = $('#'+this._entranceId);
+  entrance.get(0).setAttribute("data-tab", "none");
+  var funclist = entrance.find('ul');
+  /*
+   * 不能为a绑定事件？
+   */
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+       $.create('a', {}).html("聊天")
+    ).on('click', function(e){
+      console.log("load content: #"+that._chatId);   
+      that._chat.loadChat();
+    })
+  ).appendTo(funclist);
+  $.create('<li>').append(
      $.create('div', {
         className:'grid-photo-box',
      }).append(
       $.create('a', {
-          href:'#chat_' + id,
-      }).html("聊天")
+          // href:'#data_' + id,
+      })
+      .html("文件浏览")
+      .on('click', function(e){
+        console.log("load content: #"+that._dataId);
+        e.preventDefault();
+        e.stopPropagation();
+      })
     )
-  ).appendTo(this.funclist);
-  $.create('li', {}).append(
-     $.create('div', {
-        className:'grid-photo-box',
-     }).append(
-      $.create('a', {
-          href:'#data_' + id,
-      }).html("文件浏览")
-    )
-  ).appendTo(this.funclist);
+  ).appendTo(funclist);
 };
-EntranceClass.prototype.load = function(){
-  $.ui.loadContent('#'+this.entranceId, false, false, "up");
-    // if(! $('#'+id).length){
-      // // submit.bind("click", function(){
-        // // var message = textarea.val();
-        // // function successCb(){
-          // // that.history.append($('<li></li>').html("I say: " + message));
-          // // textarea.val('');          
-        // // }
-        // // function errorCb(){
-          // // that.history.append($('<li></li>').html("Failed to send Message: " + message));
-          // // textarea.val('');          
-        // // }
-        // // if(message.length){
-          // // afSocket.sendMessage(successCb, errorCb, [that.device.name, that.device.address, that.device.port, message]);
-        // // }else{
-          // // alert("内容不能为空");
-        // // }
-      // // });
-    // } else {
-      // // $('#'+id).get(0).setAttribute("data-tab", "none");
-      // $.ui.loadContent('#'+id, false, false, "up");
-    // }
+
+/**
+ * ChatClass类，用于聊天界面。
+ */
+var ChatClass = function(device){
+  /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
+  this._device = {};
+  $.extend(this._device, device);
+  this._id = device.address.replace(/\./g, '_') + '_' + device.port;
+  this._chatId = "chat_" + this._id;
 };
+ChatClass.prototype.loadChat = function(){
+  if(!$('#'+this._chatId).length){
+    this.newChat();
+  }
+  $.ui.loadContent(this._chatId, false, false, "fade");
+};
+ChatClass.prototype.newChat = function(){  
+  var that = this;
+  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
+  $('#'+this._chatId).get(0).setAttribute("data-footer", "nsd_talk_footer");
+  // $('#' + id).get(0).setAttribute("data-modal", "true");
+  this._chat = $('#'+this._chatId);
+  this._history = this._chat.find('ul');
+  var footerId = this._chat.attr('data-footer');
+  var textarea = $('#afui #navbar').find('#' + footerId).find('textarea');
+  var submit = $('#afui #navbar').find('#' + footerId).find('a');
+  submit.unbind("click");
+  submit.bind("click", function(){
+    var message = textarea.val();
+    function successCb(){
+      that._history.append($('<li></li>').html("I say: " + message));
+      textarea.val('');          
+    }
+    function errorCb(){
+      that._history.append($('<li></li>').html("Failed to send Message: " + message));
+      textarea.val('');          
+    }
+    if(message.length){
+      afSocket.sendMessage(successCb, errorCb, [that._device.name, that._device.address, that._device.port, message]);
+    }else{
+      alert("内容不能为空");
+    }
+  });  
+};
+ChatClass.prototype.processMsg = function(msgObj){
+  this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
+};
+ 
