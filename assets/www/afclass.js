@@ -321,6 +321,10 @@ var EntranceClass = function(device, socketObj){
   // this._dataId = "data_" + this._id;
   this._chat = new ChatClass(device, socketObj);
 };
+EntranceClass.prototype.processMsg = function(msgfromnative){
+  this._chat.loadChat();
+  this._chat.processMsg(msgfromnative);
+};
 EntranceClass.prototype.loadEntrance = function(){
   if(!$('#'+this._entranceId).length){      
     this.newEntrance();
@@ -377,13 +381,23 @@ var ChatClass = function(device, socketObj){
   this._footerId = "nsd_talk_footer";
 };
 ChatClass.prototype.loadChat = function(){
-  var that = this;
   if(!$('#'+this._chatId).length){
     this.newChat();
   }
   $.ui.loadContent(this._chatId, false, false, "fade");
+  this.reBindSendMsgBtn();
+};
+ChatClass.prototype.newChat = function(){  
+  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
+  $('#'+this._chatId).get(0).setAttribute("data-footer", this._footerId);
+  // $('#' + id).get(0).setAttribute("data-modal", "true");  
   this._chat = $('#'+this._chatId);
   this._history = this._chat.find('ul');
+  // this._textarea = $('#afui #navbar').find('#' + this._footerId).find('textarea');
+  // this._submit = $('#afui #navbar').find('#' + this._footerId).find('a');
+};
+ChatClass.prototype.reBindSendMsgBtn = function(){
+  var that = this;
   this._textarea = $('#afui #navbar').find('#' + this._footerId).find('textarea');
   this._submit = $('#afui #navbar').find('#' + this._footerId).find('a');
   this._submit.unbind("click");
@@ -402,13 +416,7 @@ ChatClass.prototype.loadChat = function(){
     }else{
       alert("内容不能为空");
     }
-  });
-};
-ChatClass.prototype.newChat = function(){  
-  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
-  $('#'+this._chatId).get(0).setAttribute("data-footer", this._footerId);
-  // $('#' + id).get(0).setAttribute("data-modal", "true");
-  this._socket.addReceiveMessageListener(this.processMsg);
+  });  
 };
 ChatClass.prototype.processMsg = function(msgObj){
   this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
@@ -437,7 +445,7 @@ SocketClass.prototype.removeReceiveMessageListener = function(cb){
   }
 };
 SocketClass.prototype.callReceiveMessageListener = function(msgfromnative){
-  for(index in this._resolveServiceListener){
+  for(index in this._receiveMessageListener){
     if(this._receiveMessageListener[index]){
       this._receiveMessageListener[index](msgfromnative);
     }

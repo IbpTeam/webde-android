@@ -41,7 +41,7 @@ cordova.define("module.nsd", function(require, exports, module) {
   var nsdLogObj = new NsdLogClass();
   var socketObj = new SocketClass(nsdLogObj);
   var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);
-  // var funcEntrance;
+
   nsdObj.scrollToBottom = function(){
     nsdLogObj.scrollToBottom();
   };
@@ -65,6 +65,13 @@ cordova.define("module.nsd", function(require, exports, module) {
     }
   };
   nsdObj.addRegisterServiceListener(registerCb);
+  
+  socketObj.addReceiveMessageListener(function(msgfromnative){
+    if(_entrances[msgfromnative.address+'.'+msgfromnative.port]){
+      _entrances[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgfromnative);
+    }
+  });
+  
   module.exports = nsdObj;
 });
 
@@ -140,6 +147,14 @@ cordova.define("af.camera", function(require, exports, module) {
     window.NsdModule = cordova.require('module.nsd');
     window.AfCamera = cordova.require('af.camera');
   });
+  // window.onunload = function(){
+    // alert("window is unload");
+    // console.log("window is unload");
+  // };
+  // window.onload = function(){
+    // alert("window is load");
+    // console.log("window is load");
+  // };
   // channel.onPause.subscribe(function() {
     // console.log('onPause');
   // });
