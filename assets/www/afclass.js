@@ -320,6 +320,7 @@ var EntranceClass = function(device, socketObj){
   // this._chatId = "chat_" + this._id;
   // this._dataId = "data_" + this._id;
   this._chat = new ChatClass(device, socketObj);
+  this._data = new DataClass(device);
 };
 EntranceClass.prototype.processMsg = function(msgfromnative){
   this._chat.loadChat();
@@ -352,16 +353,17 @@ EntranceClass.prototype.newEntrance = function(){
        $.create('a', {}).html("聊天")
     ).on('click', function(e){
       // console.log("load content: #"+that._chatId);
-      that._chat.loadChat();
+      that._chat.loadChat("聊天");
     })
   ).appendTo(funclist);
   $.create('<li>').append(
      $.create('div', {
         className:'grid-photo-box',
      }).append(
-      $.create('a', {}).html("文件浏览")
+      $.create('a', {}).html("ppt播放")
     ).on('click', function(e){
       // console.log("load content: #"+that._dataId);
+      that._data.loadData("ppt播放");
       // e.preventDefault();
       // e.stopPropagation();
     })
@@ -380,15 +382,15 @@ var ChatClass = function(device, socketObj){
   this._socket = socketObj;
   this._footerId = "nsd_talk_footer";
 };
-ChatClass.prototype.loadChat = function(){
+ChatClass.prototype.loadChat = function(title){
   if(!$('#'+this._chatId).length){
-    this.newChat();
+    this.newChat(title);
   }
   $.ui.loadContent(this._chatId, false, false, "fade");
   this.reBindSendMsgBtn();
 };
-ChatClass.prototype.newChat = function(){  
-  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", this._device.address);
+ChatClass.prototype.newChat = function(title){  
+  $.ui.addContentDiv(this._chatId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", title);
   $('#'+this._chatId).get(0).setAttribute("data-footer", this._footerId);
   // $('#' + id).get(0).setAttribute("data-modal", "true");  
   this._chat = $('#'+this._chatId);
@@ -420,6 +422,31 @@ ChatClass.prototype.reBindSendMsgBtn = function(){
 };
 ChatClass.prototype.processMsg = function(msgObj){
   this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
+};
+
+/**
+ * DataClass类，用于聊天界面。
+ */
+var DataClass = function(device){
+  /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
+  this._device = {};
+  $.extend(this._device, device);
+  this._id = device.address.replace(/\./g, '_') + '_' + device.port;
+  this._dataId = "remote_data_" + this._id;
+  this._address = device.address;
+  this._port = 8888;
+};
+DataClass.prototype.loadData = function(title){
+  if(!$('#'+this._dataId).length){
+    this.newData(title);
+  }
+  $.ui.loadContent(this._dataId, false, false, "fade");
+  // this.reBindSendMsgBtn();
+};
+DataClass.prototype.newData = function(title){  
+  $.ui.addContentDiv(this._dataId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", title);
+  this._data = $('#'+this._dataId);
+  // this._data.get(0).setAttribute("data-defer", "http://www.baidu.com");  
 };
 
 
