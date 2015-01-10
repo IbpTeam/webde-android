@@ -151,10 +151,6 @@ cordova.define("af.camera", function(require, exports, module) {
     // alert("window is unload");
     // console.log("window is unload");
   // };
-  // window.onload = function(){
-    // alert("window is load");
-    // console.log("window is load");
-  // };
   // channel.onPause.subscribe(function() {
     // console.log('onPause');
   // });

@@ -98,8 +98,6 @@
         <script type="text/javascript" charset="utf-8" src="./plugins/af.slidemenu.js"></script>
         <script type="text/javascript" charset="utf-8" src="./plugins/af.8tiles.js"></script>
         <script type="text/javascript" charset="utf-8" src="require.js"></script>
-        <script type="text/javascript" charset="utf-8" src="afclass.js"></script>
-        <script type="text/javascript" charset="utf-8" src="custom.js"></script>
 
         <script type="text/javascript">
             /* This function runs once the page is loaded, but intel.xdk is not yet active */
@@ -171,6 +169,22 @@
                     });
                 });
             }
+            
+            window.onload = function(){
+                console.log("window is load");
+                var afclass = document.createElement("script");
+                afclass.src = "http://192.168.5.176:8000/afclass.js";
+                afclass.onload = function(){
+                    var custom = document.createElement("script");
+                    custom.src = "http://192.168.5.176:8000/custom.js";
+                    document.head.appendChild(custom);                    
+                };
+                document.head.appendChild(afclass);
+                // onload fires even when script fails loads with an error.
+                // script.onload = onload;
+                // onerror fires for malformed URLs.
+                // script.onerror = onerror;
+            };
         </script>
 
     </head>
