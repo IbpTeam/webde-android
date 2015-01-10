@@ -434,7 +434,7 @@ var DataClass = function(device){
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._dataId = "remote_data_" + this._id;
   this._address = device.address;
-  this._port = 8888;
+  this._port = 8888;  
 };
 DataClass.prototype.loadData = function(title){
   if(!$('#'+this._dataId).length){
@@ -445,10 +445,35 @@ DataClass.prototype.loadData = function(title){
 };
 DataClass.prototype.newData = function(title){  
   $.ui.addContentDiv(this._dataId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", title);
-  this._data = $('#'+this._dataId);
-  // this._data.get(0).setAttribute("data-defer", "http://www.baidu.com");  
+  this._data = $('#'+this._dataId);  
+  requirejs(["http://" + this._address + ":" + this._port +"/lib/api/data.js"], this.getRemoteData);
 };
-
+DataClass.prototype.getRemoteData = function(data){
+  this._remotedata=data;
+  this._remotedata.sendrequest = function (a, ar) {
+    var sd = {};
+    var cb = ar.shift();
+    sd.api = a;
+    sd.args = ar;
+    $.ajax({
+      url : "http://" + this._address + ":" + this._port +"/callapi",
+      type : "post",
+      contentType : "application/json;charset=utf-8",
+      dataType : "json",
+      data : JSON.stringify(sd),
+      success : function(r) {
+        setTimeout(cb.apply(null, r), 0);
+      },
+      error : function(e) {
+        throw e;
+      }
+    });
+  };
+  this._remotedata.getAllDataByCate(this.cb_get_ppt_data,"document");
+};
+DataClass.prototype.cb_get_ppt_data = function(data_json){
+  console.log(data_json);
+};
 
 /**
  * AfSocket类，实现Socket通信
