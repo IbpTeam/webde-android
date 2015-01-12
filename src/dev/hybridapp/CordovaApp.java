@@ -47,14 +47,15 @@ public class CordovaApp extends CordovaActivity
 //        settings.setUseWideViewPort(true);
 //        settings.setLoadWithOverviewMode(true);
 //      this.appView.enableRemoteDebugging();
-        this.setWindowWidth(432);
+//        this.setWindowWidth(432);
         loadUrl(launchUrl);
     }
     private void setWindowWidth(int width){
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
-        appView.setInitialScale((screenWidth * 100 / width));        
+        appView.setInitialScale((screenWidth * 100 / width));
+        Log.d(TAG, "scaledDensity of DisplayMetrics:" + metrics.scaledDensity);
     }
     private void debug(){
         WebSettings settings = appView.getSettings();
