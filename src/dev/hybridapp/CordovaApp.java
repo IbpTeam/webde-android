@@ -20,8 +20,11 @@
 package dev.hybridapp;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.ZoomDensity;
 
 import org.apache.cordova.*;
 
@@ -37,11 +40,43 @@ public class CordovaApp extends CordovaActivity
         /**注意修改app.html中的远程脚本custom, afclass的加载方式*/
         launchUrl = "file:///android_asset/www/app.html?ios7";
 //        launchUrl = "http://192.168.5.176:8000/app.html?ios7";
-        appView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存
-//        this.appView.enableRemoteDebugging();
+        WebSettings settings = appView.getSettings();
+        //不使用缓存
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //不能与setWindowWidth共用
+//        settings.setUseWideViewPort(true);
+//        settings.setLoadWithOverviewMode(true);
+//      this.appView.enableRemoteDebugging();
+        this.setWindowWidth(432);
         loadUrl(launchUrl);
     }
-    
+    private void setWindowWidth(int width){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int screenWidth = metrics.widthPixels;
+        appView.setInitialScale((screenWidth * 100 / width));        
+    }
+    private void debug(){
+        WebSettings settings = appView.getSettings();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int mDensity = metrics.densityDpi;
+        Log.d(TAG, "Size of Screen:" + metrics.widthPixels + " * " + metrics.heightPixels);
+        Log.d(TAG, "Size of WebView:" + this.appView.getWidth() + " * " + this.appView.getHeight());
+        Log.d(TAG, "Scale of WebView:" + this.appView.getScale());
+        Log.d(TAG, "densityDpi = " + mDensity);
+        if (mDensity == 240) { 
+            settings.setDefaultZoom(ZoomDensity.FAR);
+        } else if (mDensity == 160) {
+            settings.setDefaultZoom(ZoomDensity.MEDIUM);
+        } else if(mDensity == 120) {
+            settings.setDefaultZoom(ZoomDensity.CLOSE);
+        }else if(mDensity == DisplayMetrics.DENSITY_XHIGH){
+            settings.setDefaultZoom(ZoomDensity.FAR); 
+        }else if (mDensity == DisplayMetrics.DENSITY_TV){
+            settings.setDefaultZoom(ZoomDensity.FAR); 
+        }        
+    }
     
     private final int START_DISCOVER = 0, STOP_DISCOVER = 1, LIST_SERVICE_INFO = 2, RESOLVE_SERVICE = 3,
             REGISTER_SERVICE = 4, UNREGISTER_SERVICE = 5, CLEAR_SCREEN = 6;
