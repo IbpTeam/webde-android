@@ -443,34 +443,58 @@ DataClass.prototype.loadData = function(title){
   $.ui.loadContent(this._dataId, false, false, "fade");
   // this.reBindSendMsgBtn();
 };
-DataClass.prototype.newData = function(title){  
+DataClass.prototype.newData = function(title){
+  var that = this;
   $.ui.addContentDiv(this._dataId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", title);
-  this._data = $('#'+this._dataId);  
-  requirejs(["http://" + this._address + ":" + this._port +"/lib/api/data.js"], this.getRemoteData);
+  this._data = $('#'+this._dataId);
+  //全局方法中对本地对象参数的设置。
+  requirejs(["http://" + this._address + ":" + this._port +"/lib/api/data.js"], function(data){
+    that._remotedata=data;
+    that._remotedata.sendrequest = function (a, ar) {
+      var sd = {};
+      var cb = ar.shift();
+      sd.api = a;
+      sd.args = ar;
+      $.ajax({
+        url : "http://" + that._address + ":" + that._port +"/callapi",
+        type : "post",
+        contentType : "application/json;charset=utf-8",
+        dataType : "json",
+        data : JSON.stringify(sd),
+        success : function(r) {
+          setTimeout(cb.apply(null, r), 0);
+        },
+        error : function(e) {
+          throw e;
+        }
+      });
+    };
+    that._remotedata.getAllDataByCate(that.cb_get_ppt_data,"document");    
+  });
 };
-DataClass.prototype.getRemoteData = function(data){
-  this._remotedata=data;
-  this._remotedata.sendrequest = function (a, ar) {
-    var sd = {};
-    var cb = ar.shift();
-    sd.api = a;
-    sd.args = ar;
-    $.ajax({
-      url : "http://" + this._address + ":" + this._port +"/callapi",
-      type : "post",
-      contentType : "application/json;charset=utf-8",
-      dataType : "json",
-      data : JSON.stringify(sd),
-      success : function(r) {
-        setTimeout(cb.apply(null, r), 0);
-      },
-      error : function(e) {
-        throw e;
-      }
-    });
-  };
-  this._remotedata.getAllDataByCate(this.cb_get_ppt_data,"document");
-};
+// DataClass.prototype.getRemoteData = function(data){
+  // this._remotedata=data;
+  // this._remotedata.sendrequest = function (a, ar) {
+    // var sd = {};
+    // var cb = ar.shift();
+    // sd.api = a;
+    // sd.args = ar;
+    // $.ajax({
+      // url : "http://" + this._address + ":" + this._port +"/callapi",
+      // type : "post",
+      // contentType : "application/json;charset=utf-8",
+      // dataType : "json",
+      // data : JSON.stringify(sd),
+      // success : function(r) {
+        // setTimeout(cb.apply(null, r), 0);
+      // },
+      // error : function(e) {
+        // throw e;
+      // }
+    // });
+  // };
+  // this._remotedata.getAllDataByCate(this.cb_get_ppt_data,"document");
+// };
 DataClass.prototype.cb_get_ppt_data = function(data_json){
   console.log(data_json);
 };
