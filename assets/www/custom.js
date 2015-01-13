@@ -72,6 +72,15 @@ cordova.define("module.nsd", function(require, exports, module) {
     }
   });
   
+  function debugPort(){
+    var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
+    if(!_entrances[device.address+'.'+device.port]){
+      _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
+    }
+    _entrances[device.address+'.'+device.port].loadEntrance();
+  }
+  debugPort();
+  
   module.exports = nsdObj;
 });
 
