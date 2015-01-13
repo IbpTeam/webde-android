@@ -317,8 +317,6 @@ var EntranceClass = function(device, socketObj){
   $.extend(this._device, device);  
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._entranceId = this._id + "_entrance";
-  // this._chatId = "chat_" + this._id;
-  // this._dataId = "data_" + this._id;
   this._chat = new ChatClass(device, socketObj);
   this._data = new DataClass(device);
 };
@@ -398,8 +396,6 @@ ChatClass.prototype.newChat = function(title){
   // $('#' + id).get(0).setAttribute("data-modal", "true");  
   this._chat = $('#'+this._chatId);
   this._history = this._chat.find('ul');
-  // this._textarea = $('#afui #navbar').find('#' + this._footerId).find('textarea');
-  // this._submit = $('#afui #navbar').find('#' + this._footerId).find('a');
 };
 ChatClass.prototype.reBindSendMsgBtn = function(){
   var that = this;
@@ -635,7 +631,6 @@ SocketClass.prototype.stopServerSocket = function(){
   window.SocketNative.stopServerSocket(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
-      // that.initServerHandler();
     },
     function(msgfromnative){
       that._d.myLog(msgfromnative, "SocketClass.prototype.stopServerSocket");
