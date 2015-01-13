@@ -316,7 +316,7 @@ var EntranceClass = function(device, socketObj){
   this._device = {};
   $.extend(this._device, device);  
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this._entranceId = "entrance_" + this._id;
+  this._entranceId = this._id + "_entrance";
   // this._chatId = "chat_" + this._id;
   // this._dataId = "data_" + this._id;
   this._chat = new ChatClass(device, socketObj);
@@ -336,10 +336,11 @@ EntranceClass.prototype.newEntrance = function(){
   var that = this;
   var device = this._device;
   $.ui.addContentDiv(this._entranceId,
-    "<p>Your are Going to communicate with" + device.address + ":" + device.port + ". </p>"
-    + "<p>Please Choose an Action Below:</p>"
+    "<p>设备名：" + device.name + "</p>"
+    + "<p>设备地址：" + device.address + ":" + device.port + ". </p>"
+    + "<p>请选择下面的操作：</p>"
     + "<ul class='grid-photo'><ul>",
-    device.name);
+    "功能列表");
   var entrance = $('#'+this._entranceId);
   entrance.get(0).setAttribute("data-tab", "none");
   var funclist = entrance.find('ul');
@@ -360,10 +361,12 @@ EntranceClass.prototype.newEntrance = function(){
      $.create('div', {
         className:'grid-photo-box',
      }).append(
-      $.create('a', {}).html("ppt播放")
-    ).on('click', function(e){
+       //href:"http://192.168.5.176:8888/index.html", target:"_blank"
+      $.create('a', {}).html("ppt列表")
+    )
+    .on('click', function(e){
       // console.log("load content: #"+that._dataId);
-      that._data.loadData("ppt播放");
+      that._data.loadData("ppt列表");
       // e.preventDefault();
       // e.stopPropagation();
     })
@@ -378,7 +381,7 @@ var ChatClass = function(device, socketObj){
   this._device = {};
   $.extend(this._device, device);
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this._chatId = "chat_" + this._id;
+  this._chatId = this._id + "_chat";
   this._socket = socketObj;
   this._footerId = "nsd_talk_footer";
 };
@@ -432,7 +435,7 @@ var DataClass = function(device){
   this._device = {};
   $.extend(this._device, device);
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this._dataId = "remote_data_" + this._id;
+  this._dataId = this._id + "_remote_data";
   this._address = device.address;
   this._port = 8888;  
 };
@@ -440,23 +443,34 @@ DataClass.prototype.loadData = function(title){
   if(!$('#'+this._dataId).length){
     this.newData(title);
   }
+  if(!this._remotedata){
+    this.loadRemoteJS();
+  }
   $.ui.loadContent(this._dataId, false, false, "fade");
-  // this.reBindSendMsgBtn();
 };
 DataClass.prototype.newData = function(title){
   var that = this;
-  $.ui.addContentDiv(this._dataId, "<p>Connect To " + this._device.address + ":" + this._device.port + "</p><ul></ul>", title);
+  $.ui.addContentDiv(this._dataId, "", title);
   this._data = $('#'+this._dataId);
+  /**NOTICE: may be encounter error later*/
+  this._panelScroll = this._data.find('.afScrollPanel');
+  this._data.attr("data-footer", "none");
+  this.loadRemoteJS();
+};
+DataClass.prototype.loadRemoteJS = function(cb){
+  var that = this;
   //全局方法中对本地对象参数的设置。
-  requirejs(["http://" + this._address + ":" + this._port +"/lib/api/data.js"], function(data){
-    that._remotedata=data;
+  var origin = "http://" + this._address + ":" + this._port;
+  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
+    that._remotedata = data;
+    that._remoteapp = app;
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
       var cb = ar.shift();
       sd.api = a;
       sd.args = ar;
       $.ajax({
-        url : "http://" + that._address + ":" + that._port +"/callapi",
+        url : origin +"/callapi",
         type : "post",
         contentType : "application/json;charset=utf-8",
         dataType : "json",
@@ -469,36 +483,83 @@ DataClass.prototype.newData = function(title){
         }
       });
     };
-    that._remotedata.getAllDataByCate(that.cb_get_ppt_data,"document");    
-  });
+    that.getRemoteData();
+  },
+  function(data){
+    alter("fail to load script: " + origin +"/lib/api/data.js");
+  });  
 };
-// DataClass.prototype.getRemoteData = function(data){
-  // this._remotedata=data;
-  // this._remotedata.sendrequest = function (a, ar) {
-    // var sd = {};
-    // var cb = ar.shift();
-    // sd.api = a;
-    // sd.args = ar;
-    // $.ajax({
-      // url : "http://" + this._address + ":" + this._port +"/callapi",
-      // type : "post",
-      // contentType : "application/json;charset=utf-8",
-      // dataType : "json",
-      // data : JSON.stringify(sd),
-      // success : function(r) {
-        // setTimeout(cb.apply(null, r), 0);
-      // },
-      // error : function(e) {
-        // throw e;
-      // }
-    // });
-  // };
-  // this._remotedata.getAllDataByCate(this.cb_get_ppt_data,"document");
-// };
-DataClass.prototype.cb_get_ppt_data = function(data_json){
-  console.log(data_json);
+DataClass.prototype.getRemoteData = function(){
+  var that = this;
+  function handleDataCB(objArray){
+    /** format of objArray:
+    URI: "rio1529rio#693be79d86e01358c560#document"
+    createDev: "rio1529rio"
+    createTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    filename: "NewFile"
+    id: 1
+    is_delete: 0
+    lastAccessDev: "rio1529rio"
+    lastAccessTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    lastModifyDev: "rio1529rio"
+    lastModifyTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    others: "documents"
+    path: "/home/cos/.resources/document/data/NewFile.txt"
+    postfix: "txt"
+    project: "上海专项"
+    size: "0"
+    */
+    // console.log(objArray);
+    for(i=0;i<objArray.length;i++){
+      if(objArray[i].postfix == 'ppt' || objArray[i].postfix == 'pptx')
+      {
+        console.log(objArray[i].filename);
+        var file = $.create("div", {className:"file"})
+        .data("uri", objArray[i].URI)
+        .append(
+          $.create("div", {className: "icon"}).append(
+            $.create("img",{src: "data/icons/powerpoint.png"})
+          )
+        )
+        .append(
+          $.create("div", {className: "name", id:objArray[i].filename}).html(objArray[i].filename)
+        )
+        .on("touchstart", function(e){
+          $(this).addClass('focus');
+          // console.log("touchstart");
+        })
+        .on("touchmove", function(e){
+          $(this).removeClass('focus');
+          // console.log("touchmove");
+        })
+        .on("touchend", function(e){   
+          if($(this).hasClass('focus')){
+            $(this).removeClass('focus');
+            var uri = $(this).data('uri');
+            console.log("You click" + uri);
+          }
+          // console.log("touchend");
+        });
+        console.log(that._data);
+        if(that._panelScroll){
+          file.appendTo(that._panelScroll);
+        }else{
+          file.appendTo(that._data);
+        }
+      }    
+    }
+  }
+  if(!this._remotedata){
+    this.loadRemoteJS();
+  }else{
+    this._remotedata.getAllDataByCate(handleDataCB, "document");
+  }
 };
 
+DataClass.prototype.openRemoteData = function(uri){
+  var that = this;
+  this._remotedata.openDataByUri(cb_get_ppt_source_file, $(this).data('uri'));
+};
 /**
  * AfSocket类，实现Socket通信
  * 

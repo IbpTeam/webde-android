@@ -147,6 +147,8 @@ cordova.define("af.camera", function(require, exports, module) {
     window.NsdModule = cordova.require('module.nsd');
     window.AfCamera = cordova.require('af.camera');
   });
+  // document.body.style.zoom=0.75;
+  // document.getElementById("afui").style.height = "100%";
   // window.onunload = function(){
     // alert("window is unload");
     // console.log("window is unload");

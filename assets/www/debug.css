@@ -22,7 +22,7 @@
     top:50%;
 }
 
-/* CSS responsive square grid */        
+/** CSS responsive square grid */        
 .grid-photo {
     margin:3px -7px;
 } 
@@ -70,4 +70,77 @@
 }
 @media only screen and (max-width : 320px) {
     .grid-photo li {width: 33.3%; padding-bottom: 33.3%;}
+}
+
+/*CSS Responsive Filelist*/
+.files {
+  padding: 0;
+  margin: 0;
+}
+
+.file {
+  padding: 2px;
+  margin: 2px;
+  width: 80px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+.file:hover {
+  cursor: pointer;
+}
+
+.file.focus {
+  background-color: #08C;
+  -webkit-border-radius: 4px;
+}
+
+.file .name {
+  width: 80px;
+  word-wrap: break-word;
+}
+
+.file.focus .name {
+  color: white;
+}
+
+.file .icon {
+  margin: auto;
+  margin-top: 0;
+  width: 60px;
+}
+.file .icon img{
+  width:100%;
+}
+
+.file.focus .icon {
+  -webkit-filter: invert(20%);
+}
+/*for file-big*/
+.file-big {
+  width: 400px;
+  display: inline-block;
+  text-align: left;
+}
+.file-big .icon-big {
+  padding: 8px;
+  margin-top: 0;
+  width: 128px;
+  display: inline-block;
+}
+.file-big .file-props {
+  margin-top: 0;
+  width: 256px;
+  display: inline-block;
+}
+.file-big p {
+  margin-bottom: 0px;
+}
+
+.file-big .icon-big img{
+  width:100%;
+}
+
+.file-big.focus .icon-big {
+  -webkit-filter: invert(20%);
 }
