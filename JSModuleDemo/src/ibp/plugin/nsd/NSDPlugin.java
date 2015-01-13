@@ -1,17 +1,5 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * author: xifeiwu
  */
 
 package ibp.plugin.nsd;
@@ -27,7 +15,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 @SuppressLint({ "HandlerLeak", "SimpleDateFormat" })
 public class NSDPlugin extends CordovaPlugin {
@@ -120,10 +107,7 @@ public class NSDPlugin extends CordovaPlugin {
 
     private void stopNsd(CallbackContext callbackContext) {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            mNsdHelper.unRegisterService();
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            unRegisterServiceAndStopNSD();
             callbackContext.success("In stopNsd.");
         } else {
             callbackContext.error("Nsd has stopped.");
@@ -189,13 +173,8 @@ public class NSDPlugin extends CordovaPlugin {
 
     public void onPause(boolean multitasking) {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("onPause", "stopNsd in onPause.");
-            mNsdHelper.setRegisterServiceCB(initNsdCB);
-            mNsdHelper.unRegisterService();
-            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            this.sendByHandler("onPause", "unRegisterService and stopNSD.");
+            unRegisterServiceAndStopNSD();
         }
     }
 
@@ -205,13 +184,16 @@ public class NSDPlugin extends CordovaPlugin {
 
     public void onDestroy() {
         if ((null != mNsdHelper) && (null != mHandler)) {
-            this.sendByHandler("onDestroy", "stopNsd in onDestroy.");
-            mNsdHelper.setRegisterServiceCB(initNsdCB);
-            mNsdHelper.unRegisterService();
-            mNsdHelper.setServiceDiscoveryCB(initNsdCB);
-            mNsdHelper.stopDiscovery();
-            mNsdHelper = null;
-            mHandler = null;
+            this.sendByHandler("onDestroy", "unRegisterService and stopNSD.");
+            unRegisterServiceAndStopNSD();
         }
+    }
+    private void unRegisterServiceAndStopNSD(){
+        mNsdHelper.setRegisterServiceCB(initNsdCB);
+        mNsdHelper.unRegisterService();
+        mNsdHelper.setServiceDiscoveryCB(initNsdCB);
+        mNsdHelper.stopDiscovery();
+        mNsdHelper = null;
+        mHandler = null;        
     }
 }

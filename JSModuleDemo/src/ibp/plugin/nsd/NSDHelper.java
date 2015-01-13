@@ -1,17 +1,5 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * author: xifeiwu
  */
 
 package ibp.plugin.nsd;
@@ -208,7 +196,7 @@ public class NSDHelper {
         map.put("name", name);
         map.put("type", type);
         map.put("address", (host == null) ? "null" : host.getHostAddress());
-        map.put("port", (host == null) ? 0 : port);
+        map.put("port", (host == null) ? -1 : port);
         JSONObject jsonObj = new JSONObject(map);
         return jsonObj;
     }

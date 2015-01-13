@@ -11,6 +11,6 @@ Socket.prototype.initHandler = function(successCallback, errorCallback) {
 Socket.prototype.sendMessage = function(successCallback, errorCallback, msgArr) {
     cordova.exec(successCallback, errorCallback, "SocketPlugin", "sendMessage", msgArr);
 };
-var SocketModule = new Socket();  
-module.exports = SocketModule;
+var SocketObj = new Socket();  
+module.exports = SocketObj;
 });
