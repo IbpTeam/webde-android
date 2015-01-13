@@ -451,15 +451,19 @@ DataClass.prototype.newData = function(title){
   /**NOTICE: may be encounter error later*/
   this._panelScroll = this._data.find('.afScrollPanel');
   this._data.attr("data-footer", "none");
-  this.loadRemoteJS();
+  // this.loadRemoteJS();
 };
 DataClass.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
   var origin = "http://" + this._address + ":" + this._port;
   requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
+    // console.log("data.js: " + that._remotedata);
+    // console.log("app.js: " + that._remoteapp);
+    // for(var key in that._remoteapp){
+      // console.log(key);
+    // }
     that._remotedata = data;
-    that._remoteapp = app;
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
       var cb = ar.shift();
@@ -479,6 +483,28 @@ DataClass.prototype.loadRemoteJS = function(cb){
         }
       });
     };
+    
+    that._remoteapp = app;
+    that._remoteapp.sendrequest = function (a, ar) {
+      var sd = {};
+      var cb = ar.shift();
+      sd.api = a;
+      sd.args = ar;
+      $.ajax({
+        url : origin +"/callapi",
+        type : "post",
+        contentType : "application/json;charset=utf-8",
+        dataType : "json",
+        data : JSON.stringify(sd),
+        success : function(r) {
+          setTimeout(cb.apply(null, r), 0);
+        },
+        error : function(e) {
+          throw e;
+        }
+      });
+    };
+    
     that.getRemoteData();
   },
   function(data){
@@ -521,8 +547,11 @@ DataClass.prototype.getRemoteData = function(){
           $.create("div", {className: "name", id:objArray[i].filename}).html(objArray[i].filename)
         )
         // .on("touchstart", function(e){
-          // $(this).addClass('focus');
-          // // console.log("touchstart");
+          // // $(this).addClass('focus');
+          // console.log("touchstart: ");
+          // for(var i=0; i<e.touches.length; i++){
+            // console.log(e.touches[i].target);
+          // }
         // })
         // .on("touchmove", function(e){
           // $(this).removeClass('focus');
@@ -535,7 +564,8 @@ DataClass.prototype.getRemoteData = function(){
           if($(this).hasClass('focus')){
             $(this).removeClass('focus');
             var uri = $(this).data('uri');
-            console.log("You click" + uri);
+            // console.log("You click" + uri);
+            that.openRemoteData(uri);
           }
         });
         console.log(that._data);
@@ -544,7 +574,7 @@ DataClass.prototype.getRemoteData = function(){
         }else{
           file.appendTo(that._data);
         }
-      }    
+      }
     }
   }
   if(!this._remotedata){
@@ -556,7 +586,44 @@ DataClass.prototype.getRemoteData = function(){
 
 DataClass.prototype.openRemoteData = function(uri){
   var that = this;
-  this._remotedata.openDataByUri(cb_get_ppt_source_file, $(this).data('uri'));
+
+  function showPopUpPanel(obj){
+    /**console.log('get ppt source file', obj);
+     * format of obj:
+     * {
+     * openmethod: "html",
+     * format: "txt",
+     * title: "文件浏览",
+     * content: "成功打开文件/home/cos/.resources/document/data/Firefox OS调研.pptx",
+     * windowname: "Firefox OS调研.pptx"
+     * }
+     */
+    btns = {
+      "Stop" : function(){
+        console.log("Close CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Escape');
+        },
+      "Play" : function(){
+        console.log("Play CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'F5');
+        },
+      "PageUp" : function(){
+        console.log("PageUp CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Up');
+        },
+      "PageDown" : function(){
+        console.log("PageDown CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Down');
+        },
+    };
+    $("#afui").popPanel({
+      title:"播放PPT",
+      message:"选择下面的按键操作PPT",
+      // onShow:function(){console.log("showing popup");},
+      buttons: btns,
+    });
+  }
+  this._remotedata.openDataByUri(showPopUpPanel, uri);
 };
 /**
  * AfSocket类，实现Socket通信
