@@ -520,13 +520,16 @@ DataClass.prototype.getRemoteData = function(){
         .append(
           $.create("div", {className: "name", id:objArray[i].filename}).html(objArray[i].filename)
         )
-        .on("touchstart", function(e){
-          $(this).addClass('focus');
-          // console.log("touchstart");
-        })
-        .on("touchmove", function(e){
-          $(this).removeClass('focus');
-          // console.log("touchmove");
+        // .on("touchstart", function(e){
+          // $(this).addClass('focus');
+          // // console.log("touchstart");
+        // })
+        // .on("touchmove", function(e){
+          // $(this).removeClass('focus');
+          // // console.log("touchmove");
+        // })
+        .on("longTap", function(e){
+          $(this).addClass('focus');          
         })
         .on("touchend", function(e){   
           if($(this).hasClass('focus')){
@@ -534,7 +537,6 @@ DataClass.prototype.getRemoteData = function(){
             var uri = $(this).data('uri');
             console.log("You click" + uri);
           }
-          // console.log("touchend");
         });
         console.log(that._data);
         if(that._panelScroll){
