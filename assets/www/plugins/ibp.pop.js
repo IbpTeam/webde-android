@@ -60,10 +60,6 @@ $("#myTestpop").trigger("close");
                 this.id = opts.id = opts.id || $.uuid(); //opts is passed by reference
                 this.title = opts.title || "PopUp";
                 this.message = opts.message || "";
-                // this.cancelText = opts.cancelText || "Cancel";
-                // this.cancelCallback = opts.cancelCallback || function () {};
-                // this.doneText = opts.doneText || "Done";
-                // this.doneCallback = opts.doneCallback || function () {};
                 this.onShow = opts.onShow || function () {};
                 this.buttons = opts.buttons;
 
@@ -87,16 +83,6 @@ $("#myTestpop").trigger("close");
             onShow: null,
             show: function () {
                 var self = this;
-                // var markup = "<div id='" + this.id + "' class='ibpPopPanel hidden'>"+
-                            // "<header>" + this.title + "</header>"+
-                            // "<div>" + this.message + "</div>"+
-                            // "<footer>"+
-                                 // "<a href='javascript:;' class='button' id='cancel'>" + this.cancelText + "</a>"+
-                                 // "<a href='javascript:;' class='button' id='action'>" + this.doneText + "</a>"+
-                                 // "<div style='clear:both'></div>"+
-                            // "</footer>"+
-                            // "</div>";
-                // $(this.container).append($(markup));.appendTo($(this.container));
                 var footer = $("<footer>");
                 var key, count=0;                
                 for(key in this.buttons){
@@ -105,12 +91,7 @@ $("#myTestpop").trigger("close");
                   );
                   count++;
                 }
-                console.log(footer);
-                // $("<footer>").html(                    
-                     // "<a href='javascript:;' class='button' id='cancel'>" + this.cancelText + "</a>"+
-                     // "<a href='javascript:;' class='button' id='action'>" + this.doneText + "</a>"+
-                     // "<div style='clear:both'></div>"
-                // )
+                // console.log(footer);
                 $.create("div", {id: this.id, className: "ibpPopPanel hidden"})
                 .append(
                   $("<header>").html(this.title)
@@ -132,18 +113,9 @@ $("#myTestpop").trigger("close");
                   button.bind("click", function (e) {
                     // console.log(button.html());
                     self.buttons[button.html()]();
-                    if("Close" == button.html()){
+                    if("Close" == button.html() || "Stop" == button.html()){
                       self.hide();
                     }
-                      // if (button.attr("id") === "cancel") {
-                          // console.log("cancel button");
-                          // self.cancelCallback.call(self.cancelCallback, self);
-                          // console.log(self.cancelCallback);
-                          // self.hide();
-                      // } else {
-                          // console.log("done button");
-                          // self.doneCallback.call(self.doneCallback, self);
-                      // }
                     e.preventDefault();
                   });
                 });
