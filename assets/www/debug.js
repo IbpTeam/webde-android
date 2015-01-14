@@ -80,7 +80,7 @@ TestAPI.prototype.loadRemoteJS = function(cb){
     var ul = $.create("ul", {className: "list"});    
     ul.append($.create("li", {className: "divider"}).html("data.js方法接口"));
     for(var key in that._remotedata){
-      console.log(key);
+      // console.log(key);
       ul.append(
         $.create("li", {}).append(
           $.create("a", {}).html(key)
@@ -89,8 +89,8 @@ TestAPI.prototype.loadRemoteJS = function(cb){
     }
     ul.append($.create("li", {className: "divider"}).html("app.js方法接口"));
     for(var key in that._remoteapp){
-      console.log(key);
-      console.log(that._remoteapp[key]);
+      // console.log(key);
+      // console.log(that._remoteapp[key]);
       ul.append(
         $.create("li", {}).append(
           $.create("a", {}).html(key)
@@ -108,16 +108,60 @@ TestAPI.prototype.loadRemoteJS = function(cb){
     alert("fail to load script: " + origin +"/lib/api/data.js");
   });  
 };
-(
-function(){
-  function entry(){    
-    var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-    var testAPI = new TestAPI(device);
-    testAPI.loadTestAPI("TestAPI");
+TestAPI.prototype.log = function(str){
+  console.log(str);
+};
+TestAPI.prototype.LOG = function(obj){
+  var that = this;
+  function logObj(obj){
+    for(var id in obj){
+      if((typeof obj[id]) === "object"){
+        that.log("This is an object, key: " + id);
+        logObj(obj[id]);
+      }else{
+        that.log(id + ": " + obj[id] + " - " + (typeof obj[id]));
+      }
+    }
   }
-  $(window).on("afui:ready", entry);  
+  logObj(obj);
+};
+TestAPI.prototype.LogObjArray = function(objArr){
+  for(var id in objArr){
+    // this.log(objArr[id]);
+    this.log("-----=====new Object=====-----");
+    for(var key in objArr[id]){
+      this.log(key + ": " + objArr[id][key]);
+    }
+  }
+};
+
+TestAPI.prototype.getAllCate = function(){
+  var that = this;
+  function getAllCateCb(objArr){
+    that.LogObjArray(objArr);
+  }  
+  this._remotedata.getAllCate(getAllCateCb);
+};
+
+TestAPI.prototype.getAllDataByCate = function(){
+  var that = this;
+  function getAllDataByCateCb(objArr){
+    that.LogObjArray(objArr);
+  }
+  //contact, Picture, video, document, Music
+  this._remotedata.getAllDataByCate(getAllDataByCateCb, "document");  
+};
+var testAPI;
+function entry(){
+  var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
+  testAPI = new TestAPI(device);
+  testAPI.loadTestAPI("TestAPI");
 }
-)();
+$(window).on("afui:ready", entry);
+// (
+// function(){
+// }
+// )();
 
 // function startDebug(){
   // console.log("in function startDebug.");
