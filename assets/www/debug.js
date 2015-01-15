@@ -440,11 +440,103 @@ RemoteFileBrowser.prototype.getAllCate = function(){
 
 RemoteFileBrowser.prototype.getAllDataByCate = function(type){
   var that = this;
-  function getAllDataByCateCb(objArr){
-    that.LogObjArray(objArr);
+  var cate = type;
+  function getAllDataByCateCb(objArray){
+    // that.LogObjArray(objArray);
+    
+    if(that._panelScroll){
+      that._panelScroll.empty();
+    }else{
+      that._panel.empty();
+    }
+    for(var idx = 0; idx < objArray.length; idx++){
+      // console.log(objArray[idx].filename);
+      var tmpArray = that.getNameAndIconByObj(cate, objArray[idx]);
+      var name = tmpArray[0];
+      var icon = tmpArray[1];
+      console.log(name + ": " + icon);
+      var file = $.create("div", {className:"file"})
+      .data("uri", objArray[idx].URI)
+      .append(
+        $.create("div", {className: "icon"}).append(
+          $.create("img",{src: "data/icons/" + icon})
+        )
+      )
+      .append(
+        $.create("div", {className: "name", id:name}).html(name)
+      )
+      .on("longTap", function(e){
+        $(this).addClass('focus');          
+      })
+      .on("touchend", function(e){   
+        if($(this).hasClass('focus')){
+          $(this).removeClass('focus');
+          var uri = $(this).data('uri');
+          console.log("You click" + uri);
+          // that.openRemoteData(uri);
+        }
+      });
+      // console.log(that._panel);
+      if(that._panelScroll){
+        file.appendTo(that._panelScroll);
+      }else{
+        file.appendTo(that._panel);
+      }
+    }
   }
   //Contact, Picture, Video, Document, Music
   this._remotedata.getAllDataByCate(getAllDataByCateCb, type);  
+};
+RemoteFileBrowser.prototype.getNameAndIconByObj = function(type, obj){
+  var name, icon;
+  switch(type){
+    case "Contact":
+      name = obj.name;
+      icon = "Contacts.png";
+    break;
+    case "Picture":
+      name = obj.filename;
+      icon = "image.png";
+    break;
+    case "Video":
+      name = obj.filename;
+      icon = "Videos.png";
+    break;
+    case "Document":
+      name = obj.filename;
+      switch(obj.postfix){
+        case "ppt":
+        case "pptx":
+          icon = "powerpoint.png";
+        break;
+        case 'xls':
+        case 'xlsx':
+        case 'et':
+        case 'ods':        
+          icon = "excel.png";
+        break;
+        case 'doc':
+        case 'docx':
+        case 'wps':
+          icon = "word.png"
+        break;
+        case 'pdf':
+          icon = "pdf.png";
+        break;
+        case 'txt':
+          icon = "text.png";
+        break;
+        default:
+          icon = "none.png";
+        break;
+      }
+    break;
+    case "Music":
+      name = obj.filename;
+      icon = "music.png";
+    break;
+  };
+  return [name, icon];
 };
 RemoteFileBrowser.prototype.log = function(str){
   console.log(str);

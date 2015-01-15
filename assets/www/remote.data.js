@@ -12,50 +12,50 @@
 /*getAllDataByCate*/
 //One Element of contact
 /**
-  URI: rio1529rio#40ee23b453106a4d8f6e#contact debug.js:112
-  name: 王枫 debug.js:112
-  sex: undefined debug.js:112
-  age:  debug.js:112
-  photoPath:  debug.js:112
-  phone: 18500097230 debug.js:112
-  email: wangfeng@nfs.iscas.ac.cn debug.js:112
+  URI: rio1529rio#40ee23b453106a4d8f6e#contact
+  name: 王枫
+  sex: undefined
+  age: 
+  photoPath: 
+  phone: 18500097230
+  email: wangfeng@nfs.iscas.ac.cn
   others: 
  */
 //One Element of Picture
 /**
-  is_delete: 0 debug.js:112
-  URI: rio1529rio#4cf153bbc89505b937bf#picture debug.js:112
-  postfix: png debug.js:112
-  filename: DeepinScreenshot20140718172730 debug.js:112
-  id: 25 debug.js:112
-  size: 1764101 debug.js:112
-  path: /home/cos/.resources/picture/data/DeepinScreenshot20140718172730.png debug.js:112
-  location: Mars debug.js:112
-  createTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST) debug.js:112
-  createDev: rio1529rio debug.js:112
-  lastAccessTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST) debug.js:112
-  lastAccessDev: rio1529rio debug.js:112
-  lastModifyTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST) debug.js:112
-  lastModifyDev: rio1529rio debug.js:112
+  is_delete: 0
+  URI: rio1529rio#4cf153bbc89505b937bf#picture
+  postfix: png
+  filename: DeepinScreenshot20140718172730
+  id: 25
+  size: 1764101
+  path: /home/cos/.resources/picture/data/DeepinScreenshot20140718172730.png
+  location: Mars
+  createTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST)
+  createDev: rio1529rio
+  lastAccessTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST)
+  lastAccessDev: rio1529rio
+  lastModifyTime: Fri Nov 14 2014 09:15:14 GMT+0800 (CST)
+  lastModifyDev: rio1529rio
   others: documents,Technology,before-20140720,TechnicalResearch,desktopEnv,lgy0721
  */
 //One Element of Video
 /**
-  is_delete: 0 debug.js:112
-  URI: rio1529rio#58e9b3bd45d1700248ba#video debug.js:112
-  postfix: ogg debug.js:112
-  filename: 火力全开 debug.js:112
-  id: 5 debug.js:112
-  size: 23826202 debug.js:112
-  path: /home/cos/.resources/video/data/火力全开.ogg debug.js:112
-  directorName: Xiquan debug.js:112
-  actorName: Xiquan debug.js:112
-  createTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST) debug.js:112
-  createDev: rio1529rio debug.js:112
-  lastAccessTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST) debug.js:112
-  lastAccessDev: rio1529rio debug.js:112
-  lastModifyTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST) debug.js:112
-  lastModifyDev: rio1529rio debug.js:112
+  is_delete: 0
+  URI: rio1529rio#58e9b3bd45d1700248ba#video
+  postfix: ogg
+  filename: 火力全开
+  id: 5
+  size: 23826202
+  path: /home/cos/.resources/video/data/火力全开.ogg
+  directorName: Xiquan
+  actorName: Xiquan
+  createTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST)
+  createDev: rio1529rio
+  lastAccessTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST)
+  lastAccessDev: rio1529rio
+  lastModifyTime: Thu Nov 20 2014 15:57:40 GMT+0800 (CST)
+  lastModifyDev: rio1529rio
   others: video 
  */
 //One Element of document
@@ -78,29 +78,29 @@
 */
 //Music
 /**
-is_delete: 0 debug.js:112
-URI: rio1529rio#c30e7e666092faa76d7c#music debug.js:112
-postfix: mp3 debug.js:112
-filename: 那些年 debug.js:112
-id: 12 debug.js:112
-size: 6000504 debug.js:112
-path: /home/cos/.resources/music/data/那些年.mp3 debug.js:112
-format: MPEG 1 layer 3 debug.js:112
-bit_rate: 128003 debug.js:112
-frequency: 44100 debug.js:112
-TIT2: 那些年 debug.js:112
-TPE1: 胡夏 debug.js:112
-TALB: 那些年,我们一起追的女孩 电影原声带 debug.js:112
-TDRC: 2011-08-08 debug.js:112
-APIC: e (image/jpeg, 61221 bytes) debug.js:112
-track: 371.12 debug.js:112
-TXXX: null debug.js:112
-COMM: null debug.js:112
-createTime: Thu Nov 20 2014 15:57:39 GMT+0800 (CST) debug.js:112
-createDev: rio1529rio debug.js:112
-lastAccessTime: Wed Jan 14 2015 15:13:53 GMT+0800 (CST) debug.js:112
-lastAccessDev: rio1529rio debug.js:112
-lastModifyTime: Thu Nov 20 2014 15:57:39 GMT+0800 (CST) debug.js:112
-lastModifyDev: rio1529rio debug.js:112
-others: musics 
+  is_delete: 0
+  URI: rio1529rio#c30e7e666092faa76d7c#music
+  postfix: mp3
+  filename: 那些年
+  id: 12
+  size: 6000504
+  path: /home/cos/.resources/music/data/那些年.mp3
+  format: MPEG 1 layer 3
+  bit_rate: 128003
+  frequency: 44100
+  TIT2: 那些年
+  TPE1: 胡夏
+  TALB: 那些年,我们一起追的女孩 电影原声带
+  TDRC: 2011-08-08
+  APIC: e (image/jpeg, 61221 bytes)
+  track: 371.12
+  TXXX: null
+  COMM: null
+  createTime: Thu Nov 20 2014 15:57:39 GMT+0800 (CST)
+  createDev: rio1529rio
+  lastAccessTime: Wed Jan 14 2015 15:13:53 GMT+0800 (CST)
+  lastAccessDev: rio1529rio
+  lastModifyTime: Thu Nov 20 2014 15:57:39 GMT+0800 (CST)
+  lastModifyDev: rio1529rio
+  others: musics 
  */

@@ -637,25 +637,25 @@ DataClass.prototype.getRemoteData = function(){
     size: "0"
     */
     // console.log(objArray);
-    for(i=0;i<objArray.length;i++){
-      if(objArray[i].postfix == 'ppt' || objArray[i].postfix == 'pptx')
+    for(var idx = 0; idx < objArray.length; idx++){
+      if(objArray[idx].postfix == 'ppt' || objArray[idx].postfix == 'pptx')
       {
-        console.log(objArray[i].filename);
+        console.log(objArray[idx].filename);
         var file = $.create("div", {className:"file"})
-        .data("uri", objArray[i].URI)
+        .data("uri", objArray[idx].URI)
         .append(
           $.create("div", {className: "icon"}).append(
             $.create("img",{src: "data/icons/powerpoint.png"})
           )
         )
         .append(
-          $.create("div", {className: "name", id:objArray[i].filename}).html(objArray[i].filename)
+          $.create("div", {className: "name", id:objArray[idx].filename}).html(objArray[idx].filename)
         )
         // .on("touchstart", function(e){
           // // $(this).addClass('focus');
           // console.log("touchstart: ");
           // for(var i=0; i<e.touches.length; i++){
-            // console.log(e.touches[i].target);
+            // console.log(e.touches[idx].target);
           // }
         // })
         // .on("touchmove", function(e){
