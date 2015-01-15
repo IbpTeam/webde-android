@@ -314,6 +314,7 @@ var RemoteFileBrowser = function(device){
   this._ID = "RemoteFileBrowser";
   this._address = device.address;
   this._port = 8888;
+  this._cateInfo = new Object();
 };
 RemoteFileBrowser.prototype.show = function(title){
   if(!$('#'+this._ID).length){
@@ -388,14 +389,36 @@ RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
         if(("Other" == obj.type) || ("Devices" == obj.type)){
           continue;
         }
+        that._cateInfo[obj.type] = new Object();
+        $.extend(that._cateInfo[obj.type], obj);
+        var icon;
+        switch(obj.type){
+          case "Contact":
+            icon = "icon user big";
+          break;
+          case "Picture":
+            icon = "icon picture big";
+          break;
+          case "Video":
+            icon = "icon tv big";
+          break;
+          case "Document":
+            icon = "icon paper big";
+          break;
+          case "Music":
+            icon = "icon headset big";
+          break;
+        };
         ul.append(
           $.create("li", {}).append(
-            $.create("a", {}).html(obj.desc).on("click", function(){
-              console.log(obj.type);
+            $.create("a", {className: icon}).html(obj.desc).data("type", obj.type).on("click", function(){
+              //console.log($(this).data("type"));
+              that.getAllDataByCate($(this).data("type"));
             })
           )
         );
       }
+      // that.LogObjObj(that._cateInfo);
       var nav = $.create("nav", {id: "nav_remotefilebrowser"});
       nav.append(ul).appendTo($("#afui"));
       that._panel.attr("data-nav", "nav_remotefilebrowser");
@@ -407,33 +430,6 @@ RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
     alert("fail to load script: " + origin +"/lib/api/data.js");
   });  
 };
-RemoteFileBrowser.prototype.log = function(str){
-  console.log(str);
-};
-RemoteFileBrowser.prototype.LOG = function(obj){
-  var that = this;
-  function logObj(obj){
-    for(var id in obj){
-      if((typeof obj[id]) === "object"){
-        that.log("This is an object, key: " + id);
-        logObj(obj[id]);
-      }else{
-        that.log(id + ": " + obj[id] + " - " + (typeof obj[id]));
-      }
-    }
-  }
-  logObj(obj);
-};
-RemoteFileBrowser.prototype.LogObjArray = function(objArr){
-  for(var id in objArr){
-    // this.log(objArr[id]);
-    this.log("-----=====new Object=====-----");
-    for(var key in objArr[id]){
-      this.log(key + ": " + objArr[id][key]);
-    }
-  }
-};
-
 RemoteFileBrowser.prototype.getAllCate = function(){
   var that = this;
   function getAllCateCb(objArr){
@@ -447,8 +443,42 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
   function getAllDataByCateCb(objArr){
     that.LogObjArray(objArr);
   }
-  //contact, Picture, video, document, Music
+  //Contact, Picture, Video, Document, Music
   this._remotedata.getAllDataByCate(getAllDataByCateCb, type);  
+};
+RemoteFileBrowser.prototype.log = function(str){
+  console.log(str);
+};
+RemoteFileBrowser.prototype.LogObj = function(obj){
+  for(var key in obj){
+    this.log(key + ": " + obj[key]);
+  }
+};
+RemoteFileBrowser.prototype.LogObjArray = function(objArr){
+  for(var id in objArr){
+    this.log("-----=====Content Of Object=====-----");
+    this.LogObj(objArr[id]);
+  }
+};
+RemoteFileBrowser.prototype.LogObjObj = function(objObj){
+  for(var key in objObj){
+    this.log("-----=====Content Of " + key + "=====-----");
+    this.LogObj(objObj[key]);
+  }
+};
+RemoteFileBrowser.prototype.LogUnkown = function(obj){
+  var that = this;
+  function logObj(obj){
+    for(var id in obj){
+      if((typeof obj[id]) === "object"){
+        that.log("This is an object, key: " + id);
+        logObj(obj[id]);
+      }else{
+        that.log(id + ": " + obj[id] + " - " + (typeof obj[id]));
+      }
+    }
+  }
+  logObj(obj);
 };
 
 var testAPI;
