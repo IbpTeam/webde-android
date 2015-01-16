@@ -198,8 +198,8 @@
                 <div class="panel" id="home" title="首页" data-tab="navbar_home" >
                 </div>
 
-                <!-- 在线服务列表 -->
-                <div class="panel" id="nsd" title="在线服务列表" data-tab="navbar_nsd"  data-nav="nav_nsd">
+                <!-- 在线服务列表 data-tab="navbar_nsd"  -->
+                <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
                     <ul class="list">             
                     </ul>
                 </div>
@@ -227,7 +227,7 @@
                 
 
                 <!-- 设备接口 -->
-                <div class="panel" id="device" title="设备接口" data-tab="navbar_device" >
+                <div class="panel" id="device" title="本地接口测试" data-tab="navbar_device" >
                     <h3>Hybrid App Development</h3>
                     <p>本地接口测试</p>
                     <ul class="list">
@@ -282,9 +282,12 @@
             <div id="navbar">
                 <div class="horzRule"></div>
                 <a id="navbar_home" href="#home" class="icon home">首页</a>
-                <a id="navbar_nsd" href="#nsd" class="icon user">发现服务</a>
-                <a id="navbar_device" href="#device" class="icon camera mini">设备接口</a>
+                <!-- <a id="navbar_nsd" href="#nsd" class="icon user">发现服务</a> -->
+                <a id="navbar_device" href="#device" class="icon camera mini">本地接口测试</a>
             </div>
+            <footer id='tohomepanel'>
+                <a id="navbar_home" href="#home" class="icon home">返回首页</a>
+            </footer>
             <!-- nav main -->
             <nav title="Left Menu">
                 <ul class="list">

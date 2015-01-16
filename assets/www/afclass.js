@@ -1,3 +1,63 @@
+var HomeClass = function(){
+  var h2 = $.create("h2", {}).css({"text-align": "center"}).html("远程交互");
+  var ul = $.create("ul", {className: "list inset"})
+  .append(
+    $.create("li", {className: "divider"}).html("登录界面入口")
+  )
+  .append(//, {href: "#nsd"}
+    $("<li>").append($("<a>").html("网络发现").on("click", function(){
+      //console.log("to 网络发现");
+      $("footer#tohomepanel a").removeClass("pressed");
+      $.ui.loadContent("#nsd", false, false, "slide");
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("设备连接").on("click", function(){
+      var popup = $("#afui").popup({
+        title : "输入设备信息",
+        message : "用户名: <input type='text' class='af-ui-forms' data-id='name'><br> " +
+        "设备地址: <input type='text' class='af-ui-forms' data-id='address' style='webkit-text-security:disc'>",
+        cancelText : "取消",
+        cancelCallback : function() {
+        },
+        doneText : "登录",
+        doneCallback : function() {
+          var name = $('#' + popup.id).find("input[data-id='name']").val();
+          var address = $('#' + popup.id).find("input[data-id='address']").val();
+          console.log(name + ": " + address);
+        },
+        cancelOnly : false
+      });
+      console.log(popup);
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("二维码扫描").on("click", function(){
+      console.log("to 二维码扫描");
+    }))
+  );
+  this._ID = '#home';
+  this._panel = $('#content ' + this._ID);
+  if(this._panelScroll = this._panel.find('.afScrollPanel')){
+    this._panelScroll.append(h2);
+    this._panelScroll.append(ul);
+  }else{
+    this._panel.append(h2);
+    this._panel.append(ul);    
+  };
+  $.ui.loadContent(this._ID, false, false, "");
+};
+HomeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "");
+  // <h2 style="text-align: center">远程交互</h2>
+  // <ul class="list inset">
+      // <li class="divider">登录界面入口</li>
+      // <li>
+          // <a href="#nsd">设备发现</a>
+      // </li>
+  // </ul>
+};
+
 // used for content show.
 var NsdLogClass = function(){
   this._panel = $('#content #device_nsd');

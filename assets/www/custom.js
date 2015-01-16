@@ -72,14 +72,14 @@ cordova.define("module.nsd", function(require, exports, module) {
     }
   });
   
-  function debugPort(){
-    var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-    if(!_entrances[device.address+'.'+device.port]){
-      _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
-    }
-    _entrances[device.address+'.'+device.port].loadEntrance();
-  }
-  debugPort();
+  // function debugPort(){
+    // var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
+    // if(!_entrances[device.address+'.'+device.port]){
+      // _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
+    // }
+    // _entrances[device.address+'.'+device.port].loadEntrance();
+  // }
+  // debugPort();
   
   module.exports = nsdObj;
 });
@@ -152,6 +152,7 @@ cordova.define("af.camera", function(require, exports, module) {
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
+    var home = HomeClass();
     window.AfTimer = cordova.require('af.timer');
     window.NsdModule = cordova.require('module.nsd');
     window.AfCamera = cordova.require('af.camera');
