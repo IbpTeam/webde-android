@@ -1,5 +1,17 @@
 var HomeClass = function(){
+  var that = this;
+  this._httpPort = 8888;
   var h2 = $.create("h2", {}).css({"text-align": "center"}).html("远程交互");
+  var explan = $("<ul>").css({"margin-bottom": "10px"})
+  .append(
+    $("<li>").html("网络发现：通过网络发现列表。")
+  )
+  .append(
+    $("<li>").html("设备连接：通过输入IP地址。")
+  )
+  .append(
+    $("<li>").html("二维码扫描：通过二维码扫描。")
+  );
   var ul = $.create("ul", {className: "list inset"})
   .append(
     $.create("li", {className: "divider"}).html("登录界面入口")
@@ -24,11 +36,26 @@ var HomeClass = function(){
         doneCallback : function() {
           var name = $('#' + popup.id).find("input[data-id='name']").val();
           var address = $('#' + popup.id).find("input[data-id='address']").val();
+          var fullUrl = 'http://' + address + ':' + that._httpPort;
+          if(address){
+            HomeClass.prototype.checkNetwork(fullUrl,
+              function(){
+                console.log(name + ": " + address + " ok");
+                if(!name){
+                  name = address;
+                }
+              },
+              function(){
+                window.alert(fullUrl + " is not open.");
+              }
+            );
+          }else{
+              window.alert("地址不能为空");            
+          }
           console.log(name + ": " + address);
         },
         cancelOnly : false
       });
-      console.log(popup);
     }))
   )
   .append(
@@ -40,22 +67,29 @@ var HomeClass = function(){
   this._panel = $('#content ' + this._ID);
   if(this._panelScroll = this._panel.find('.afScrollPanel')){
     this._panelScroll.append(h2);
+    this._panelScroll.append(explan);
     this._panelScroll.append(ul);
   }else{
     this._panel.append(h2);
+    this._panelScroll.append(explan);
     this._panel.append(ul);    
   };
-  $.ui.loadContent(this._ID, false, false, "");
+  $.ui.loadContent(this._ID, false, false, "fade");
 };
-HomeClass.prototype.show = function(){
-  $.ui.loadContent(this._ID, false, false, "");
-  // <h2 style="text-align: center">远程交互</h2>
-  // <ul class="list inset">
-      // <li class="divider">登录界面入口</li>
-      // <li>
-          // <a href="#nsd">设备发现</a>
-      // </li>
-  // </ul>
+HomeClass.prototype.checkNetwork = function(url2test, successcb, failcb){
+  // console.log("url2test: " + url2test);
+  $.ajax({
+    type: "GET",
+    cache: false,
+    url: url2test,
+    data: "",
+    success: function(){
+      successcb();
+    },
+    error:function(){
+      failcb();
+    }
+  });
 };
 
 // used for content show.
