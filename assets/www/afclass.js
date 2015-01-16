@@ -1,6 +1,51 @@
-var HomeClass = function(){
-  var that = this;
+var HomeClass = function(device){
+  this._device = {};
+  $.extend(this._device, device);
+  this._ID = "home";
   this._httpPort = 8888;
+  this._socketPort = 7777;
+  this.initObject();
+  this.initPanel();
+};
+HomeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "fade");  
+};
+HomeClass.prototype.initObject = function(){
+  var that = this;
+  this._nsdLogObj = new NsdLogClass();
+  this._entrances = new Object();
+  
+  this._socketObj = new SocketClass(this._nsdLogObj);
+  var serviceInfo = [this._device.name, this._socketPort];
+  this._socketObj.startServerSocket(serviceInfo); 
+  this._socketObj.addReceiveMessageListener(function(msgfromnative){
+    console.log(msgfromnative);
+    if(that._entrances[msgfromnative.address+'.'+msgfromnative.port]){
+      that._entrances[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgfromnative);
+    }
+  });  
+
+  this._nsdObj = new NsdClass(this._device, this._nsdLogObj);
+  this._nsdObj.addResolveServiceListener(function(device){
+    if(!that._entrances[device.address+'.'+device.port]){
+      that._entrances[device.address+'.'+device.port] = new EntranceClass(device, that._socketObj);
+    }
+    that._entrances[device.address+'.'+device.port].show();
+  });
+  var registerCb = {
+    /** format of ServiceInfo: [this._mName, this._mPort];*/
+    start:function(serviceInfo){
+      //socketObj.startServerSocket(serviceInfo);
+    },
+    stop:function(){
+      socketObj.stopServerSocket();
+    }
+  };
+  this._nsdObj.addRegisterServiceListener(registerCb);
+};
+
+HomeClass.prototype.initPanel = function(){
+  var that = this;
   var h2 = $.create("h2", {}).css({"text-align": "center"}).html("远程交互");
   var explan = $("<ul>").css({"margin-bottom": "10px"})
   .append(
@@ -16,46 +61,55 @@ var HomeClass = function(){
   .append(
     $.create("li", {className: "divider"}).html("登录界面入口")
   )
-  .append(//, {href: "#nsd"}
+  .append(
     $("<li>").append($("<a>").html("网络发现").on("click", function(){
-      //console.log("to 网络发现");
       $("footer#tohomepanel a").removeClass("pressed");
-      $.ui.loadContent("#nsd", false, false, "slide");
+      // $.ui.loadContent("#nsd", false, false, "slide");
+      that._nsdObj.show();
     }))
   )
   .append(
     $("<li>").append($("<a>").html("设备连接").on("click", function(){
-      var popup = $("#afui").popup({
-        title : "输入设备信息",
-        message : "用户名: <input type='text' class='af-ui-forms' data-id='name'><br> " +
-        "设备地址: <input type='text' class='af-ui-forms' data-id='address' style='webkit-text-security:disc'>",
-        cancelText : "取消",
-        cancelCallback : function() {
-        },
-        doneText : "登录",
-        doneCallback : function() {
-          var name = $('#' + popup.id).find("input[data-id='name']").val();
-          var address = $('#' + popup.id).find("input[data-id='address']").val();
-          var fullUrl = 'http://' + address + ':' + that._httpPort;
-          if(address){
-            HomeClass.prototype.checkNetwork(fullUrl,
-              function(){
-                console.log(name + ": " + address + " ok");
-                if(!name){
-                  name = address;
+      var popup = $("#afui").popup(
+        {
+          title : "输入设备信息",
+          message : "用户名: <input type='text' class='af-ui-forms' data-id='name'><br> " +
+          "设备地址: <input type='text' class='af-ui-forms' data-id='address' style='webkit-text-security:disc'>",
+          cancelText : "取消",
+          cancelCallback : function() {
+          },
+          doneText : "登录",
+          doneCallback : function() {
+            var name = $('#' + popup.id).find("input[data-id='name']").val();
+            var address = $('#' + popup.id).find("input[data-id='address']").val();
+            var fullUrl = 'http://' + address + ':' + that._httpPort;
+            if(address){
+              HomeClass.prototype.checkNetwork(fullUrl,
+                function(){
+                  console.log(name + ": " + address + " ok");
+                  if(!name){
+                    name = address;
+                  }
+                  var device = {"type":"_http._tcp.","port":that._socketPort,"address":address,"name":name};
+                  if(!that._entrances[device.address+'.'+device.port]){
+                    that._entrances[device.address+'.'+device.port] = new EntranceClass(device, that._socketObj);
+                  }
+                  that._entrances[device.address+'.'+device.port].show();
+                },
+                function(){
+                  window.alert(fullUrl + " is not open.");
                 }
-              },
-              function(){
-                window.alert(fullUrl + " is not open.");
-              }
-            );
-          }else{
-              window.alert("地址不能为空");            
-          }
-          console.log(name + ": " + address);
-        },
-        cancelOnly : false
-      });
+              );
+            }else{
+                window.alert("地址不能为空");            
+            }
+            console.log(name + ": " + address);
+          },
+          cancelOnly : false
+        }
+      );
+      //add default value.      
+      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.5.176");
     }))
   )
   .append(
@@ -74,10 +128,10 @@ var HomeClass = function(){
     this._panelScroll.append(explan);
     this._panel.append(ul);    
   };
-  $.ui.loadContent(this._ID, false, false, "fade");
+  this.show();
 };
+
 HomeClass.prototype.checkNetwork = function(url2test, successcb, failcb){
-  // console.log("url2test: " + url2test);
   $.ajax({
     type: "GET",
     cache: false,
@@ -125,23 +179,145 @@ NsdLogClass.prototype.scrollToBottom = function(){
 NsdLogClass.prototype.clearContent = function(){
   this._content.html('');
 };
-// var nsdLogObj = new NsdLogClass();
 
 /**
  * Class NsdClass is used for Network Service Discovery.
  */ 
-var NsdClass = function(name, port, debug) {
+var NsdClass = function(device, debug) {
   if(!window.NSDNative){
     alert("object window.NSD does not exist.");
     return;
   }
-  this._mName = name;
-  this._mPort = port;  
+  this._device = {};
+  $.extend(this._device, device);
+  this._ID = "nsd";
+  this._mName = device.name;
+  this._mPort = device.port;  
   this._deviceList = new Object();
   this._d = debug;
-  this._userlist = $('#content #nsd ul.list');
   this._resolveServiceListener = new Array();
   this._registerServiceListener = new Array();
+};
+NsdClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){
+    this.newPanel(title);
+  }
+  $.ui.loadContent(this._ID, false, false, "slide");
+};
+NsdClass.prototype.newPanel = function(title){
+  if(!title){
+    title = "在线服务列表"; 
+  }
+  $.ui.addContentDiv(this._ID, "", title);
+  this._panel = $('#'+this._ID);
+  this._panel.data("nav", "nav_nsd").data("footer", "tohomepanel");  
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._userlist = $.create("ul", {className: "list"});
+  if(this._panelScroll){
+    this._panelScroll.append(this._userlist);
+  }else{
+    this._panel.append(this._userlist);    
+  }
+  this.addNavBar();
+};
+
+// <!-- 在线服务列表 data-tab="navbar_nsd"  -->
+// <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
+    // <ul class="list">             
+    // </ul>
+// </div>
+NsdClass.prototype.addNavBar = function(){
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html("需要插件ibp.plugin.nsd")
+  )
+  .append(
+    $("<li>").append($("<a>").html("initNsd").on("click", function(){
+      that.initNsd();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopNsd").on("click", function(){
+      that.stopNsd();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("startDiscovery").on("click", function(){
+      that.startDiscovery();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("showDeviceList").on("click", function(){
+      that.showDeviceList();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopDiscovery").on("click", function(){
+      that.stopDiscovery();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("registerService").on("click", function(){
+      that.registerService();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("unRegisterService").on("click", function(){
+      that.unRegisterService();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("scrollToBottom").on("click", function(){
+      that._d.scrollToBottom();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("clearContent").on("click", function(){
+      that._d.clearContent();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: "nav_nsd"});
+  nav.append(ul).appendTo($("#afui"));
+// <nav id="nav_nsd">    
+    // <ul class="list">
+        // <li class="divider">
+            // 需要插件ibp.plugin.nsd
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.initNsd();$.ui.toggleSideMenu();">initNsd</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.stopNsd();$.ui.toggleSideMenu();">stopNsd</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.startDiscovery();$.ui.toggleSideMenu();">startDiscovery</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.showDeviceList();$.ui.toggleSideMenu();">showDeviceList</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.stopDiscovery();$.ui.toggleSideMenu();">stopDiscovery</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.registerService();">registerService</a>
+        // </li>
+        // <li>
+            // <a onclick="NsdModule.unRegisterService();">unRegisterService</a>
+        // </li>
+    // </ul>
+  // </nav>
 };
 NsdClass.prototype.addResolveServiceListener = function(cb){
   this._resolveServiceListener.push(cb);
@@ -422,13 +598,13 @@ EntranceClass.prototype.processMsg = function(msgfromnative){
   this._chat.loadChat();
   this._chat.processMsg(msgfromnative);
 };
-EntranceClass.prototype.loadEntrance = function(){
+EntranceClass.prototype.show = function(){
   if(!$('#'+this._entranceId).length){      
-    this.newEntrance();
+    this.newPanel();
   }
   $.ui.loadContent('#'+this._entranceId, false, false, "up");
 };
-EntranceClass.prototype.newEntrance = function(){
+EntranceClass.prototype.newPanel = function(){
   var that = this;
   var device = this._device;
   $.ui.addContentDiv(this._entranceId,
@@ -438,7 +614,7 @@ EntranceClass.prototype.newEntrance = function(){
     + "<ul class='grid-photo'><ul>",
     "功能列表");
   var entrance = $('#'+this._entranceId);
-  entrance.get(0).setAttribute("data-tab", "none");
+  //entrance.get(0).setAttribute("data-tab", "none");
   var funclist = entrance.find('ul');
   /*
    * 不能为a绑定事件？

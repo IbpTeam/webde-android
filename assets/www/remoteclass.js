@@ -234,11 +234,11 @@ RemoteFileBrowser.prototype.show = function(title){
 };
 RemoteFileBrowser.prototype.newPanel = function(title){
   $.ui.addContentDiv(this._ID, "", title);
-  this._panel = $('#'+this._ID);
-  
+  this._panel = $('#'+this._ID);  
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
+  this._panel.attr("data-footer", "none");
 };
 RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
   var that = this;
@@ -348,8 +348,7 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
   var that = this;
   var cate = type;
   function getAllDataByCateCb(objArray){
-    // that.LogObjArray(objArray);
-    
+    // that.LogObjArray(objArray);    
     if(that._panelScroll){
       that._panelScroll.empty();
     }else{
@@ -389,6 +388,7 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
         file.appendTo(that._panel);
       }
     }
+    $.ui.toggleSideMenu();
   }
   //Contact, Picture, Video, Document, Music
   this._remotedata.getAllDataByCate(getAllDataByCateCb, type);  

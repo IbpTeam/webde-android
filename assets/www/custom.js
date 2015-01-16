@@ -40,23 +40,19 @@ cordova.define("af.timer", function(require, exports, module) {
 cordova.define("module.nsd", function(require, exports, module) {
   var nsdLogObj = new NsdLogClass();
   var socketObj = new SocketClass(nsdLogObj);
-  var nsdObj = new NsdClass("nsd-android-test", 7777, nsdLogObj);
+  device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
+  var nsdObj = new NsdClass(device, nsdLogObj);
+  //nsdObj.show("在线服务列表");
 
-  nsdObj.scrollToBottom = function(){
-    nsdLogObj.scrollToBottom();
-  };
-  nsdObj.clearContent = function(){
-    nsdLogObj.clearContent();
-  };
   var _entrances = new Object();
   nsdObj.addResolveServiceListener(function(device){
     if(!_entrances[device.address+'.'+device.port]){
       _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
     }
-    _entrances[device.address+'.'+device.port].loadEntrance();
+    _entrances[device.address+'.'+device.port].show();
   });
   var registerCb = {
-    // serviceInfo = [this._mName, this._mPort];
+    /** format of ServiceInfo: [this._mName, this._mPort];*/
     start:function(serviceInfo){
       socketObj.startServerSocket(serviceInfo);
     },
@@ -152,27 +148,37 @@ cordova.define("af.camera", function(require, exports, module) {
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
-    var home = HomeClass();
-    window.AfTimer = cordova.require('af.timer');
-    window.NsdModule = cordova.require('module.nsd');
-    window.AfCamera = cordova.require('af.camera');
+    var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
+    var homeObj = new HomeClass(device);
+    //homeObj.show();
+    //console.log(homeObj);
+    // window.AfTimer = cordova.require('af.timer');
+    // //window.NsdModule = cordova.require('module.nsd');
+    // window.AfCamera = cordova.require('af.camera');
   });
-  // document.body.style.zoom=0.75;
-  // document.getElementById("afui").style.height = "100%";
-  // window.onunload = function(){
-    // alert("window is unload");
-    // console.log("window is unload");
-  // };
-  // channel.onPause.subscribe(function() {
-    // console.log('onPause');
-  // });
-  // channel.onResume.subscribe(function() {
-    // console.log('onResume');
-  // });
-  // channel.onDestroy.subscribe(function() {
-    // console.log('onDestroy');
-  // });
+  // // document.body.style.zoom=0.75;
+  // // document.getElementById("afui").style.height = "100%";
+  // // window.onunload = function(){
+    // // alert("window is unload");
+    // // console.log("window is unload");
+  // // };
+  // // channel.onPause.subscribe(function() {
+    // // console.log('onPause');
+  // // });
+  // // channel.onResume.subscribe(function() {
+    // // console.log('onResume');
+  // // });
+  // // channel.onDestroy.subscribe(function() {
+    // // console.log('onDestroy');
+  // // });
 })();
+// function entry(){
+  // var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
+  // var homeObj = new HomeClass(device);
+  // homeObj.show();
+// }
+// $(window).on("afui:ready", entry);
+
 /*
   function logObj(obj){
     for(id in obj){

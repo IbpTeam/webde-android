@@ -100,6 +100,7 @@
         <script type="text/javascript" charset="utf-8" src="./plugins/af.8tiles.js"></script>
         <script type="text/javascript" charset="utf-8" src="require.js"></script>
         <script type="text/javascript" charset="utf-8" src="./plugins/ibp.pop.js"></script>
+        <script type="text/javascript" charset="utf-8" src="remoteclass.js"></script>
         <script type="text/javascript" charset="utf-8" src="afclass.js"></script>
         <script type="text/javascript" charset="utf-8" src="custom.js"></script>
 
@@ -119,7 +120,7 @@
                 if (search == "win8")
                     $.os.ie = true;
                 else if (search == "firefox")
-                    $.os.fennec = "true"
+                    $.os.fennec = "true";
                 $.ui.ready(function() {
                     $("#afui").get(0).className = search;
                 });
@@ -198,11 +199,6 @@
                 <div class="panel" id="home" title="首页" data-tab="navbar_home" >
                 </div>
 
-                <!-- 在线服务列表 data-tab="navbar_nsd"  -->
-                <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
-                    <ul class="list">             
-                    </ul>
-                </div>
                 <!-- 聊天界面 -->
                 <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer'>
                     <ul>
@@ -334,40 +330,6 @@
                     </li>
                     <li>
                         <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="nav_nsd">
-                <div class='title'>
-                    <h3>需要安装插件ibp.plugin.nsd</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.initNsd();">initNsd</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.stopNsd();">stopNsd</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.startDiscovery();">startDiscovery</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.showDeviceList();">showDeviceList</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.stopDiscovery();">stopDiscovery</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.registerService();">registerService</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.unRegisterService();">unRegisterService</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.scrollToBottom();">scrollToBottom</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="NsdModule.clearContent();">clearContent</a>
                     </li>
                 </ul>
             </nav>
