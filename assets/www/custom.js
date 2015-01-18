@@ -68,15 +68,6 @@ cordova.define("module.nsd", function(require, exports, module) {
     }
   });
   
-  // function debugPort(){
-    // var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-    // if(!_entrances[device.address+'.'+device.port]){
-      // _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
-    // }
-    // _entrances[device.address+'.'+device.port].loadEntrance();
-  // }
-  // debugPort();
-  
   module.exports = nsdObj;
 });
 
@@ -149,7 +140,7 @@ cordova.define("af.camera", function(require, exports, module) {
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
-    var homeObj = new HomeClass(device);
+    window.homeObj = new HomeClass(device);
     //homeObj.show();
     //console.log(homeObj);
     // window.AfTimer = cordova.require('af.timer');
@@ -179,6 +170,15 @@ cordova.define("af.camera", function(require, exports, module) {
 // }
 // $(window).on("afui:ready", entry);
 
+// function debugPort(){
+  // var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
+  // if(!_entrances[device.address+'.'+device.port]){
+    // _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
+  // }
+  // _entrances[device.address+'.'+device.port].loadEntrance();
+// }
+// debugPort();
+  
 /*
   function logObj(obj){
     for(id in obj){
