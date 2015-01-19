@@ -1,10 +1,10 @@
 var HomeClass = function(device){
   this._device = {};
   $.extend(this._device, device);
-  this._socketServerInfo = [this._device.name, this._socketPort];
   this._ID = "home";
   this._httpPort = 8888;
   this._socketPort = 7777;
+  this._socketServerInfo = [this._device.name, this._socketPort];
   this.initObject();
   this.initPanel();
 };
@@ -16,7 +16,6 @@ HomeClass.prototype.initObject = function(){
   this._nsdLogObj = new NsdLogClass();
   this._entrances = new Object();  
   this._socketObj = new SocketClass(this._nsdLogObj);
-  //this._socketObj.startServerSocket(_socketServerInfo); 
   this._socketObj.addReceiveMessageListener(function(msgfromnative){
     console.log(msgfromnative);
     if(that._entrances[msgfromnative.address+'.'+msgfromnative.port]){
@@ -78,7 +77,6 @@ HomeClass.prototype.initPanel = function(){
   )
   .append(
     $("<li>").append($("<a>").html("网络发现").on("click", function(){
-      // $.ui.loadContent("#nsd", false, false, "slide");
       that._nsdObj.show();
     }))
   )
