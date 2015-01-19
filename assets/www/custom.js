@@ -98,6 +98,7 @@ cordova.define("af.camera", function(require, exports, module) {
   var afCamera = new AfCamera();
   module.exports = afCamera;
 });
+
 var NativeClass = function(){
   this._ID = "native";
   this._panel = $("#" + this._ID);
@@ -105,11 +106,13 @@ var NativeClass = function(){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
   this.initPanel();
+  this._timer = new TimerClass();
 };
 NativeClass.prototype.show = function(){
   $.ui.loadContent(this._ID, false, false, "slide");
 };
 NativeClass.prototype.initPanel = function(){
+  var that = this;
   var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
   var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
   .append(
@@ -118,6 +121,7 @@ NativeClass.prototype.initPanel = function(){
   .append(
     $("<li>").append($("<a>").html("ibp.plugin.timer").on("click", function(){
       console.log("ibp.plugin.timer");
+      that._timer.show();
     }))
   )
   .append(
@@ -126,14 +130,87 @@ NativeClass.prototype.initPanel = function(){
     }))
   );
   if(this._panelScroll){
-    // this._panelScroll.append(explan);
     this._panelScroll.append(ul);
   }else{
-    // this._panelScroll.append(explan);
     this._panel.append(ul);
   };
 };
 
+var TimerClass = function(){
+  if(!window.TimerNative){
+    window.alert("window.TimerNative is not found.");
+    return;
+  }
+  this._ID = "ibp_plugin_timer";
+  this._navID = "nav_ibp_plugin_timer";
+};
+TimerClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
+  }
+  $.ui.loadContent('#'+this._ID, false, false, "up");
+};
+TimerClass.prototype.newPanel = function(title){  
+  if(!title){
+    title = this._ID;
+  }
+  var that = this;
+  $.ui.addContentDiv(this._ID, "<ul></ul>", title);
+  this._panel = $('#'+this._ID);
+  this._ui = this._panel.find("ul");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._panel.data("nav", this._navID);
+  this.addNavBar();
+};
+TimerClass.prototype.addNavBar = function(){  
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html(this._ID)
+  )
+  .append(
+    $("<li>").append($("<a>").html("startTimer").on("click", function(){
+      that.startTimer();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopTimer").on("click", function(){
+      that.stopTimer();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: this._navID});
+  nav.append(ul).appendTo($("#afui"));
+};
+TimerClass.prototype.log = function(str){
+  console.log(str);
+  // this._ui.append($("<li>").html(str));
+  this._ui.html(str);
+};
+TimerClass.prototype.startTimer = function () {
+  var that = this;
+  window.TimerNative.start(
+    function(msgfromnative){
+      that.log(msgfromnative.data);
+    },
+    function(msgfromnative){
+      that.log(msgfromnative.data);
+    });
+};
+TimerClass.prototype.stopTimer = function () {
+  var that = this;
+  window.TimerNative.stop(
+    function(msgfromnative){
+      that.log(msgfromnative);
+    },
+    function(msgfromnative){
+      that.log(msgfromnative);
+    });
+};
+  
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
