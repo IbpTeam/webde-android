@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<!--HTML5 doctype-->
+<html>
+
+    <head>
+        <script>
+          (function() {
+            if ("-ms-user-select" in document.documentElement.style && navigator.userAgent.match(/IEMobile\/10\.0/)) {
+              var msViewportStyle = document.createElement("style");
+              msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
+              document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+            }
+          })();
+        </script>
+
+        <title>App Framework Kitchen Sink</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="stylesheet" type="text/css" href="css/icons.css" />
+
+        <!--
+        <link rel="stylesheet" type="text/css" href="css/af.ui.css" title="default" />
+        -->
+        <link rel="stylesheet" type="text/css" href="css/main.css"  />
+        <link rel="stylesheet" type="text/css" href="css/appframework.css"  />
+        <link rel="stylesheet" type="text/css" href="css/lists.css"  />
+        <link rel="stylesheet" type="text/css" href="css/forms.css"  />
+        <link rel="stylesheet" type="text/css" href="css/buttons.css"  />
+        <link rel="stylesheet" type="text/css" href="css/badges.css"  />
+        <link rel="stylesheet" type="text/css" href="css/grid.css"  />
+
+        <link rel="stylesheet" type="text/css" href="css/android.css"  />
+        <link rel="stylesheet" type="text/css" href="css/win8.css"  />
+        <link rel="stylesheet" type="text/css" href="css/bb.css"  />
+        <link rel="stylesheet" type="text/css" href="css/ios.css"  />
+        <link rel="stylesheet" type="text/css" href="css/ios7.css"  />
+        <link rel="stylesheet" type="text/css" href="css/tizen.css"  />
+        <link rel="stylesheet" type="text/css" href="css/firefox.css"  />
+
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.actionsheet.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.popup.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.scroller.css"  />
+        <link rel="stylesheet" type="text/css" href="plugins/css/af.selectBox.css"  />
+
+        <link rel="stylesheet" type="text/css" href="debug.css"  />
+
+        <!-- uncomment for intel.xdk apps
+        <script type="text/javascript" charset="utf-8" src="intelxdk.js"></script>
+        <script type="text/javascript" charset="utf-8" src="xhr.js"></script>
+        -->
+        <!-- <script type="text/javascript" src="cordova.js"></script> -->
+        <script type="text/javascript" charset="utf-8" src="./appframework.js"></script>
+        <!--
+        <script type="text/javascript" charset="utf-8" src="./jquery-2.1.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./jq.appframework.js"></script>
+        -->
+        <!-- include af.desktopBrowsers.js on desktop browsers only -->
+        <script>
+          function loadedPanel(what) {
+            //We are going to set the badge as the number of li elements inside the target
+            $.ui.updateBadge("#aflink", $("#af").find("li").length);
+          }
+
+          function unloadedPanel(what) {
+            console.log("unloaded " + what.id);
+          }
+
+          if (!((window.DocumentTouch && document instanceof DocumentTouch) || 'ontouchstart' in window)) {
+            var script = document.createElement("script");
+            script.src = "plugins/af.desktopBrowsers.js";
+            var tag = $("head").append(script);
+            //$.os.desktop=true;
+          }
+
+          //  $.feat.nativeTouchScroll=true;
+
+        </script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.actionsheet.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.css3animate.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.passwordBox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.scroller.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.selectBox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.touchEvents.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.touchLayer.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.popup.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="./ui/appframework.ui.js"></script>
+        <!-- <script type="text/javascript" charset="utf-8" src="./ui/transitions/all.js"></script> -->
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/fade.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/flip.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/pop.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slide.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slideDown.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./ui/transitions/slideUp.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.slidemenu.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./plugins/af.8tiles.js"></script>
+        <script type="text/javascript" charset="utf-8" src="require.js"></script>
+        <script type="text/javascript" charset="utf-8" src="debug.js"></script>
+
+        <script type="text/javascript">
+          /* This function runs once the page is loaded, but intel.xdk is not yet active */
+          //$.ui.animateHeaders=false;
+          var search = document.location.search.toLowerCase().replace("?", "");
+          //if(!search)
+          $.ui.useOSThemes = true;
+          $.ui.overlayStatusbar = true;
+          // for ios7 only to add header padding to overlay the statusbar
+          // $.ui.resetScrollers=true;
+          if (search.length > 0)//Android fix has too many buggy issues on iOS - can't preview with $.os.android
+          {
+
+            $.ui.useOSThemes = true;
+            if (search == "win8")
+              $.os.ie = true;
+            else if (search == "firefox")
+              $.os.fennec = "true"
+            $.ui.ready(function() {
+              $("#afui").get(0).className = search;
+            });
+          }
+
+          var webRoot = "./";
+          // $.os.android=true;
+          $.ui.autoLaunch = false;
+          $.ui.openLinksNewTab = false;
+          $.ui.splitview = false;
+
+          $(document).ready(function() {
+            $.ui.launch();
+            //$.ui.slideSideMenu=false;
+          });
+
+          /* This code is used to run as soon as intel.xdk activates */
+          var onDeviceReady = function() {
+            $.ui.launch();
+            intel.xdk.device.setRotateOrientation("portrait");
+            intel.xdk.device.setAutoRotate(false);
+            webRoot = intel.xdk.webRoot + "";
+            //hide splash screen
+            intel.xdk.device.hideSplashScreen();
+            $.ui.blockPageScroll();
+            //block the page from scrolling at the header/footer
+          };
+          document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
+
+          function showHide(obj, objToHide) {
+            var el = $("#" + objToHide)[0];
+
+            if (obj.className == "expanded") {
+              obj.className = "collapsed";
+            } else {
+              obj.className = "expanded";
+            }
+            $(el).toggle();
+
+          }
+
+          if ($.os.android || $.os.ie || search == "android") {
+            $.ui.ready(function() {
+              $("#main .list").append("<li><a id='toggleAndroidTheme'>Toggle Theme Color</a></li>");
+              var $el = $("#afui");
+              $("#toggleAndroidTheme").bind("click", function(e) {
+                if ($el.hasClass("light"))
+                  $el.removeClass("light");
+                else
+                  $el.addClass("light");
+              });
+            });
+          }
+        </script>
+
+    </head>
+
+    <body>
+        <div id="afui">
+            <div id="content">
+                <!-- UI测试 -->
+                <div class="panel" id="ui" title="UI" data-tab="navbar_ui">
+                    <ul class="list">
+                        <li>
+                            <a href="#uifilelist">UI FileList</a>
+                        </li>
+                        <li>
+                            <a href="#uigridphoto">UI Grid</a>
+                        </li>
+                        <li>
+                            <a href="#uiother">UI Other</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel" id="uifilelist" title="uifilelist">
+                    <div class="files">
+                        <div class="file" data-uri="rio1529rio#41aac67f33a82c12fd02#document">
+                            <div class="icon"><img src="data/user/Amy_Jones.jpg"></div>
+                            <div class="name" id="第四章-第一讲">第四章-第一讲</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel" id="uigridphoto" title="uigrid">
+                    <ul class="grid-photo">
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item1"><img src="data/user/Amy_Jones.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item2"><img src="data/user/Eugene_Lee.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item3"><img src="data/user/Gary_Donovan.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item4"><img src="data/user/James_King.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item5"><img src="data/user/John_Williams.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item6"><img src="data/user/Julie_Taylor.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item7"><img src="data/user/Kathleen_Byrne.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item8"><img src="data/user/Lisa_Wong.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item9"><img src="data/user/Paul_Jones.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item10"><img src="data/user/Ray_Moore.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item11"><img src="data/user/Steven_Wells.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item12"><img src="data/user/Kathleen_Byrne.jpg" /></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item13">聊天</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item14">文件浏览</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="grid-photo-box">
+                                <a href="#item15"><img src="" /></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel" id="uiother" title="uiother">
+                    <div id="testalign">
+                        <span>你好</span>
+                    </div>
+
+                    <form>
+                        <div>
+                            <label>initNSD</label>
+                            <input id="initNSD" checked="" type="checkbox" name="initNSD" class="toggle">
+                            <label for="initNSD" data-on="ON" data-off="OFF"> <span></span> </label>
+                        </div>
+                    </form>
+                    <script type="text/javascript">
+                      $("#initNSD").click(function() {
+                        console.log("in click of initNSD.");
+                        console.log($("#initNSD").prop("checked"));
+                        console.log($("#initNSD").val());
+                      });
+                    </script>
+
+                    <div class="formGroupHead">
+                        Toggle Switches
+                    </div>
+                    <form>
+                        <div class="input-group">
+                            <label>Gender</label>
+                            <input id="toggle1" type="checkbox" name="toggle1" value="1" class="toggle">
+                            <label for="toggle1" data-on="On" data-off="Off"><span></span></label>
+                            <input id="toggle2" type="radio" name="toggle2" value="1" class="toggle">
+                            <label for="toggle2" data-on="Yes" data-off="No"><span></span></label>
+                            <input id="toggle3" type="radio" name="toggle2" value="1" class="toggle">
+                            <label for="toggle3" data-on="Yes" data-off="No"><span></span></label>
+                        </div>
+                    </form>
+                </div>
+                    
+                <!-- Plugin测试 -->
+                <div class="panel" id="plugin" title="Plugin" data-tab="navbar_plugin"></div>
+    
+                <!-- Blank -->
+                <div class="panel" id="blank" title="Blank" data-tab="navbar_blank" data-defer=""></div>
+        
+                <!-- Theme Setting -->
+                <div class="panel" id="theme_setting" title="主题设置" data-tab="none">
+                    <h2>Web UI</h2>
+                    <p>选择不同的界面风格</p>
+                    <ul class="list inset">
+                        <li class="divider">修改界面风格</li>
+                        <li>
+                            <a href="debug.html?default" data-ignore="true">Default</a>
+                        </li>
+                        <li>
+                            <a href="debug.html" data-ignore="true">AutoDetected theme</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?ios" data-ignore="true">iOS theme</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?ios7" data-ignore="true">ios7</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?android" data-ignore="true">Android theme</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?win8" data-ignore="true">Win8 theme</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?bb" data-ignore="true">BB10 theme</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?tizen" data-ignore="true">tizen</a>
+                        </li>
+                        <li>
+                            <a href="debug.html?firefox" data-ignore="true">firefox</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- bottom navbar. Add additional tabs here -->
+            <div id="navbar">
+                <div class="horzRule"></div>
+                <a id="navbar_ui" href="#ui" class="icon picture">UI</a>
+                <a id="navbar_plugin" href="#plugin" class="icon heart">Plugin</a>
+                <a id="navbar_blank" href="#blank" class="icon paper">Blank</a>
+            </div>
+            <!-- nav main -->
+            <nav title="Left Menu">
+                <ul class="list">
+                    <li class="divider">
+                        Global
+                    </li>
+                    <li>
+                        <a href="#theme_setting">Theme Setting</a>
+                    </li>
+                    <li class="divider">
+                        Menus
+                    </li>
+                    <li>
+                        <a onclick="$.ui.toggleHeaderMenu();">Toggle Header</a>
+                    </li>
+                    <li>
+                        <a onclick="$.ui.toggleSideMenu()">Toggle Side</a>
+                    </li>
+                    <li>
+                        <a onclick="$.ui.toggleNavMenu()">Toggle Footer</a>
+                    </li>
+
+                    <li class="divider">
+                        Page Jump
+                    </li>
+                    <li>
+                        <a href="app.html?default" data-ignore="true">Go to app.html</a>
+                    </li>
+                    <li>
+                        <a href="index.html?default" data-ignore="true">Go to index.html</a>
+                    </li>
+                    <li>
+                        <a href="debug.html?default" data-ignore="true">Go to debug.html</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- aside -->
+            <aside>
+                <header class="header">
+                    <h1>Icons</h1>
+                    <a class="button icon settings"></a>
+                </header>
+                <ul class="list">
+                    <li class="divider">
+                        Icons
+                    </li>
+                    <li>
+                        <a  class="icon home big">Home</a>
+                    </li>
+                    <li>
+                        <a  class="icon pencil big">Pencil</a>
+                    </li>
+                    <li>
+                        <a  class="icon picture big">Picture</a>
+                    </li>
+                    <li>
+                        <a  class="icon camera big">Camera</a>
+                    </li>
+                    <li>
+                        <a  class="icon headset big">Headset</a>
+                    </li>
+                    <li>
+                        <a  class="icon paper big">Paper</a>
+                    </li>
+                    <li>
+                        <a  class="icon stack big">Stack</a>
+                    </li>
+                    <li>
+                        <a  class="icon folder big">Folder</a>
+                    </li>
+                    <li>
+                        <a  class="icon tag big">Tag</a>
+                    </li>
+                    <li>
+                        <a  class="icon basket big">Basket</a>
+                    </li>
+                    <li>
+                        <a  class="icon phone big">Phone</a>
+                    </li>
+                    <li>
+                        <a  class="icon mail big">Mail</a>
+                    </li>
+                    <li>
+                        <a  class="icon location big">Location</a>
+                    </li>
+                    <li>
+                        <a  class="icon clock big">Clock</a>
+                    </li>
+                    <li>
+                        <a  class="icon calendar big">Calendar</a>
+                    </li>
+                    <li>
+                        <a  class="icon message big">Message</a>
+                    </li>
+                    <li>
+                        <a  class="icon chat big">Chat</a>
+                    </li>
+                    <li>
+                        <a  class="icon user big">User</a>
+                    </li>
+                    <li>
+                        <a  class="icon loading big">Loading</a>
+                    </li>
+                    <li>
+                        <a  class="icon refresh big">Refresh</a>
+                    </li>
+                    <li>
+                        <a  class="icon magnifier big">Magnifier</a>
+                    </li>
+                    <li>
+                        <a  class="icon key big">Key</a>
+                    </li>
+                    <li>
+                        <a  class="icon settings big">Settings</a>
+                    </li>
+                    <li>
+                        <a  class="icon graph big">Graph</a>
+                    </li>
+                    <li>
+                        <a  class="icon trash big">Trash</a>
+                    </li>
+                    <li>
+                        <a  class="icon pin big">Pin</a>
+                    </li>
+                    <li>
+                        <a  class="icon target big">Target</a>
+                    </li>
+                    <li>
+                        <a  class="icon download big">Download</a>
+                    </li>
+                    <li>
+                        <a  class="icon upload big">Upload</a>
+                    </li>
+                    <li>
+                        <a  class="icon star big">Star</a>
+                    </li>
+                    <li>
+                        <a  class="icon heart big">Heart</a>
+                    </li>
+                    <li>
+                        <a  class="icon warning big">Warning</a>
+                    </li>
+                    <li>
+                        <a  class="icon add big">Add</a>
+                    </li>
+                    <li>
+                        <a  class="icon remove big">Remove</a>
+                    </li>
+                    <li>
+                        <a  class="icon question big">Question</a>
+                    </li>
+                    <li>
+                        <a  class="icon info big">Info</a>
+                    </li>
+                    <li>
+                        <a  class="icon error big">Error</a>
+                    </li>
+                    <li>
+                        <a  class="icon check big">Check</a>
+                    </li>
+                    <li>
+                        <a  class="icon minimize big">Minimize</a>
+                    </li>
+                    <li>
+                        <a  class="icon close big">Close</a>
+                    </li>
+                    <li>
+                        <a  class="icon up big">Up</a>
+                    </li>
+                    <li>
+                        <a  class="icon down big">Down</a>
+                    </li>
+                    <li>
+                        <a  class="icon left big">Left</a>
+                    </li>
+                    <li>
+                        <a  class="icon right big">Right</a>
+                    </li>
+                    <li>
+                        <a  class="icon tools big">Tools</a>
+                    </li>
+                    <li>
+                        <a  class="icon html5 big">HTML5</a>
+                    </li>
+                    <li>
+                        <a  class="icon css big">CSS</a>
+                    </li>
+                    <li>
+                        <a  class="icon js big">JS</a>
+                    </li>
+                    <li>
+                        <a  class="icon cloud big">Cloud</a>
+                    </li>
+                    <li>
+                        <a  class="icon tv big">TV</a>
+                    </li>
+                    <li>
+                        <a  class="icon wifi big">Wifi</a>
+                    </li>
+                    <li>
+                        <a  class="icon new big">New</a>
+                    </li>
+                    <li>
+                        <a  class="icon mic big">Mic</a>
+                    </li>
+                    <li>
+                        <a  class="icon database big">Database</a>
+                    </li>
+                    <li>
+                        <a  class="icon busy big">Busy</a>
+                    </li>
+                    <li>
+                        <a  class="icon bug big">Bug</a>
+                    </li>
+                    <li>
+                        <a  class="icon lamp big">Lamp</a>
+                    </li>
+                </ul>
+            </aside>
+        </div>
+    </body>
+</html>

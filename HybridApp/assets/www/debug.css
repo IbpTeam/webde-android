@@ -1,0 +1,146 @@
+#afui #nsd .list li {padding:10px 10px 10px 10px}
+#afui #nsd .list li .list-image {float:left;width:50px;height:50px}
+#afui #nsd .list li .list-text {margin-left:60px;min-height:50px}
+
+#afui #navbar #nsd_talk_footer textarea{
+    padding:8px 12px;
+    margin:8px 0;
+}
+
+#testalign {
+    width: 300px;
+    height: 200px;
+    color:red;
+    text-align: center;
+    /*line-height: 400%;*/
+    /*vertical-align: middle;*/
+    position:relative;
+    /*line-height:200px;*/
+}
+#testalign span{
+    position: absolute;
+    top:50%;
+}
+
+/** CSS responsive square grid */        
+.grid-photo {
+    margin:3px -7px;
+} 
+.grid-photo:after {
+    content:'';
+    display:block;
+    clear:both;
+ }        
+.grid-photo li {
+    position: relative;
+    display:block;
+    float:left;
+    width: 10%;
+    padding-bottom: 10%;
+}
+.grid-photo .grid-photo-box {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 3px;
+    bottom: 3px;
+    background-color: rgba(0,238,238,1);
+    text-align: center;  
+}
+.grid-photo .grid-photo-box:active {
+    background-color: rgba(255,255,255,1);
+    border: rgba(0,238,238,0.5) 1px solid;
+}
+.grid-photo .grid-photo-box a{
+    line-height: 400%;
+    text-decoration:blink; 
+    font-weight:bold;
+    color:black;
+    vertical-align: middle;
+}
+.grid-photo .grid-photo-box img {width:100%;height:100%}
+@media only screen and (max-width : 1024px) {
+    .grid-photo li {width: 12.5%; padding-bottom: 12.5%;}        
+}        
+@media only screen and (max-width : 768px) {
+    .grid-photo li {width: 16.6%; padding-bottom: 16.6%;}
+}        
+@media only screen and (max-width : 480px) {
+    .grid-photo li {width: 25%; padding-bottom: 25%;}
+}
+@media only screen and (max-width : 320px) {
+    .grid-photo li {width: 33.3%; padding-bottom: 33.3%;}
+}
+
+/*CSS Responsive Filelist*/
+.files {
+  padding: 0;
+  margin: 0;
+}
+
+.file {
+  padding: 2px;
+  margin: 2px;
+  width: 80px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+.file:hover {
+  cursor: pointer;
+}
+
+.file.focus {
+  background-color: #08C;
+  -webkit-border-radius: 4px;
+}
+
+.file .name {
+  width: 80px;
+  word-wrap: break-word;
+}
+
+.file.focus .name {
+  color: white;
+}
+
+.file .icon {
+  margin: auto;
+  margin-top: 0;
+  width: 60px;
+}
+.file .icon img{
+  width:100%;
+}
+
+.file.focus .icon {
+  -webkit-filter: invert(20%);
+}
+/*for file-big*/
+.file-big {
+  width: 400px;
+  display: inline-block;
+  text-align: left;
+}
+.file-big .icon-big {
+  padding: 8px;
+  margin-top: 0;
+  width: 128px;
+  display: inline-block;
+}
+.file-big .file-props {
+  margin-top: 0;
+  width: 256px;
+  display: inline-block;
+}
+.file-big p {
+  margin-bottom: 0px;
+}
+
+.file-big .icon-big img{
+  width:100%;
+}
+
+.file-big.focus .icon-big {
+  -webkit-filter: invert(20%);
+}
