@@ -1,309 +1,214 @@
 
-var TestAPI = function(device){
+/**
+ * DataClass类，用于聊天界面。
+ */
+var DataClass = function(device){
+  /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
   this._device = {};
   $.extend(this._device, device);
-  this._ID = "testapi";
+  this._id = device.address.replace(/\./g, '_') + '_' + device.port;
+  this._dataId = this._id + "_remote_data";
   this._address = device.address;
   this._port = 8888;  
-  this._panel = $('#'+this._ID);
+};
+DataClass.prototype.loadData = function(title){
+  if(!$('#'+this._dataId).length){
+    this.newData(title);
+  }
+  if(!this._remotedata || !this._remoteapp){
+    this.loadRemoteJS();
+  }
+  if(!this._panel){
+    this._panel = $('#'+this._dataId);
+    if(this._panel.find('.afScrollPanel')){
+      this._panelScroll = this._panel.find('.afScrollPanel');
+    }
+  }
+  $.ui.loadContent(this._dataId, false, false, "fade");
+};
+DataClass.prototype.newData = function(title){
+  $.ui.addContentDiv(this._dataId, "", title);
+  this._panel = $('#'+this._dataId);
+  /**NOTICE: may be encounter error later*/
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
-  
-  this._remotedatajs = new RemoteDataJS(device);
-  this._remoteappjs = new RemoteAppJS(device);
-  this._remotefilebrowser = new RemoteFileBrowser(device);
+  this._panel.attr("data-footer", "none");
+  // this.loadRemoteJS();
+};
+DataClass.prototype.loadRemoteJS = function(cb){
   var that = this;
-  var ul = $.create("ul", {className: "list"});
-  ul.append(
-    $.create("li", {}).append(
-      $.create("a", {}).html("data.js方法接口").on("click", function(e){
-        //console.log("data.js方法接口");
-        that._remotedatajs.show();
-      })
-    )
-  );
-  ul.append(
-    $.create("li", {}).append(
-      $.create("a", {}).html("app.js方法接口").on("click", function(e){
-        // console.log("app.js方法接口");)
-        that._remoteappjs.show();
-      })
-    )
-  );
-  ul.append(
-    $.create("li", {}).append(
-      $.create("a", {}).html("文件浏览").on("click", function(e){
-        //console.log("文件浏览");        
-        that._remotefilebrowser.show();
-      })
-    )
-  );
-  // console.log(ul.get(0));
-  if(this._panelScroll){
-    ul.appendTo(this._panelScroll);
+  //全局方法中对本地对象参数的设置。
+  var origin = "http://" + this._address + ":" + this._port;
+  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
+    // console.log("data.js: " + data);
+    // console.log("app.js: " + app);
+    // for(var key in app){
+      // console.log(key);
+    // }
+    that._remotedata = data;
+    that._remotedata.sendrequest = function (a, ar) {
+      var sd = {};
+      var cb = ar.shift();
+      sd.api = a;
+      sd.args = ar;
+      $.ajax({
+        url : origin +"/callapi",
+        type : "post",
+        contentType : "application/json;charset=utf-8",
+        dataType : "json",
+        data : JSON.stringify(sd),
+        success : function(r) {
+          setTimeout(cb.apply(null, r), 0);
+        },
+        error : function(e) {
+          throw e;
+        }
+      });
+    };
+    
+    that._remoteapp = app;
+    that._remoteapp.sendrequest = function (a, ar) {
+      var sd = {};
+      var cb = ar.shift();
+      sd.api = a;
+      sd.args = ar;
+      $.ajax({
+        url : origin +"/callapi",
+        type : "post",
+        contentType : "application/json;charset=utf-8",
+        dataType : "json",
+        data : JSON.stringify(sd),
+        success : function(r) {
+          setTimeout(cb.apply(null, r), 0);
+        },
+        error : function(e) {
+          throw e;
+        }
+      });
+    };
+    
+    that.getRemoteData();
+  },
+  function(data){
+    alert("fail to load script: " + origin +"/lib/api/data.js");
+  });  
+};
+DataClass.prototype.getRemoteData = function(){
+  var that = this;
+  function handleDataCB(objArray){
+    /** format of objArray:
+    URI: "rio1529rio#693be79d86e01358c560#document"
+    createDev: "rio1529rio"
+    createTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    filename: "NewFile"
+    id: 1
+    is_delete: 0
+    lastAccessDev: "rio1529rio"
+    lastAccessTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    lastModifyDev: "rio1529rio"
+    lastModifyTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
+    others: "documents"
+    path: "/home/cos/.resources/document/data/NewFile.txt"
+    postfix: "txt"
+    project: "上海专项"
+    size: "0"
+    */
+    // console.log(objArray);
+    for(var idx = 0; idx < objArray.length; idx++){
+      if(objArray[idx].postfix == 'ppt' || objArray[idx].postfix == 'pptx')
+      {
+        console.log(objArray[idx].filename);
+        var file = $.create("div", {className:"file"})
+        .data("uri", objArray[idx].URI)
+        .append(
+          $.create("div", {className: "icon"}).append(
+            $.create("img",{src: "data/icons/powerpoint.png"})
+          )
+        )
+        .append(
+          $.create("div", {className: "name", id:objArray[idx].filename}).html(objArray[idx].filename)
+        )
+        // .on("touchstart", function(e){
+          // // $(this).addClass('focus');
+          // console.log("touchstart: ");
+          // for(var i=0; i<e.touches.length; i++){
+            // console.log(e.touches[idx].target);
+          // }
+        // })
+        // .on("touchmove", function(e){
+          // $(this).removeClass('focus');
+          // // console.log("touchmove");
+        // })
+        .on("longTap", function(e){
+          $(this).addClass('focus');          
+        })
+        .on("touchend", function(e){   
+          if($(this).hasClass('focus')){
+            $(this).removeClass('focus');
+            var uri = $(this).data('uri');
+            // console.log("You click" + uri);
+            that.openRemoteData(uri);
+          }
+        });
+        // console.log(that._panel);
+        if(that._panelScroll){
+          file.appendTo(that._panelScroll);
+        }else{
+          file.appendTo(that._panel);
+        }
+      }
+    }
+  }
+  if(!this._remotedata){
+    this.loadRemoteJS();
   }else{
-    ul.appendTo(this._panel);
+    this._remotedata.getAllDataByCate(handleDataCB, "document");
   }
-};
-TestAPI.prototype.loadTestAPI = function(title){
-  $.ui.loadContent(this._ID, false, false, "fade");
-};
-// TestAPI.prototype.newTestAPI = function(title){
-  // $.ui.addContentDiv(this._ID, "", title);
-  // this._panel = $('#'+this._ID);
-// };
-
-/**
- * Show functions of remote data.js
- */
-var RemoteDataJS = function(device){
-  this._device = {};
-  $.extend(this._device, device);
-  this._ID = "remotedatajs";
-  this._address = device.address;
-  this._port = 8888;
-};
-RemoteDataJS.prototype.show = function(title){
-  if(!$('#'+this._ID).length){
-    this.newPanel(title);
-  }
-  if(!this._remotedata){
-    this.loadRemoteJS();
-  }
-  $.ui.loadContent(this._ID, false, false, "fade");
-};
-RemoteDataJS.prototype.newPanel = function(title){
-  $.ui.addContentDiv(this._ID, "", title);
-  this._panel = $('#'+this._ID);
-  if(this._panel.find('.afScrollPanel')){
-    this._panelScroll = this._panel.find('.afScrollPanel');
-  }
-};
-RemoteDataJS.prototype.loadRemoteJS = function(cb){
-  var that = this;
-  //全局方法中对本地对象参数的设置。
-  var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
-    that._remotedata = data;
-    that._remotedata.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    
-    that._remoteapp = app;
-    that._remoteapp.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    var ul = $.create("ul", {className: "list"});
-    ul.append($.create("li", {className: "divider"}).html("data.js方法接口"));
-    for(var key in that._remotedata){
-      ul.append(
-        $.create("li", {}).append(
-          $.create("a", {}).html(key)
-        )
-      );
-    }
-    if(that._panelScroll){
-      ul.appendTo(that._panelScroll);
-    }else{
-      ul.appendTo(that._panel);
-    }
-  },
-  function(data){
-    alert("fail to load script: " + origin +"/lib/api/data.js");
-  });  
-};
-RemoteDataJS.prototype.log = function(str){
-  console.log(str);
-};
-RemoteDataJS.prototype.LOG = function(obj){
-  var that = this;
-  function logObj(obj){
-    for(var id in obj){
-      if((typeof obj[id]) === "object"){
-        that.log("This is an object, key: " + id);
-        logObj(obj[id]);
-      }else{
-        that.log(id + ": " + obj[id] + " - " + (typeof obj[id]));
-      }
-    }
-  }
-  logObj(obj);
-};
-RemoteDataJS.prototype.LogObjArray = function(objArr){
-  for(var id in objArr){
-    // this.log(objArr[id]);
-    this.log("-----=====new Object=====-----");
-    for(var key in objArr[id]){
-      this.log(key + ": " + objArr[id][key]);
-    }
-  }
-};
-RemoteDataJS.prototype.getAllCate = function(){
-  var that = this;
-  function getAllCateCb(objArr){
-    that.LogObjArray(objArr);
-  }  
-  this._remotedata.getAllCate(getAllCateCb);
-};
-RemoteDataJS.prototype.getAllDataByCate = function(){
-  var that = this;
-  function getAllDataByCateCb(objArr){
-    that.LogObjArray(objArr);
-  }
-  //contact, Picture, video, document, Music
-  this._remotedata.getAllDataByCate(getAllDataByCateCb, "document");  
 };
 
-/**
- * Show functions of remote app.js
- */
-var RemoteAppJS = function(device){
-  this._device = {};
-  $.extend(this._device, device);
-  this._ID = "remoteappjs";
-  this._address = device.address;
-  this._port = 8888;
-};
-RemoteAppJS.prototype.show = function(title){
-  if(!$('#'+this._ID).length){
-    this.newPanel(title);
-  }
-  if(!this._remotedata){
-    this.loadRemoteJS();
-  }
-  $.ui.loadContent(this._ID, false, false, "fade");
-};
-RemoteAppJS.prototype.newPanel = function(title){
-  $.ui.addContentDiv(this._ID, "", title);
-  this._panel = $('#'+this._ID);
-  if(this._panel.find('.afScrollPanel')){
-    this._panelScroll = this._panel.find('.afScrollPanel');
-  }
-};
-RemoteAppJS.prototype.loadRemoteJS = function(cb){
+DataClass.prototype.openRemoteData = function(uri){
   var that = this;
-  //全局方法中对本地对象参数的设置。
-  var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
-    that._remotedata = data;
-    that._remotedata.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
+
+  function showPopUpPanel(obj){
+    /**console.log('get ppt source file', obj);
+     * format of obj:
+     * {
+     * openmethod: "html",
+     * format: "txt",
+     * title: "文件浏览",
+     * content: "成功打开文件/home/cos/.resources/document/data/Firefox OS调研.pptx",
+     * windowname: "Firefox OS调研.pptx"
+     * }
+     */
+    btns = {
+      "Stop" : function(){
+        console.log("Close CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Escape');
         },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    
-    that._remoteapp = app;
-    that._remoteapp.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
+      "Play" : function(){
+        console.log("Play CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'F5');
         },
-        error : function(e) {
-          throw e;
-        }
-      });
+      "PageUp" : function(){
+        console.log("PageUp CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Up');
+        },
+      "PageDown" : function(){
+        console.log("PageDown CB");
+        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Down');
+        },
     };
-    var ul = $.create("ul", {className: "list"});
-    ul.append($.create("li", {className: "divider"}).html("app.js方法接口"));
-    for(var key in that._remoteapp){
-      ul.append(
-        $.create("li", {}).append(
-          $.create("a", {}).html(key)
-        )
-      );
-    }
-    if(that._panelScroll){
-      ul.appendTo(that._panelScroll);
-    }else{
-      ul.appendTo(that._panel);
-    }
-  },
-  function(data){
-    alert("fail to load script: " + origin +"/lib/api/data.js");
-  });  
-};
-RemoteAppJS.prototype.log = function(str){
-  console.log(str);
-};
-RemoteAppJS.prototype.LOG = function(obj){
-  var that = this;
-  function logObj(obj){
-    for(var id in obj){
-      if((typeof obj[id]) === "object"){
-        that.log("This is an object, key: " + id);
-        logObj(obj[id]);
-      }else{
-        that.log(id + ": " + obj[id] + " - " + (typeof obj[id]));
-      }
-    }
+    $("#afui").popPanel({
+      title:"播放PPT",
+      message:"选择下面的按键操作PPT",
+      // onShow:function(){console.log("showing popup");},
+      buttons: btns,
+    });
   }
-  logObj(obj);
+  this._remotedata.openDataByUri(showPopUpPanel, uri);
 };
-RemoteAppJS.prototype.LogObjArray = function(objArr){
-  for(var id in objArr){
-    // this.log(objArr[id]);
-    this.log("-----=====new Object=====-----");
-    for(var key in objArr[id]){
-      this.log(key + ": " + objArr[id][key]);
-    }
-  }
-};
+
 
 /**
  * Browser Remote File.
@@ -329,11 +234,11 @@ RemoteFileBrowser.prototype.show = function(title){
 };
 RemoteFileBrowser.prototype.newPanel = function(title){
   $.ui.addContentDiv(this._ID, "", title);
-  this._panel = $('#'+this._ID);
-  
+  this._panel = $('#'+this._ID);  
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
+  this._panel.attr("data-footer", "none");
 };
 RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
   var that = this;
@@ -443,8 +348,7 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
   var that = this;
   var cate = type;
   function getAllDataByCateCb(objArray){
-    // that.LogObjArray(objArray);
-    
+    // that.LogObjArray(objArray);    
     if(that._panelScroll){
       that._panelScroll.empty();
     }else{
@@ -484,6 +388,7 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
         file.appendTo(that._panel);
       }
     }
+    $.ui.toggleSideMenu();
   }
   //Contact, Picture, Video, Document, Music
   this._remotedata.getAllDataByCate(getAllDataByCateCb, type);  
@@ -573,25 +478,3 @@ RemoteFileBrowser.prototype.LogUnkown = function(obj){
   }
   logObj(obj);
 };
-
-var testAPI;
-function entry(){
-  var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-  testAPI = new TestAPI(device);
-  testAPI.loadTestAPI("TestAPI");
-}
-$(window).on("afui:ready", entry);
-// (
-// function(){
-// }
-// )();
-
-// function startDebug(){
-  // console.log("in function startDebug.");
-// }
-// function setBlankPanle(){
-  // var afmblank = $("#blank");
-  // var blank = afmblank.get(0);
-  // blank.setAttribute("data-load", startDebug());  
-// }
-// setBlankPanle();
