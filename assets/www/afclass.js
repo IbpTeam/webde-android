@@ -14,8 +14,7 @@ HomeClass.prototype.show = function(){
 HomeClass.prototype.initObject = function(){
   var that = this;
   this._nsdLogObj = new NsdLogClass();
-  this._entrances = new Object();
-  
+  this._entrances = new Object();  
   this._socketObj = new SocketClass(this._nsdLogObj);
   //this._socketObj.startServerSocket(_socketServerInfo); 
   this._socketObj.addReceiveMessageListener(function(msgfromnative){
@@ -130,6 +129,7 @@ HomeClass.prototype.initPanel = function(){
   .append(
     $("<li>").append($("<a>").html("二维码扫描").on("click", function(){
       console.log("to 二维码扫描");
+      window.alert("待开发。。。");
     }))
   );
   this._ID = '#home';
@@ -669,6 +669,26 @@ EntranceClass.prototype.newPanel = function(title){
     )
     .on('click', function(e){
       that._remotefilebrowser.show("文件浏览");
+    })
+  ).appendTo(funclist);
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {}).html("应用列表")
+    )
+    .on('click', function(e){
+      window.alert("开发中。。。");
+    })
+  ).appendTo(funclist);
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {}).html("拍照上传")
+    )
+    .on('click', function(e){
+      window.alert("开发中。。。");
     })
   ).appendTo(funclist);
   this._panel.data("nav", "nav_entrance");
