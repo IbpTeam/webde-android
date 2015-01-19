@@ -104,3 +104,33 @@
   lastModifyDev: rio1529rio
   others: musics 
  */
+
+
+/**Code Patch
+// function entry(){
+  // var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
+  // var homeObj = new HomeClass(device);
+  // homeObj.show();
+// }
+// $(window).on("afui:ready", entry);
+
+// function debugPort(){
+  // var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
+  // if(!_entrances[device.address+'.'+device.port]){
+    // _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
+  // }
+  // _entrances[device.address+'.'+device.port].loadEntrance();
+// }
+// debugPort();
+  
+/*
+  function logObj(obj){
+    for(id in obj){
+      if((typeof obj[id]) === object){
+        logObj(obj[id]);
+      }else{
+        log(id + ": " + obj[id] + " - " + (typeof obj[id]));
+      }
+    }
+  }
+ */
