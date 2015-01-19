@@ -197,39 +197,10 @@
             <div id="content">
                 <!-- 首页 -->
                 <div class="panel" id="home" title="首页" data-tab="navbar_home" >
-                </div>
+                </div>                
 
-                <!-- 聊天界面 -->
-                <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer'>
-                    <ul>
-                        <li>
-                            Jack
-                        </li>
-                        <li>
-                            Lucy
-                        </li>
-                        <li>
-                            John
-                        </li>
-                        <li>
-                            Larry
-                        </li>
-                    </ul>
-                    <footer id="nsd_talk_footer">
-                        <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
-                        <a class="button" style="float:right">发送</a>
-                    </footer>
-                </div>
-                
-
-                <!-- 设备接口 -->
-                <div class="panel" id="device" title="本地接口测试" data-tab="navbar_device" >
-                    <h3>Hybrid App Development</h3>
-                    <p>本地接口测试</p>
-                    <ul class="list">
-                        <li><a href="#device_timer">Timer</a></li>
-                        <li><a href="#device_camera">Camera</a></li>
-                    </ul>
+                <!-- 本地模块测试 -->
+                <div class="panel" id="native" title="本地模块测试" data-tab="navbar_device" >
                 </div>
                 <div class="panel" id="device_timer" title="Timer" data-footer="none" data-nav='nav_timer'>
                 </div>
@@ -275,11 +246,14 @@
             <div id="navbar">
                 <div class="horzRule"></div>
                 <a id="navbar_home" href="#home" class="icon home">首页</a>
-                <!-- <a id="navbar_nsd" href="#nsd" class="icon user">发现服务</a> -->
-                <a id="navbar_device" href="#device" class="icon camera mini">本地接口测试</a>
+                <a id="navbar_device" href="#native" class="icon camera">本地模块测试</a>
             </div>
             <footer id='tohomepanel'>
                 <a id="navbar_home" href="#home" class="icon home">返回首页</a>
+            </footer>
+            <footer id="nsd_talk_footer">
+                <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
+                <a class="button" style="float:right">发送</a>
             </footer>
             <!-- nav main -->
             <nav title="Left Menu">

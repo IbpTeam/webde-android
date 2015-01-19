@@ -98,12 +98,48 @@ cordova.define("af.camera", function(require, exports, module) {
   var afCamera = new AfCamera();
   module.exports = afCamera;
 });
+var NativeClass = function(){
+  this._ID = "native";
+  this._panel = $("#" + this._ID);
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this.initPanel();
+};
+NativeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "slide");
+};
+NativeClass.prototype.initPanel = function(){
+  var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
+  var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
+  .append(
+    $.create("li", {className: "divider"}).html("本地模块测试")
+  )
+  .append(
+    $("<li>").append($("<a>").html("ibp.plugin.timer").on("click", function(){
+      console.log("ibp.plugin.timer");
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("org.apache.cordova.camera").on("click", function(){
+      console.log("org.apache.cordova.camera");
+    }))
+  );
+  if(this._panelScroll){
+    // this._panelScroll.append(explan);
+    this._panelScroll.append(ul);
+  }else{
+    // this._panelScroll.append(explan);
+    this._panel.append(ul);
+  };
+};
 
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
     window.homeObj = new HomeClass(device);
+    window.nativeObj = new NativeClass();
     //homeObj.show();
     //console.log(homeObj);
     // window.AfTimer = cordova.require('af.timer');
