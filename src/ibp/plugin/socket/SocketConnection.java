@@ -145,6 +145,35 @@ public class SocketConnection {
                 mMsgObj.put("content", msgObjFromRemote.getString("content"));                
                 logToConsole("getAndWrapMessage, Origin", message);
                 logToConsole("getAndWrapMessage, Wrapped", mMsgObj.toString());
+                /**Origin: 
+                 *  {
+                 *  "type":"SentEnFirst",
+                 *  "content":
+                 *      "{
+                 *      \"from\":\"cos\",
+                 *      \"uuid\":\"rio1529rio\",
+                 *      \"to\":\"rtty123\",
+                 *      \"message\":\"Hi  this is in IMSender test\",
+                 *      \"type\":\"app1\",
+                 *      \"time\":1421653282826
+                 *      }"
+                 *  }
+                 */
+                /**Wrapped: 
+                 *  {
+                 *  "content":
+                 *      "{
+                 *      \"from\":\"cos\",
+                 *      \"uuid\":\"rio1529rio\",
+                 *      \"to\":\"rtty123\",
+                 *      \"message\":\"Hi  this is in IMSender test\",
+                 *      \"type\":\"app1\",
+                 *      \"time\":1421653282826
+                 *      }",
+                 *  "port":37078,
+                 *  "address":"192.168.5.176"
+                 *  }
+                 */
             }else{
                 logToConsole("getAndWrapMessage", "Ignore Message, " + message);
                 mMsgObj = null;
@@ -171,6 +200,19 @@ public class SocketConnection {
         replyObj.put("type", "Reply");
         replyObj.put("content", replyContentObj.toString());
         logToConsole("replyMessage", replyObj.toString());
+        /**replyMessage: 
+         *  {
+         *  "content":
+         *      "{
+         *      \"message\":\"887f32f5969a0e534b42d087c8fe7558\",
+         *      \"to\":\"cos\",
+         *      \"time\":1421653281821,
+         *      \"from\":\"192.168.5.3\",
+         *      \"type\":\"Reply\"
+         *      }",
+         *  "type":"Reply"
+         *  }
+         */
         PrintWriter out = this.getWriter(socket);
         if(null != out){
             out.println(replyObj.toString());
@@ -200,8 +242,15 @@ public class SocketConnection {
             return null;
         }
         return serverSocket;        
-    }    
-    public boolean sendMessage(String address, int port, JSONObject msgObj) throws JSONException {
+    }
+    /**
+     * @param dstAddress: destination Address
+     * @param dstPort: destination Port
+     * @param msgObj: {from: @string, to: @string, message: @string, type: @string}
+     * @return
+     * @throws JSONException
+     */
+    public boolean sendMessage(String dstAddress, int dstPort, JSONObject msgObj) throws JSONException {
         boolean isOK = false;
         if(!msgObj.has("from")){
             msgObj.put("from", this.mAddress);
@@ -212,8 +261,22 @@ public class SocketConnection {
         objToSend.put("type", "SentEnFirst");
         objToSend.put("content", msgObj.toString());
         String strToSend = objToSend.toString();
-        logToConsole("sendMessage", "Send to " + address + ":" + port + ". Wrapped Message: " + strToSend);
-        Socket socket = connectToServerSocket(address, port);
+        /**Wrapped Message: 
+         * {
+         * "content":
+         *      "{
+         *      \"message\":\"Send\",
+         *      \"to\":\"192.168.5.176\",
+         *      \"time\":1421650022603,
+         *      \"uuid\":\"192.168.5.3\",
+         *      \"from\":\"nsd-android-test\",
+         *      \"type\":\"app1\"
+         *      }",
+         * "type":"SentEnFirst"
+         * }
+         */
+        logToConsole("sendMessage", "Send to " + dstAddress + ":" + dstPort + ". Wrapped Message: " + strToSend);
+        Socket socket = connectToServerSocket(dstAddress, dstPort);
         if(null != socket){
             PrintWriter out = this.getWriter(socket);
             if(null != out){
@@ -252,6 +315,19 @@ public class SocketConnection {
             if(null != input){
                 JSONObject msgObj = new JSONObject(input.readLine());
                 mTimer.cancel();
+                /**Reply Message From Socket: 
+                 * {
+                 * "content":
+                 *      "{
+                 *      \"from\":\"cos\",
+                 *      \"to\":\"nsd-android-test\",
+                 *      \"message\":\"7937be785d372ed1bb645cd9603a5343\",
+                 *      \"type\":\"Reply\",
+                 *      \"time\":1421650023742
+                 *      }",
+                 * "type":"Reply"
+                 * }
+                 */
                 this.logToConsole("waitAndCheckReply", "Reply Message From Socket: " + msgObj.toString());
                 input.close();
                 if("Reply".equals(msgObj.getString("type"))){
