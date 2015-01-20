@@ -200,13 +200,9 @@
                 </div>                
 
                 <!-- 本地模块测试 -->
-                <div class="panel" id="native" title="本地模块测试" data-tab="navbar_device" >
-                </div>
-                <div class="panel" id="device_timer" title="Timer" data-footer="none" data-nav='nav_timer'>
-                </div>
-                <div class="panel" id="device_camera" title="Camera" data-footer="none" data-nav="nav_camera">
-                </div>                
-    
+                <div class="panel" id="native" title="本地模块测试" data-tab="navbar_native" >
+                </div>           
+
                 <div class="panel" id="theme_setting" title="主题设置" data-tab="none">
                     <h2>Web UI</h2>
                     <p>选择不同的界面风格</p>
@@ -246,7 +242,7 @@
             <div id="navbar">
                 <div class="horzRule"></div>
                 <a id="navbar_home" href="#home" class="icon home">首页</a>
-                <a id="navbar_device" href="#native" class="icon camera">本地模块测试</a>
+                <a id="navbar_native" href="#native" class="icon camera">本地模块测试</a>
             </div>
             <footer id='tohomepanel'>
                 <a id="navbar_home" href="#home" class="icon home">返回首页</a>
@@ -288,32 +284,6 @@
                     </li>
                     <li>
                         <a href="debug.html?default" data-ignore="true">Go to debug.html</a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="nav_timer">
-                <div class='title'>
-                    <h3>需要安装插件ibp.plugin.timer</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon check" onclick="AfTimer.startTimer();">startTimer</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="nav_camera">
-                <div class='title'>
-                    <h3>需要安装插件org.apache.cordova.camera</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon camera" onclick="AfCamera.startCamera();">Camera</a>
-                    </li>
-                    <li>
-                        <a class="button icon picture" onclick="AfCamera.cameraGallery();" class="buttonStyle">Gallery</a><br/>
                     </li>
                 </ul>
             </nav>

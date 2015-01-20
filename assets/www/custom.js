@@ -1,103 +1,106 @@
-cordova.define("af.timer", function(require, exports, module) {
-  var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
-  var device_timer = $('#content #device_timer');
-  var content = $('<div></div>');
-  if($(device_timer).find('.afScrollPanel')){
-    $(device_timer).find('.afScrollPanel').append($(content));
-  }else{
-    $(device_timer).append($(content));
+var CameraClass = function(){
+  if(!window.navigator.camera){
+    window.alert("window.navigator.camera is not found.");
+    return;
   }
-  function log(info){
-    console.log(info);
-    $(content).html($('<p></p>').html(info).html());//$('<p></p>').html(info)
+  this._ID = "org_apache_cordova_camera";
+  this._navID = "nav_" + this._ID;
+};
+CameraClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
   }
-  var AfTimer = function() {};   
-  AfTimer.prototype.startTimer = function () {
-    TimerPlugin.start(
-      function(msgfromnative){
-        log(msgfromnative.data);
-      },
-      function(msgfromnative){
-        log(msgfromnative.data);
-      });
-  };
-  AfTimer.prototype.stopTimer = function () {
-    TimerPlugin.stop(
-      function(msgfromnative){
-        log(msgfromnative);
-      },
-      function(msgfromnative){
-        log(msgfromnative);
-      });
-  };
-  var afTimer = new AfTimer();  
-  module.exports = afTimer;
-});
-
-cordova.define("af.camera", function(require, exports, module) {
-  // var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
-  var device_camera = $('#content #device_camera');
-  var content = $('<div></div>');
-  if(device_camera.find('.afScrollPanel')){
-    device_camera.find('.afScrollPanel').append($(content));
-  }else{
-    device_camera.append($(content));
+  $.ui.loadContent('#'+this._ID, false, false, "slide");
+};
+CameraClass.prototype.newPanel = function(title){  
+  if(!title){
+    title = this._ID;
   }
-  // content.html(<div id="camera-image" class="ui-body ui-body-b" style="background-size:100%;min-height:250px"></div>);
-
-  var camera_image = $.create("div", {
+  var that = this;
+  $.ui.addContentDiv(this._ID, "<ul></ul>", title);
+  this._panel = $('#'+this._ID);
+  this._ui = this._panel.find("ul");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._panel.data("nav", this._navID);
+  this.addNavBar();
+  this.addImageDiv();
+};
+CameraClass.prototype.addNavBar = function(){  
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html(this._ID)
+  )
+  .append(
+    $("<li>").append($("<a>").html("startCamera").on("click", function(){
+      that.startCamera();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("cameraGallery").on("click", function(){
+      that.cameraGallery();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: this._navID});
+  nav.append(ul).appendTo($("#afui"));
+};
+CameraClass.prototype.addImageDiv = function(){
+  this._camera_image = $.create("div", {
     id : "camera-image",
     className : "ui-body ui-body-b",
   }).css({
     "background-size" : "100%",
     "min-height" : "250px"
-  }); 
-  content.append(camera_image);
-// log(navigator.camera);
-  function log(info){
-    console.log(info);
-    $(content).append($('<p></p>').html(info));
+  });
+  if(this._panelScroll){
+    this._panelScroll.append(this._camera_image);
+  }else{
+    this._panel.append(this._camera_image);
   }
-  var AfCamera = function() {};
-  
-  /* Camera */
-  AfCamera.prototype.startCamera = function () {
-      var onSuccess = function(url) {
-      //    $('#camera-image').html("<img src="+url+" width='250' />");
-          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
-          $('#camera-image').css("background-repeat", "no-repeat");
-          $('#camera-image').css("width", "250px");
-      };
-      var onFail = function() {
-          alert('Error');
-      };
-      navigator.camera.getPicture(onSuccess, onFail, {
-          quality: 50,
-      //    destinationType: navigator.camera.DestinationType.FILE_URL,    
-          destinationType: navigator.camera.DestinationType.DATA_URL
-      });
-  };
-  
-  AfCamera.prototype.cameraGallery = function cameraGallery() {        
-      var onSuccess = function(url) {
-      //    $('#camera-image').html("<img src="+url+" width='250' />");
-          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
-          $('#camera-image').css("background-repeat", "no-repeat");
-          $('#camera-image').css("width", "250px");
-      };
-      var onFail = function() {
-          alert('Error');
-      };
-      navigator.camera.getPicture(onSuccess, onFail, {
-          quality: 50,
-      //    destinationType: navigator.camera.DestinationType.FILE_URL,
-          destinationType: navigator.camera.DestinationType.DATA_URL,
-          sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
-      });
-  };
-  var afCamera = new AfCamera();
-  module.exports = afCamera;
-});
+};
+CameraClass.prototype.log = function(str){
+  console.log(str);
+  // this._ui.append($("<li>").html(str));
+  this._ui.html(str);
+};
+/* Camera */
+CameraClass.prototype.startCamera = function () {
+    var onSuccess = function(url) {
+    //    $('#camera-image').html("<img src="+url+" width='250' />");
+        $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+        $('#camera-image').css("background-repeat", "no-repeat");
+        $('#camera-image').css("width", "250px");
+    };
+    var onFail = function() {
+        alert('Error');
+    };
+    navigator.camera.getPicture(onSuccess, onFail, {
+        quality: 50,
+    //    destinationType: navigator.camera.DestinationType.FILE_URL,    
+        destinationType: navigator.camera.DestinationType.DATA_URL
+    });
+};
+CameraClass.prototype.cameraGallery = function() {
+    var onSuccess = function(url) {
+    //    $('#camera-image').html("<img src="+url+" width='250' />");
+        $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+        $('#camera-image').css("background-repeat", "no-repeat");
+        $('#camera-image').css("width", "250px");
+    };
+    var onFail = function() {
+        alert('Error');
+    };
+    navigator.camera.getPicture(onSuccess, onFail, {
+        quality: 50,
+    //    destinationType: navigator.camera.DestinationType.FILE_URL,
+        destinationType: navigator.camera.DestinationType.DATA_URL,
+        sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+    });
+};
 
 var NativeClass = function(){
   this._ID = "native";
@@ -105,8 +108,10 @@ var NativeClass = function(){
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
+  //this._navbar = this._panel.data("tab");
   this.initPanel();
   this._timer = new TimerClass();
+  this._camera = new CameraClass();
 };
 NativeClass.prototype.show = function(){
   $.ui.loadContent(this._ID, false, false, "slide");
@@ -127,6 +132,7 @@ NativeClass.prototype.initPanel = function(){
   .append(
     $("<li>").append($("<a>").html("org.apache.cordova.camera").on("click", function(){
       console.log("org.apache.cordova.camera");
+      that._camera.show();
     }))
   );
   if(this._panelScroll){
@@ -142,13 +148,13 @@ var TimerClass = function(){
     return;
   }
   this._ID = "ibp_plugin_timer";
-  this._navID = "nav_ibp_plugin_timer";
+  this._navID = "nav_" + this._ID;
 };
 TimerClass.prototype.show = function(title){
   if(!$('#'+this._ID).length){      
     this.newPanel(title);
   }
-  $.ui.loadContent('#'+this._ID, false, false, "up");
+  $.ui.loadContent('#'+this._ID, false, false, "slide");
 };
 TimerClass.prototype.newPanel = function(title){  
   if(!title){
