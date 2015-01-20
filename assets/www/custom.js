@@ -223,24 +223,5 @@ TimerClass.prototype.stopTimer = function () {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
     window.homeObj = new HomeClass(device);
     window.nativeObj = new NativeClass();
-    //homeObj.show();
-    //console.log(homeObj);
-    // window.AfTimer = cordova.require('af.timer');
-    // window.AfCamera = cordova.require('af.camera');
   });
-  // document.body.style.zoom=0.75;
-  // document.getElementById("afui").style.height = "100%";
-  // window.onunload = function(){
-    // alert("window is unload");
-    // console.log("window is unload");
-  // };
-  // channel.onPause.subscribe(function() {
-    // console.log('onPause');
-  // });
-  // channel.onResume.subscribe(function() {
-    // console.log('onResume');
-  // });
-  // channel.onDestroy.subscribe(function() {
-    // console.log('onDestroy');
-  // });
 })();

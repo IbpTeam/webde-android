@@ -238,11 +238,6 @@ NsdClass.prototype.newPanel = function(title){
   this.addNavBar();
 };
 
-// <!-- 在线服务列表 data-tab="navbar_nsd"  -->
-// <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
-    // <ul class="list">             
-    // </ul>
-// </div>
 NsdClass.prototype.addNavBar = function(){
   var that = this;
   var ul = $.create("ul", {className: "list"})
@@ -305,34 +300,6 @@ NsdClass.prototype.addNavBar = function(){
   );  
   var nav = $.create("nav", {id: "nav_nsd"});
   nav.append(ul).appendTo($("#afui"));
-// <nav id="nav_nsd">    
-    // <ul class="list">
-        // <li class="divider">
-            // 需要插件ibp.plugin.nsd
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.initNsd();$.ui.toggleSideMenu();">initNsd</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.stopNsd();$.ui.toggleSideMenu();">stopNsd</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.startDiscovery();$.ui.toggleSideMenu();">startDiscovery</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.showDeviceList();$.ui.toggleSideMenu();">showDeviceList</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.stopDiscovery();$.ui.toggleSideMenu();">stopDiscovery</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.registerService();">registerService</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.unRegisterService();">unRegisterService</a>
-        // </li>
-    // </ul>
-  // </nav>
 };
 NsdClass.prototype.addResolveServiceListener = function(cb){
   this._resolveServiceListener.push(cb);

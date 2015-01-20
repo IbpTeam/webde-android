@@ -134,3 +134,43 @@
     }
   }
  */
+
+/**
+// document.body.style.zoom=0.75;
+// document.getElementById("afui").style.height = "100%";
+// window.onunload = function(){
+  // alert("window is unload");
+  // console.log("window is unload");
+// };
+// channel.onPause.subscribe(function() {
+  // console.log('onPause');
+// });
+// channel.onResume.subscribe(function() {
+  // console.log('onResume');
+// });
+// channel.onDestroy.subscribe(function() {
+  // console.log('onDestroy');
+// });
+*/
+
+/** Used for remote js loading, obsolute.
+// window.onload = function(){
+    // console.log("window is load");
+    // var afclass = document.createElement("script");
+    // afclass.src = "http://192.168.5.176:8000/afclass.js";
+    // afclass.onload = function(){
+        // var custom = document.createElement("script");
+        // custom.src = "http://192.168.5.176:8000/custom.js";
+        // document.head.appendChild(custom);                    
+    // };
+    // document.head.appendChild(afclass);
+// };
+ */
+
+/**
+ <!-- 在线服务列表 data-tab="navbar_nsd"  -->
+ <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
+     <ul class="list">             
+     </ul>
+ </div>
+ */
