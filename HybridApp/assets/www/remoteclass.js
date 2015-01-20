@@ -41,11 +41,6 @@ DataClass.prototype.loadRemoteJS = function(cb){
   //全局方法中对本地对象参数的设置。
   var origin = "http://" + this._address + ":" + this._port;
   requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
-    // console.log("data.js: " + data);
-    // console.log("app.js: " + app);
-    // for(var key in app){
-      // console.log(key);
-    // }
     that._remotedata = data;
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
@@ -129,17 +124,7 @@ DataClass.prototype.getRemoteData = function(){
         .append(
           $.create("div", {className: "name", id:objArray[idx].filename}).html(objArray[idx].filename)
         )
-        // .on("touchstart", function(e){
-          // // $(this).addClass('focus');
-          // console.log("touchstart: ");
-          // for(var i=0; i<e.touches.length; i++){
-            // console.log(e.touches[idx].target);
-          // }
-        // })
-        // .on("touchmove", function(e){
-          // $(this).removeClass('focus');
-          // // console.log("touchmove");
-        // })
+        /**touchstart touchmove touchend*/
         .on("longTap", function(e){
           $(this).addClass('focus');          
         })
@@ -151,7 +136,6 @@ DataClass.prototype.getRemoteData = function(){
             that.openRemoteData(uri);
           }
         });
-        // console.log(that._panel);
         if(that._panelScroll){
           file.appendTo(that._panelScroll);
         }else{

@@ -266,13 +266,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/ibp.plugin.timer/www/Timer.js",
-        "id": "ibp.plugin.timer.timer",
-        "clobbers": [
-            "Timer"
-        ]
-    },
-    {
         "file": "plugins/ibp.plugin.socket/www/socket.js",
         "id": "ibp.plugin.socket.socket",
         "clobbers": [
@@ -284,6 +277,13 @@ module.exports = [
         "id": "ibp.plugin.nsd.nsd",
         "clobbers": [
             "NSDNative"
+        ]
+    },
+    {
+        "file": "plugins/ibp.plugin.timer/www/Timer.js",
+        "id": "ibp.plugin.timer.timer",
+        "clobbers": [
+            "TimerNative"
         ]
     }
 ];
@@ -298,9 +298,9 @@ module.exports.metadata =
     "org.apache.cordova.file": "1.3.1",
     "org.apache.cordova.device": "0.2.12",
     "ibp.plugin.helloworld": "0.0.3",
-    "ibp.plugin.timer": "0.0.2",
     "ibp.plugin.socket": "0.0.1",
-    "ibp.plugin.nsd": "0.0.1"
+    "ibp.plugin.nsd": "0.0.1",
+    "ibp.plugin.timer": "0.0.2"
 }
 // BOTTOM OF METADATA
 });

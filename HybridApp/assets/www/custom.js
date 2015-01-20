@@ -1,192 +1,227 @@
-cordova.define("af.timer", function(require, exports, module) {
-  var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
-  var device_timer = $('#content #device_timer');
-  var content = $('<div></div>');
-  if($(device_timer).find('.afScrollPanel')){
-    $(device_timer).find('.afScrollPanel').append($(content));
-  }else{
-    $(device_timer).append($(content));
+var CameraClass = function(){
+  if(!window.navigator.camera){
+    window.alert("window.navigator.camera is not found.");
+    return;
   }
-  function log(info){
-    console.log(info);
-    $(content).html($('<p></p>').html(info).html());//$('<p></p>').html(info)
+  this._ID = "org_apache_cordova_camera";
+  this._navID = "nav_" + this._ID;
+};
+CameraClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
   }
-  var AfTimer = function() {};   
-  AfTimer.prototype.startTimer = function () {
-    TimerPlugin.start(
-      function(msgfromnative){
-        log(msgfromnative.data);
-      },
-      function(msgfromnative){
-        log(msgfromnative.data);
-      });
-  };
-  AfTimer.prototype.stopTimer = function () {
-    TimerPlugin.stop(
-      function(msgfromnative){
-        log(msgfromnative);
-      },
-      function(msgfromnative){
-        log(msgfromnative);
-      });
-  };
-  var afTimer = new AfTimer();  
-  module.exports = afTimer;
-});
-
-/**
- * module af.nsd for nsd show.
- */
-cordova.define("module.nsd", function(require, exports, module) {
-  var nsdLogObj = new NsdLogClass();
-  var socketObj = new SocketClass(nsdLogObj);
-  device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
-  var nsdObj = new NsdClass(device, nsdLogObj);
-  //nsdObj.show("在线服务列表");
-
-  var _entrances = new Object();
-  nsdObj.addResolveServiceListener(function(device){
-    if(!_entrances[device.address+'.'+device.port]){
-      _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
-    }
-    _entrances[device.address+'.'+device.port].show();
-  });
-  var registerCb = {
-    /** format of ServiceInfo: [this._mName, this._mPort];*/
-    start:function(serviceInfo){
-      socketObj.startServerSocket(serviceInfo);
-    },
-    stop:function(){
-      socketObj.stopServerSocket();
-    }
-  };
-  nsdObj.addRegisterServiceListener(registerCb);
-  
-  socketObj.addReceiveMessageListener(function(msgfromnative){
-    if(_entrances[msgfromnative.address+'.'+msgfromnative.port]){
-      _entrances[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgfromnative);
-    }
-  });
-  
-  module.exports = nsdObj;
-});
-
-cordova.define("af.camera", function(require, exports, module) {
-  // var TimerPlugin = cordova.require('ibp.plugin.timer.timer');
-  var device_camera = $('#content #device_camera');
-  var content = $('<div></div>');
-  if(device_camera.find('.afScrollPanel')){
-    device_camera.find('.afScrollPanel').append($(content));
-  }else{
-    device_camera.append($(content));
+  $.ui.loadContent('#'+this._ID, false, false, "slide");
+};
+CameraClass.prototype.newPanel = function(title){  
+  if(!title){
+    title = this._ID;
   }
-  // content.html(<div id="camera-image" class="ui-body ui-body-b" style="background-size:100%;min-height:250px"></div>);
-
-  var camera_image = $.create("div", {
+  var that = this;
+  $.ui.addContentDiv(this._ID, "<ul></ul>", title);
+  this._panel = $('#'+this._ID);
+  this._ui = this._panel.find("ul");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._panel.data("nav", this._navID);
+  this.addNavBar();
+  this.addImageDiv();
+};
+CameraClass.prototype.addNavBar = function(){  
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html(this._ID)
+  )
+  .append(
+    $("<li>").append($("<a>").html("startCamera").on("click", function(){
+      that.startCamera();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("cameraGallery").on("click", function(){
+      that.cameraGallery();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: this._navID});
+  nav.append(ul).appendTo($("#afui"));
+};
+CameraClass.prototype.addImageDiv = function(){
+  this._camera_image = $.create("div", {
     id : "camera-image",
     className : "ui-body ui-body-b",
   }).css({
     "background-size" : "100%",
     "min-height" : "250px"
-  }); 
-  content.append(camera_image);
-// log(navigator.camera);
-  function log(info){
-    console.log(info);
-    $(content).append($('<p></p>').html(info));
+  });
+  if(this._panelScroll){
+    this._panelScroll.append(this._camera_image);
+  }else{
+    this._panel.append(this._camera_image);
   }
-  var AfCamera = function() {};
-  
-  /* Camera */
-  AfCamera.prototype.startCamera = function () {
-      var onSuccess = function(url) {
-      //    $('#camera-image').html("<img src="+url+" width='250' />");
-          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
-          $('#camera-image').css("background-repeat", "no-repeat");
-          $('#camera-image').css("width", "250px");
-      };
-      var onFail = function() {
-          alert('Error');
-      };
-      navigator.camera.getPicture(onSuccess, onFail, {
-          quality: 50,
-      //    destinationType: navigator.camera.DestinationType.FILE_URL,    
-          destinationType: navigator.camera.DestinationType.DATA_URL
-      });
-  };
-  
-  AfCamera.prototype.cameraGallery = function cameraGallery() {        
-      var onSuccess = function(url) {
-      //    $('#camera-image').html("<img src="+url+" width='250' />");
-          $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
-          $('#camera-image').css("background-repeat", "no-repeat");
-          $('#camera-image').css("width", "250px");
-      };
-      var onFail = function() {
-          alert('Error');
-      };
-      navigator.camera.getPicture(onSuccess, onFail, {
-          quality: 50,
-      //    destinationType: navigator.camera.DestinationType.FILE_URL,
-          destinationType: navigator.camera.DestinationType.DATA_URL,
-          sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
-      });
-  };
-  var afCamera = new AfCamera();
-  module.exports = afCamera;
-});
+};
+CameraClass.prototype.log = function(str){
+  console.log(str);
+  // this._ui.append($("<li>").html(str));
+  this._ui.html(str);
+};
+/* Camera */
+CameraClass.prototype.startCamera = function () {
+    var onSuccess = function(url) {
+    //    $('#camera-image').html("<img src="+url+" width='250' />");
+        $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+        $('#camera-image').css("background-repeat", "no-repeat");
+        $('#camera-image').css("width", "250px");
+    };
+    var onFail = function() {
+        alert('Error');
+    };
+    navigator.camera.getPicture(onSuccess, onFail, {
+        quality: 50,
+    //    destinationType: navigator.camera.DestinationType.FILE_URL,    
+        destinationType: navigator.camera.DestinationType.DATA_URL
+    });
+};
+CameraClass.prototype.cameraGallery = function() {
+    var onSuccess = function(url) {
+    //    $('#camera-image').html("<img src="+url+" width='250' />");
+        $('#camera-image').css("background-image", "url('data: image/jpeg;base64,"+encodeURIComponent(url)+"')");
+        $('#camera-image').css("background-repeat", "no-repeat");
+        $('#camera-image').css("width", "250px");
+    };
+    var onFail = function() {
+        alert('Error');
+    };
+    navigator.camera.getPicture(onSuccess, onFail, {
+        quality: 50,
+    //    destinationType: navigator.camera.DestinationType.FILE_URL,
+        destinationType: navigator.camera.DestinationType.DATA_URL,
+        sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+    });
+};
 
+var NativeClass = function(){
+  this._ID = "native";
+  this._panel = $("#" + this._ID);
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  //this._navbar = this._panel.data("tab");
+  this.initPanel();
+  this._timer = new TimerClass();
+  this._camera = new CameraClass();
+};
+NativeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "slide");
+};
+NativeClass.prototype.initPanel = function(){
+  var that = this;
+  var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
+  var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
+  .append(
+    $.create("li", {className: "divider"}).html("本地模块测试")
+  )
+  .append(
+    $("<li>").append($("<a>").html("ibp.plugin.timer").on("click", function(){
+      console.log("ibp.plugin.timer");
+      that._timer.show();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("org.apache.cordova.camera").on("click", function(){
+      console.log("org.apache.cordova.camera");
+      that._camera.show();
+    }))
+  );
+  if(this._panelScroll){
+    this._panelScroll.append(ul);
+  }else{
+    this._panel.append(ul);
+  };
+};
+
+var TimerClass = function(){
+  if(!window.TimerNative){
+    window.alert("window.TimerNative is not found.");
+    return;
+  }
+  this._ID = "ibp_plugin_timer";
+  this._navID = "nav_" + this._ID;
+};
+TimerClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
+  }
+  $.ui.loadContent('#'+this._ID, false, false, "slide");
+};
+TimerClass.prototype.newPanel = function(title){  
+  if(!title){
+    title = this._ID;
+  }
+  var that = this;
+  $.ui.addContentDiv(this._ID, "<ul></ul>", title);
+  this._panel = $('#'+this._ID);
+  this._ui = this._panel.find("ul");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._panel.data("nav", this._navID);
+  this.addNavBar();
+};
+TimerClass.prototype.addNavBar = function(){  
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html(this._ID)
+  )
+  .append(
+    $("<li>").append($("<a>").html("startTimer").on("click", function(){
+      that.startTimer();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopTimer").on("click", function(){
+      that.stopTimer();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: this._navID});
+  nav.append(ul).appendTo($("#afui"));
+};
+TimerClass.prototype.log = function(str){
+  console.log(str);
+  // this._ui.append($("<li>").html(str));
+  this._ui.html(str);
+};
+TimerClass.prototype.startTimer = function () {
+  var that = this;
+  window.TimerNative.start(
+    function(msgfromnative){
+      that.log(msgfromnative.data);
+    },
+    function(msgfromnative){
+      that.log(msgfromnative.data);
+    });
+};
+TimerClass.prototype.stopTimer = function () {
+  var that = this;
+  window.TimerNative.stop(
+    function(msgfromnative){
+      that.log(msgfromnative);
+    },
+    function(msgfromnative){
+      that.log(msgfromnative);
+    });
+};
+  
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
     window.homeObj = new HomeClass(device);
-    //homeObj.show();
-    //console.log(homeObj);
-    // window.AfTimer = cordova.require('af.timer');
-    // //window.NsdModule = cordova.require('module.nsd');
-    // window.AfCamera = cordova.require('af.camera');
+    window.nativeObj = new NativeClass();
   });
-  // // document.body.style.zoom=0.75;
-  // // document.getElementById("afui").style.height = "100%";
-  // // window.onunload = function(){
-    // // alert("window is unload");
-    // // console.log("window is unload");
-  // // };
-  // // channel.onPause.subscribe(function() {
-    // // console.log('onPause');
-  // // });
-  // // channel.onResume.subscribe(function() {
-    // // console.log('onResume');
-  // // });
-  // // channel.onDestroy.subscribe(function() {
-    // // console.log('onDestroy');
-  // // });
 })();
-// function entry(){
-  // var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
-  // var homeObj = new HomeClass(device);
-  // homeObj.show();
-// }
-// $(window).on("afui:ready", entry);
-
-// function debugPort(){
-  // var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-  // if(!_entrances[device.address+'.'+device.port]){
-    // _entrances[device.address+'.'+device.port] = new EntranceClass(device, socketObj);
-  // }
-  // _entrances[device.address+'.'+device.port].loadEntrance();
-// }
-// debugPort();
-  
-/*
-  function logObj(obj){
-    for(id in obj){
-      if((typeof obj[id]) === object){
-        logObj(obj[id]);
-      }else{
-        log(id + ": " + obj[id] + " - " + (typeof obj[id]));
-      }
-    }
-  }
-  */

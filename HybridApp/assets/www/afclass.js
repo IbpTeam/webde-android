@@ -1,10 +1,10 @@
 var HomeClass = function(device){
   this._device = {};
   $.extend(this._device, device);
-  this._socketServerInfo = [this._device.name, this._socketPort];
   this._ID = "home";
   this._httpPort = 8888;
   this._socketPort = 7777;
+  this._socketServerInfo = [this._device.name, this._socketPort];
   this.initObject();
   this.initPanel();
 };
@@ -16,7 +16,6 @@ HomeClass.prototype.initObject = function(){
   this._nsdLogObj = new NsdLogClass();
   this._entrances = new Object();  
   this._socketObj = new SocketClass(this._nsdLogObj);
-  //this._socketObj.startServerSocket(_socketServerInfo); 
   this._socketObj.addReceiveMessageListener(function(msgfromnative){
     console.log(msgfromnative);
     if(that._entrances[msgfromnative.address+'.'+msgfromnative.port]){
@@ -78,7 +77,6 @@ HomeClass.prototype.initPanel = function(){
   )
   .append(
     $("<li>").append($("<a>").html("网络发现").on("click", function(){
-      // $.ui.loadContent("#nsd", false, false, "slide");
       that._nsdObj.show();
     }))
   )
@@ -240,11 +238,6 @@ NsdClass.prototype.newPanel = function(title){
   this.addNavBar();
 };
 
-// <!-- 在线服务列表 data-tab="navbar_nsd"  -->
-// <div class="panel" id="nsd" title="在线服务列表" data-nav="nav_nsd" data-footer='tohomepanel'>
-    // <ul class="list">             
-    // </ul>
-// </div>
 NsdClass.prototype.addNavBar = function(){
   var that = this;
   var ul = $.create("ul", {className: "list"})
@@ -307,34 +300,6 @@ NsdClass.prototype.addNavBar = function(){
   );  
   var nav = $.create("nav", {id: "nav_nsd"});
   nav.append(ul).appendTo($("#afui"));
-// <nav id="nav_nsd">    
-    // <ul class="list">
-        // <li class="divider">
-            // 需要插件ibp.plugin.nsd
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.initNsd();$.ui.toggleSideMenu();">initNsd</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.stopNsd();$.ui.toggleSideMenu();">stopNsd</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.startDiscovery();$.ui.toggleSideMenu();">startDiscovery</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.showDeviceList();$.ui.toggleSideMenu();">showDeviceList</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.stopDiscovery();$.ui.toggleSideMenu();">stopDiscovery</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.registerService();">registerService</a>
-        // </li>
-        // <li>
-            // <a onclick="NsdModule.unRegisterService();">unRegisterService</a>
-        // </li>
-    // </ul>
-  // </nav>
 };
 NsdClass.prototype.addResolveServiceListener = function(cb){
   this._resolveServiceListener.push(cb);

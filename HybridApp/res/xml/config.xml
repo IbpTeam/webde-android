@@ -29,13 +29,13 @@
     <feature name="HelloWorldJava">
         <param name="android-package" value="ibp.plugin.helloworld.HelloWorldJava" />
     </feature>
-    <feature name="TimerPlugin">
-        <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
-    </feature>
     <feature name="SocketPlugin">
         <param name="android-package" value="ibp.plugin.socket.SocketPlugin" />
     </feature>
     <feature name="NSDPlugin">
         <param name="android-package" value="ibp.plugin.nsd.NSDPlugin" />
+    </feature>
+    <feature name="TimerPlugin">
+        <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
     </feature>
 </widget>

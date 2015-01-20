@@ -118,9 +118,9 @@ public class TimerPlugin extends CordovaPlugin {
         activityStates("onPause");
     }
     public void onResume(boolean multitasking) {
-        th = new Thread(timecnt);
-        flag = true;
-        th.start();
+        //th = new Thread(timecnt);
+        //flag = true;
+        //th.start();
         activityStates("onResume");
     }
     public void onDestroy() {
@@ -132,3 +132,4 @@ public class TimerPlugin extends CordovaPlugin {
         Toast.makeText(cordova.getActivity(), state, Toast.LENGTH_SHORT).show();
     }
 }
+

@@ -174,18 +174,6 @@
                     });
                 });
             }
-            
-            // window.onload = function(){
-                // console.log("window is load");
-                // var afclass = document.createElement("script");
-                // afclass.src = "http://192.168.5.176:8000/afclass.js";
-                // afclass.onload = function(){
-                    // var custom = document.createElement("script");
-                    // custom.src = "http://192.168.5.176:8000/custom.js";
-                    // document.head.appendChild(custom);                    
-                // };
-                // document.head.appendChild(afclass);
-            // };
         </script>
 
     </head>
@@ -197,48 +185,12 @@
             <div id="content">
                 <!-- 首页 -->
                 <div class="panel" id="home" title="首页" data-tab="navbar_home" >
-                </div>
-
-                <!-- 聊天界面 -->
-                <div class="panel" id="nsd_talk" title="聊天" data-footer='nsd_talk_footer'>
-                    <ul>
-                        <li>
-                            Jack
-                        </li>
-                        <li>
-                            Lucy
-                        </li>
-                        <li>
-                            John
-                        </li>
-                        <li>
-                            Larry
-                        </li>
-                    </ul>
-                    <footer id="nsd_talk_footer">
-                        <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
-                        <a class="button" style="float:right">发送</a>
-                    </footer>
-                </div>
-                
-
-                <!-- 设备接口 -->
-                <div class="panel" id="device" title="本地接口测试" data-tab="navbar_device" >
-                    <h3>Hybrid App Development</h3>
-                    <p>本地接口测试</p>
-                    <ul class="list">
-                        <li><a href="#device_timer">Timer</a></li>
-                        <li><a href="#device_nsd">Nsdchat</a></li>
-                        <li><a href="#device_camera">Camera</a></li>
-                    </ul>
-                </div>
-                <div class="panel" id="device_timer" title="Timer" data-footer="none" data-nav='nav_timer'>
-                </div>
-                <div class="panel" id="device_nsd" title="Nsdchat" data-footer="none" data-nav="nav_nsd">
-                </div>
-                <div class="panel" id="device_camera" title="Camera" data-footer="none" data-nav="nav_camera">
                 </div>                
-    
+
+                <!-- 本地模块测试 -->
+                <div class="panel" id="native" title="本地模块测试" data-tab="navbar_native" >
+                </div>           
+
                 <div class="panel" id="theme_setting" title="主题设置" data-tab="none">
                     <h2>Web UI</h2>
                     <p>选择不同的界面风格</p>
@@ -278,11 +230,14 @@
             <div id="navbar">
                 <div class="horzRule"></div>
                 <a id="navbar_home" href="#home" class="icon home">首页</a>
-                <!-- <a id="navbar_nsd" href="#nsd" class="icon user">发现服务</a> -->
-                <a id="navbar_device" href="#device" class="icon camera mini">本地接口测试</a>
+                <a id="navbar_native" href="#native" class="icon camera">本地模块测试</a>
             </div>
             <footer id='tohomepanel'>
                 <a id="navbar_home" href="#home" class="icon home">返回首页</a>
+            </footer>
+            <footer id="nsd_talk_footer">
+                <textarea rows="1" style="width:80%;" placeholder="enter what you want to say."></textarea>
+                <a class="button" style="float:right">发送</a>
             </footer>
             <!-- nav main -->
             <nav title="Left Menu">
@@ -317,32 +272,6 @@
                     </li>
                     <li>
                         <a href="debug.html?default" data-ignore="true">Go to debug.html</a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="nav_timer">
-                <div class='title'>
-                    <h3>需要安装插件ibp.plugin.timer</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon check" onclick="AfTimer.startTimer();">startTimer</a>
-                    </li>
-                    <li>
-                        <a class="button icon check" onclick="AfTimer.stopTimer();">stopTimer</a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="nav_camera">
-                <div class='title'>
-                    <h3>需要安装插件org.apache.cordova.camera</h3>
-                </div>
-                <ul>
-                    <li>
-                        <a class="button icon camera" onclick="AfCamera.startCamera();">Camera</a>
-                    </li>
-                    <li>
-                        <a class="button icon picture" onclick="AfCamera.cameraGallery();" class="buttonStyle">Gallery</a><br/>
                     </li>
                 </ul>
             </nav>
