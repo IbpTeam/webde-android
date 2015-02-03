@@ -1,11 +1,175 @@
+var HomeClass = function(device){
+  this._device = {};
+  $.extend(this._device, device);
+  this._ID = "home";
+  this._httpPort = 8888;
+  this._socketPort = 7777;
+  this._socketServerInfo = [this._device.name, this._socketPort];
+  this.initObject();
+  this.initPanel();
+};
+HomeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "fade");
+};
+HomeClass.prototype.initObject = function(){
+  var that = this;
+  this._nsdLogObj = new NsdLogClass();
+  this._entrances = new Object();  
+  this._socketObj = new SocketClass(this._nsdLogObj);
+  this._socketObj.addReceiveMessageListener(function(msgfromnative){
+    console.log(msgfromnative);
+    if(that._entrances[msgfromnative.address+'.'+msgfromnative.port]){
+      that._entrances[msgfromnative.address+'.'+msgfromnative.port].processMsg(msgfromnative);
+    }
+  });  
+
+  this._nsdObj = new NsdClass(this._device, this._nsdLogObj);
+  this._nsdObj.addResolveServiceListener(function(device){
+    if(!that._entrances[device.address+'.'+device.port]){
+      that._entrances[device.address+'.'+device.port] = new EntranceClass(device, that._socketObj);
+    }
+    that._entrances[device.address+'.'+device.port].show();
+  });
+  var registerCb = {
+    /** format of _socketServerInfo: [this._mName, this._mPort];*/
+    start:function(_socketServerInfo){
+      //socketObj.startServerSocket(_socketServerInfo);
+    },
+    stop:function(){
+      socketObj.stopServerSocket();
+    }
+  };
+  this._nsdObj.addRegisterServiceListener(registerCb);
+};
+HomeClass.prototype.startServerSocket = function(){
+  if(this._socketObj){
+    this._socketObj.startServerSocket(this._socketServerInfo);
+    $.ui.toggleSideMenu();
+  }else{
+    window.alert("this._socketObj is null");
+  }
+};
+HomeClass.prototype.stopServerSocket = function(){
+  if(this._socketObj){
+    this._socketObj.stopServerSocket();
+    $.ui.toggleSideMenu();
+  }else{
+    window.alert("this._socketObj is null");
+  }
+};
+
+HomeClass.prototype.initPanel = function(){
+  var that = this;
+  var h2 = $.create("h2", {}).css({"text-align": "center"}).html("远程交互");
+  var explan = $("<ul>").css({"margin-bottom": "10px"})
+  .append(
+    $("<li>").html("网络发现：通过网络发现列表。")
+  )
+  .append(
+    $("<li>").html("设备连接：通过输入IP地址。")
+  )
+  .append(
+    $("<li>").html("二维码扫描：通过二维码扫描。")
+  );
+  var ul = $.create("ul", {className: "list inset"})
+  .append(
+    $.create("li", {className: "divider"}).html("登录界面入口")
+  )
+  .append(
+    $("<li>").append($("<a>").html("网络发现").on("click", function(){
+      that._nsdObj.show();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("设备连接").on("click", function(){
+      var popup = $("#afui").popup(
+        {
+          title : "输入设备信息",
+          message : "用户名: <input type='text' class='af-ui-forms' data-id='name'><br> " +
+          "设备地址: <input type='text' class='af-ui-forms' data-id='address' style='webkit-text-security:disc'>",
+          cancelText : "取消",
+          cancelCallback : function() {
+          },
+          doneText : "登录",
+          doneCallback : function() {
+            var name = $('#' + popup.id).find("input[data-id='name']").val();
+            var address = $('#' + popup.id).find("input[data-id='address']").val();
+            var fullUrl = 'http://' + address + ':' + that._httpPort;
+            if(address){
+              HomeClass.prototype.checkNetwork(fullUrl,
+                function(){
+                  console.log(name + ": " + address + " ok");
+                  if(!name){
+                    name = address;
+                  }
+                  var device = {"type":"_http._tcp.","port":that._socketPort,"address":address,"name":name};
+                  if(!that._entrances[device.address+'.'+device.port]){
+                    that._entrances[device.address+'.'+device.port] = new EntranceClass(device, that._socketObj);
+                  }
+                  that._entrances[device.address+'.'+device.port].show();
+                },
+                function(){
+                  window.alert(fullUrl + " is not open.");
+                }
+              );
+            }else{
+                window.alert("地址不能为空");            
+            }
+            console.log(name + ": " + address);
+          },
+          cancelOnly : false
+        }
+      );
+      //add default value.      
+      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.5.176");
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("二维码扫描").on("click", function(){
+      console.log("to 二维码扫描");
+      window.alert("待开发。。。");
+    }))
+  );
+  this._ID = '#home';
+  this._panel = $('#content ' + this._ID);
+  if(this._panelScroll = this._panel.find('.afScrollPanel')){
+    this._panelScroll.append(h2);
+    this._panelScroll.append(explan);
+    this._panelScroll.append(ul);
+  }else{
+    this._panel.append(h2);
+    this._panelScroll.append(explan);
+    this._panel.append(ul);    
+  };
+  this.show();
+};
+
+HomeClass.prototype.checkNetwork = function(url2test, successcb, failcb){
+  $.ajax({
+    type: "GET",
+    cache: false,
+    url: url2test,
+    data: "",
+    success: function(){
+      successcb();
+    },
+    error:function(){
+      failcb();
+    }
+  });
+};
+
 // used for content show.
 var NsdLogClass = function(){
-  this._device_nsd = $('#content #device_nsd');
+  this._panel = $('#content #device_nsd');
   this._content = $('<div></div>');
-  if(this._device_nsd.find('.afScrollPanel')){
-    this._device_nsd.find('.afScrollPanel').append(this._content);
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  if(this._panelScroll){
+    this._panelScroll.append(this._content);
   }else{
-    this._device_nsd.append(this._content);
+    this._panel.append(this._content);
   }
   this._debug = true;
 };
@@ -28,23 +192,114 @@ NsdLogClass.prototype.scrollToBottom = function(){
 NsdLogClass.prototype.clearContent = function(){
   this._content.html('');
 };
-// var nsdLogObj = new NsdLogClass();
 
 /**
  * Class NsdClass is used for Network Service Discovery.
  */ 
-var NsdClass = function(name, port, debug) {
+var NsdClass = function(device, debug) {
   if(!window.NSDNative){
     alert("object window.NSD does not exist.");
     return;
   }
-  this._mName = name;
-  this._mPort = port;  
+  this._device = {};
+  $.extend(this._device, device);
+  this._ID = "nsd";
+  this._mName = device.name;
+  this._mPort = device.port;  
   this._deviceList = new Object();
   this._d = debug;
-  this._userlist = $('#content #nsd ul.list');
   this._resolveServiceListener = new Array();
   this._registerServiceListener = new Array();
+};
+NsdClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){
+    this.newPanel(title);
+  }
+  $("footer#tohomepanel a").removeClass("pressed");
+  $.ui.loadContent(this._ID, false, false, "slide");
+};
+NsdClass.prototype.newPanel = function(title){
+  if(!title){
+    title = "在线服务列表"; 
+  }
+  $.ui.addContentDiv(this._ID, "", title);
+  this._panel = $('#'+this._ID);
+  this._panel.data("footer", "tohomepanel");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._userlist = $.create("ul", {className: "list"});
+  if(this._panelScroll){
+    this._panelScroll.append(this._userlist);
+  }else{
+    this._panel.append(this._userlist);    
+  }
+  this._panel.data("nav", "nav_nsd");
+  this.addNavBar();
+};
+
+NsdClass.prototype.addNavBar = function(){
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html("需要插件ibp.plugin.nsd")
+  )
+  .append(
+    $("<li>").append($("<a>").html("initNsd").on("click", function(){
+      that.initNsd();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopNsd").on("click", function(){
+      that.stopNsd();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("startDiscovery").on("click", function(){
+      that.startDiscovery();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("showDeviceList").on("click", function(){
+      that.showDeviceList();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("stopDiscovery").on("click", function(){
+      that.stopDiscovery();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("registerService").on("click", function(){
+      that.registerService();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("unRegisterService").on("click", function(){
+      that.unRegisterService();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("scrollToBottom").on("click", function(){
+      that._d.scrollToBottom();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("clearContent").on("click", function(){
+      that._d.clearContent();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: "nav_nsd"});
+  nav.append(ul).appendTo($("#afui"));
 };
 NsdClass.prototype.addResolveServiceListener = function(cb){
   this._resolveServiceListener.push(cb);
@@ -156,7 +411,6 @@ NsdClass.prototype.registerService = function() {
   window.NSDNative.registerService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
-      // afSocket.startServerSocket(serviceInfo);
       that.callRegisterServiceListener("start", serviceInfo);
     },
     function(msgfromnative){
@@ -171,7 +425,6 @@ NsdClass.prototype.unRegisterService = function() {
   window.NSDNative.unRegisterService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.unRegisterService");
-      // afSocket.stopServerSocket();
       that.callRegisterServiceListener("stop", serviceInfo);
     },
     function(msgfromnative){
@@ -316,32 +569,38 @@ var EntranceClass = function(device, socketObj){
   this._device = {};
   $.extend(this._device, device);  
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this._entranceId = this._id + "_entrance";
+  this._ID = this._id + "_entrance";
+  this._navID = "nav_entrance";
   this._chat = new ChatClass(device, socketObj);
   this._data = new DataClass(device);
+  this._remotefilebrowser = new RemoteFileBrowser(device);
 };
 EntranceClass.prototype.processMsg = function(msgfromnative){
   this._chat.loadChat();
   this._chat.processMsg(msgfromnative);
 };
-EntranceClass.prototype.loadEntrance = function(){
-  if(!$('#'+this._entranceId).length){      
-    this.newEntrance();
+EntranceClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
   }
-  $.ui.loadContent('#'+this._entranceId, false, false, "up");
+  $.ui.loadContent('#'+this._ID, false, false, "up");
 };
-EntranceClass.prototype.newEntrance = function(){
+EntranceClass.prototype.newPanel = function(title){
+  if(!title){
+    title = "功能列表";
+  }
   var that = this;
   var device = this._device;
-  $.ui.addContentDiv(this._entranceId,
+  $.ui.addContentDiv(this._ID,
     "<p>设备名：" + device.name + "</p>"
     + "<p>设备地址：" + device.address + ":" + device.port + ". </p>"
     + "<p>请选择下面的操作：</p>"
     + "<ul class='grid-photo'><ul>",
-    "功能列表");
-  var entrance = $('#'+this._entranceId);
-  entrance.get(0).setAttribute("data-tab", "none");
-  var funclist = entrance.find('ul');
+    title);
+  this._panel = $('#'+this._ID);
+  
+  //this._panel.get(0).setAttribute("data-tab", "none");
+  var funclist = this._panel.find('ul');
   /*
    * 不能为a绑定事件？
    */
@@ -351,7 +610,6 @@ EntranceClass.prototype.newEntrance = function(){
      }).append(
        $.create('a', {}).html("聊天")
     ).on('click', function(e){
-      // console.log("load content: #"+that._chatId);
       that._chat.loadChat("聊天");
     })
   ).appendTo(funclist);
@@ -363,14 +621,65 @@ EntranceClass.prototype.newEntrance = function(){
       $.create('a', {}).html("ppt列表")
     )
     .on('click', function(e){
-      // console.log("load content: #"+that._dataId);
       that._data.loadData("ppt列表");
       // e.preventDefault();
       // e.stopPropagation();
     })
   ).appendTo(funclist);
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {}).html("文件浏览")
+    )
+    .on('click', function(e){
+      that._remotefilebrowser.show("文件浏览");
+    })
+  ).appendTo(funclist);
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {}).html("应用列表")
+    )
+    .on('click', function(e){
+      window.alert("开发中。。。");
+    })
+  ).appendTo(funclist);
+  $.create('<li>').append(
+     $.create('div', {
+        className:'grid-photo-box',
+     }).append(
+      $.create('a', {}).html("拍照上传")
+    )
+    .on('click', function(e){
+      window.alert("开发中。。。");
+    })
+  ).appendTo(funclist);
+  this._panel.data("nav", "nav_entrance");
+  this.addNavBar();
 };
-
+EntranceClass.prototype.addNavBar = function(){
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html("操作列表")
+  )
+  .append(
+    $("<li>").append($("<a>").html("开启Socket服务").on("click", function(){
+      window.homeObj.startServerSocket();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("关闭Socket服务").on("click", function(){
+      window.homeObj.stopServerSocket();
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: "nav_entrance"});
+  nav.append(ul).appendTo($("#afui"));
+};
 /**
  * ChatClass类，用于聊天界面。
  */
@@ -423,139 +732,6 @@ ChatClass.prototype.processMsg = function(msgObj){
   this._history.append($('<li></li>').html(msgObj.from + ": " + msgObj.message));
 };
 
-/**
- * DataClass类，用于聊天界面。
- */
-var DataClass = function(device){
-  /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
-  this._device = {};
-  $.extend(this._device, device);
-  this._id = device.address.replace(/\./g, '_') + '_' + device.port;
-  this._dataId = this._id + "_remote_data";
-  this._address = device.address;
-  this._port = 8888;  
-};
-DataClass.prototype.loadData = function(title){
-  if(!$('#'+this._dataId).length){
-    this.newData(title);
-  }
-  if(!this._remotedata){
-    this.loadRemoteJS();
-  }
-  $.ui.loadContent(this._dataId, false, false, "fade");
-};
-DataClass.prototype.newData = function(title){
-  var that = this;
-  $.ui.addContentDiv(this._dataId, "", title);
-  this._data = $('#'+this._dataId);
-  /**NOTICE: may be encounter error later*/
-  this._panelScroll = this._data.find('.afScrollPanel');
-  this._data.attr("data-footer", "none");
-  this.loadRemoteJS();
-};
-DataClass.prototype.loadRemoteJS = function(cb){
-  var that = this;
-  //全局方法中对本地对象参数的设置。
-  var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
-    that._remotedata = data;
-    that._remoteapp = app;
-    that._remotedata.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    that.getRemoteData();
-  },
-  function(data){
-    alter("fail to load script: " + origin +"/lib/api/data.js");
-  });  
-};
-DataClass.prototype.getRemoteData = function(){
-  var that = this;
-  function handleDataCB(objArray){
-    /** format of objArray:
-    URI: "rio1529rio#693be79d86e01358c560#document"
-    createDev: "rio1529rio"
-    createTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
-    filename: "NewFile"
-    id: 1
-    is_delete: 0
-    lastAccessDev: "rio1529rio"
-    lastAccessTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
-    lastModifyDev: "rio1529rio"
-    lastModifyTime: "Fri Nov 14 2014 09:15:13 GMT+0800 (CST)"
-    others: "documents"
-    path: "/home/cos/.resources/document/data/NewFile.txt"
-    postfix: "txt"
-    project: "上海专项"
-    size: "0"
-    */
-    // console.log(objArray);
-    for(i=0;i<objArray.length;i++){
-      if(objArray[i].postfix == 'ppt' || objArray[i].postfix == 'pptx')
-      {
-        console.log(objArray[i].filename);
-        var file = $.create("div", {className:"file"})
-        .data("uri", objArray[i].URI)
-        .append(
-          $.create("div", {className: "icon"}).append(
-            $.create("img",{src: "data/icons/powerpoint.png"})
-          )
-        )
-        .append(
-          $.create("div", {className: "name", id:objArray[i].filename}).html(objArray[i].filename)
-        )
-        .on("touchstart", function(e){
-          $(this).addClass('focus');
-          // console.log("touchstart");
-        })
-        .on("touchmove", function(e){
-          $(this).removeClass('focus');
-          // console.log("touchmove");
-        })
-        .on("touchend", function(e){   
-          if($(this).hasClass('focus')){
-            $(this).removeClass('focus');
-            var uri = $(this).data('uri');
-            console.log("You click" + uri);
-          }
-          // console.log("touchend");
-        });
-        console.log(that._data);
-        if(that._panelScroll){
-          file.appendTo(that._panelScroll);
-        }else{
-          file.appendTo(that._data);
-        }
-      }    
-    }
-  }
-  if(!this._remotedata){
-    this.loadRemoteJS();
-  }else{
-    this._remotedata.getAllDataByCate(handleDataCB, "document");
-  }
-};
-
-DataClass.prototype.openRemoteData = function(uri){
-  var that = this;
-  this._remotedata.openDataByUri(cb_get_ppt_source_file, $(this).data('uri'));
-};
 /**
  * AfSocket类，实现Socket通信
  * 

@@ -61,16 +61,15 @@ public class SocketPlugin extends CordovaPlugin {
     public void onResume(boolean multitasking) {
     }
     /**
-     * origMsg: [name, address, port, message]
      * @param callbackContext
-     * @param origMsg
+     * @param origMsg: [name, address, port, message]
      */
     private void sendMessage(CallbackContext callbackContext, JSONArray origMsg){
         try {
             JSONObject msgObj = new JSONObject();
             String dstName = origMsg.getString(0);
-            String address = origMsg.getString(1);
-            int port = origMsg.getInt(2);
+            String dstAddress = origMsg.getString(1);
+            int dstPort = origMsg.getInt(2);
             String message = origMsg.getString(3);
             if(null != mName){
                 msgObj.put("from", mName);
@@ -78,7 +77,7 @@ public class SocketPlugin extends CordovaPlugin {
             msgObj.put("to", dstName);
             msgObj.put("message", message);
             msgObj.put("type", "app1");
-            if(socketConn.sendMessage(address, port, msgObj)){
+            if(socketConn.sendMessage(dstAddress, dstPort, msgObj)){
                 callbackContext.success("Plugin.sendMessage success");
             }else{
                 callbackContext.error("Plugin.sendMessage error");
