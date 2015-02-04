@@ -3,8 +3,10 @@
  */
 package ibp.plugin.socket;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -130,16 +132,25 @@ public class SocketConnection {
         }
     };
     private JSONObject getAndWrapMessage(Socket socket) throws JSONException{
-        BufferedReader input;
+//        BufferedReader input;
+        DataInputStream dataInputStream;
         JSONObject mMsgObj = new JSONObject();
         mMsgObj.put("address", this.getSocketAddress(socket));
         mMsgObj.put("port", this.getSocketPort(socket));
         try {
-            input = getReader(socket);
-            String message = input.readLine();
-            if(null == message){
-                return null;
-            }
+//            input = getReader(socket);
+//            String message = input.readLine();
+//            if(null == message){
+//                    return null;
+//            }
+
+            dataInputStream = getDataInputStream(socket);
+            byte[] bytes = new byte[1024];
+            int length = dataInputStream.read(bytes);
+            byte[] data = new byte[length];
+            System.arraycopy(bytes, 0, data, 0, length);
+            String message = new String(data, "UTF-8");
+            
             JSONObject msgObjFromRemote = new JSONObject(message);
             if(msgObjFromRemote.has("type") && (msgObjFromRemote.getString("type").equals("SentEnFirst"))){
                 mMsgObj.put("content", msgObjFromRemote.getString("content"));                
@@ -436,6 +447,18 @@ public class SocketConnection {
             e.printStackTrace();
         }
         return bufferedReader;
+    }
+    private DataInputStream getDataInputStream(Socket socket){
+        DataInputStream dataInputStream = null;
+        try {
+            InputStream stream = socket.getInputStream();
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(stream);
+            dataInputStream = new DataInputStream(bufferedInputStream);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return dataInputStream;
     }
 
     private String getSocketAddress(Socket socket){
