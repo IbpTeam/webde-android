@@ -197,11 +197,11 @@ NsdLogClass.prototype.clearContent = function(){
  * Class NsdClass is used for Network Service Discovery.
  */ 
 var NsdClass = function(device, debug) {
-  if(!window.NSDNative){
+  this._NSDNative = window.JMDNSNative;//NSDNative
+  if(!this._NSDNative){
     alert("object window.NSD does not exist.");
     return;
   }
-  this._NSDNative = window.NSDNative;
   this._device = {};
   $.extend(this._device, device);
   this._ID = "nsd";
@@ -333,6 +333,7 @@ NsdClass.prototype.callRegisterServiceListener = function(state, serviceInfo){
 };
 NsdClass.prototype.initNsd = function() {
   //initNsd is used for service discovery, onPause, onDestroy, onResume.
+  //service resolve use its own callbackcontext.
   var that = this;
   this._NSDNative.initNsd(
     function(msgfromnative){
@@ -688,6 +689,7 @@ var ChatClass = function(device, socketObj){
   /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
   this._device = {};
   $.extend(this._device, device);
+  this._device.port=7777;
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._chatId = this._id + "_chat";
   this._socket = socketObj;
