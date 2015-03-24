@@ -10,8 +10,8 @@ var TestAPI = function(device){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
   
-  this._remotedatajs = new RemoteDataJS(device);
-  this._remoteappjs = new RemoteAppJS(device);
+  this._remoteDataObj = new RemoteDataClass(device);
+  this._remoteAppObj = new RemoteAppClass(device);
   this._remotefilebrowser = new RemoteFileBrowser(device);
   var that = this;
   var ul = $.create("ul", {className: "list"});
@@ -19,7 +19,7 @@ var TestAPI = function(device){
     $.create("li", {}).append(
       $.create("a", {}).html("data.js方法接口").on("click", function(e){
         //console.log("data.js方法接口");
-        that._remotedatajs.show();
+        that._remoteDataObj.show();
       })
     )
   );
@@ -27,7 +27,7 @@ var TestAPI = function(device){
     $.create("li", {}).append(
       $.create("a", {}).html("app.js方法接口").on("click", function(e){
         // console.log("app.js方法接口");)
-        that._remoteappjs.show();
+        that._remoteAppObj.show();
       })
     )
   );
@@ -49,22 +49,28 @@ var TestAPI = function(device){
 TestAPI.prototype.loadTestAPI = function(title){
   $.ui.loadContent(this._ID, false, false, "fade");
 };
-// TestAPI.prototype.newTestAPI = function(title){
-  // $.ui.addContentDiv(this._ID, "", title);
-  // this._panel = $('#'+this._ID);
-// };
 
+var TestDataJSObj = {
+  readDesktopConfig: function(_cb){
+    var that = this;
+    that._remotedata.readDesktopConfig(function(err_, ret_) {
+      if(err_) return that.log(err_);
+      that.log(ret_.layout);
+      if(typeof _cb === 'function') _cb.call(that, null);
+    }, 'Default.conf');
+  }
+}
 /**
  * Show functions of remote data.js
  */
-var RemoteDataJS = function(device){
+var RemoteDataClass = function(device){
   this._device = {};
   $.extend(this._device, device);
-  this._ID = "remotedatajs";
+  this._ID = "remotedataclass";
   this._address = device.address;
   this._port = 8888;
 };
-RemoteDataJS.prototype.show = function(title){
+RemoteDataClass.prototype.show = function(title){
   if(!$('#'+this._ID).length){
     this.newPanel(title);
   }
@@ -73,14 +79,14 @@ RemoteDataJS.prototype.show = function(title){
   }
   $.ui.loadContent(this._ID, false, false, "fade");
 };
-RemoteDataJS.prototype.newPanel = function(title){
+RemoteDataClass.prototype.newPanel = function(title){
   $.ui.addContentDiv(this._ID, "", title);
   this._panel = $('#'+this._ID);
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
 };
-RemoteDataJS.prototype.loadRemoteJS = function(cb){
+RemoteDataClass.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
   var origin = "http://" + this._address + ":" + this._port;
@@ -131,7 +137,13 @@ RemoteDataJS.prototype.loadRemoteJS = function(cb){
     for(var key in that._remotedata){
       ul.append(
         $.create("li", {}).append(
-          $.create("a", {}).html(key)
+          $.create("a", {}).html(key).on("click", function(e){
+            var funcName = this.innerHTML;
+            console.log("Test API " + funcName + " of data.js");
+            if(that[funcName]){
+              that[funcName]();
+            }
+          })
         )
       );
     }
@@ -145,10 +157,10 @@ RemoteDataJS.prototype.loadRemoteJS = function(cb){
     alert("fail to load script: " + origin +"/lib/api/data.js");
   });  
 };
-RemoteDataJS.prototype.log = function(str){
+RemoteDataClass.prototype.log = function(str){
   console.log(str);
 };
-RemoteDataJS.prototype.LOG = function(obj){
+RemoteDataClass.prototype.LOG = function(obj){
   var that = this;
   function logObj(obj){
     for(var id in obj){
@@ -162,7 +174,7 @@ RemoteDataJS.prototype.LOG = function(obj){
   }
   logObj(obj);
 };
-RemoteDataJS.prototype.LogObjArray = function(objArr){
+RemoteDataClass.prototype.LogObjArray = function(objArr){
   for(var id in objArr){
     // this.log(objArr[id]);
     this.log("-----=====new Object=====-----");
@@ -171,14 +183,14 @@ RemoteDataJS.prototype.LogObjArray = function(objArr){
     }
   }
 };
-RemoteDataJS.prototype.getAllCate = function(){
+RemoteDataClass.prototype.getAllCate = function(){
   var that = this;
   function getAllCateCb(objArr){
     that.LogObjArray(objArr);
   }  
   this._remotedata.getAllCate(getAllCateCb);
 };
-RemoteDataJS.prototype.getAllDataByCate = function(){
+RemoteDataClass.prototype.getAllDataByCate = function(){
   var that = this;
   function getAllDataByCateCb(objArr){
     that.LogObjArray(objArr);
@@ -186,18 +198,19 @@ RemoteDataJS.prototype.getAllDataByCate = function(){
   //contact, Picture, video, document, Music
   this._remotedata.getAllDataByCate(getAllDataByCateCb, "document");  
 };
+$.extend(RemoteDataClass.prototype, TestDataJSObj);
 
 /**
  * Show functions of remote app.js
  */
-var RemoteAppJS = function(device){
+var RemoteAppClass = function(device){
   this._device = {};
   $.extend(this._device, device);
-  this._ID = "remoteappjs";
+  this._ID = "remoteappclass";
   this._address = device.address;
   this._port = 8888;
 };
-RemoteAppJS.prototype.show = function(title){
+RemoteAppClass.prototype.show = function(title){
   if(!$('#'+this._ID).length){
     this.newPanel(title);
   }
@@ -206,14 +219,14 @@ RemoteAppJS.prototype.show = function(title){
   }
   $.ui.loadContent(this._ID, false, false, "fade");
 };
-RemoteAppJS.prototype.newPanel = function(title){
+RemoteAppClass.prototype.newPanel = function(title){
   $.ui.addContentDiv(this._ID, "", title);
   this._panel = $('#'+this._ID);
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
   }
 };
-RemoteAppJS.prototype.loadRemoteJS = function(cb){
+RemoteAppClass.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
   var origin = "http://" + this._address + ":" + this._port;
@@ -278,10 +291,10 @@ RemoteAppJS.prototype.loadRemoteJS = function(cb){
     alert("fail to load script: " + origin +"/lib/api/data.js");
   });  
 };
-RemoteAppJS.prototype.log = function(str){
+RemoteAppClass.prototype.log = function(str){
   console.log(str);
 };
-RemoteAppJS.prototype.LOG = function(obj){
+RemoteAppClass.prototype.LOG = function(obj){
   var that = this;
   function logObj(obj){
     for(var id in obj){
@@ -295,7 +308,7 @@ RemoteAppJS.prototype.LOG = function(obj){
   }
   logObj(obj);
 };
-RemoteAppJS.prototype.LogObjArray = function(objArr){
+RemoteAppClass.prototype.LogObjArray = function(objArr){
   for(var id in objArr){
     // this.log(objArr[id]);
     this.log("-----=====new Object=====-----");
@@ -576,9 +589,63 @@ RemoteFileBrowser.prototype.LogUnkown = function(obj){
 
 var testAPI;
 function entry(){
-  var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
-  testAPI = new TestAPI(device);
-  testAPI.loadTestAPI("TestAPI");
+  var _socketPort=7777;
+  var _httpPort = 8888;
+  function checkNetwork(url2test, successcb, failcb){
+    $.ajax({
+      type: "GET",
+      cache: false,
+      url: url2test,
+      data: "",
+      success: function(){
+        successcb();
+      },
+      error:function(){
+        failcb();
+      }
+    });
+  };
+  var popup = $("#afui").popup(
+    {
+      title : "输入设备信息",
+      message : "用户名: <input type='text' class='af-ui-forms' data-id='name'><br> " +
+      "设备地址: <input type='text' class='af-ui-forms' data-id='address' style='webkit-text-security:disc'>",
+      cancelText : "取消",
+      cancelCallback : function() {
+      },
+      doneText : "登录",
+      doneCallback : function() {
+        var name = $('#' + popup.id).find("input[data-id='name']").val();
+        var address = $('#' + popup.id).find("input[data-id='address']").val();
+        var fullUrl = 'http://' + address + ':' + _httpPort;
+        if(address){
+          checkNetwork(fullUrl,
+            function(){
+              console.log(name + ": " + address + " ok");
+              if(!name){
+                name = address;
+              }
+              var device = {"type":"_http._tcp.","port":_httpPort,"address":address,"name":name};
+              testAPI = new TestAPI(device);
+              testAPI.loadTestAPI("TestAPI");
+            },
+            function(){
+              window.alert(fullUrl + " is not open.");
+            }
+          );
+        }else{
+            window.alert("地址不能为空");            
+        }
+        console.log(name + ": " + address);
+      },
+      cancelOnly : false
+    }
+  );
+  //add default value.  
+  $('#' + popup.id).find("input[data-id='name']").attr("value", "test");
+  $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.5.243");
+
+  //var device = {"name": "test", "address":"192.168.5.176", "port": 8888};
 }
 $(window).on("afui:ready", entry);
 // (
