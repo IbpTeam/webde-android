@@ -38,4 +38,7 @@
     <feature name="TimerPlugin">
         <param name="android-package" value="ibp.plugin.timer.TimerPlugin" />
     </feature>
+    <feature name="JMDNSlugin">
+        <param name="android-package" value="ibp.plugin.jmdns.JMDNSPlugin" />
+    </feature>
 </widget>

@@ -285,6 +285,13 @@ module.exports = [
         "clobbers": [
             "TimerNative"
         ]
+    },
+    {
+        "file": "plugins/ibp.plugin.jmdns/www/jmdns.js",
+        "id": "ibp.plugin.jmdns.jmdns",
+        "clobbers": [
+            "JMDNSNative"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -300,7 +307,8 @@ module.exports.metadata =
     "ibp.plugin.helloworld": "0.0.3",
     "ibp.plugin.socket": "0.0.1",
     "ibp.plugin.nsd": "0.0.1",
-    "ibp.plugin.timer": "0.0.2"
+    "ibp.plugin.timer": "0.0.2",
+    "ibp.plugin.jmdns": "0.0.1"
 }
 // BOTTOM OF METADATA
 });

@@ -197,7 +197,8 @@ NsdLogClass.prototype.clearContent = function(){
  * Class NsdClass is used for Network Service Discovery.
  */ 
 var NsdClass = function(device, debug) {
-  if(!window.NSDNative){
+  this._NSDNative = window.JMDNSNative;//NSDNative
+  if(!this._NSDNative){
     alert("object window.NSD does not exist.");
     return;
   }
@@ -332,8 +333,9 @@ NsdClass.prototype.callRegisterServiceListener = function(state, serviceInfo){
 };
 NsdClass.prototype.initNsd = function() {
   //initNsd is used for service discovery, onPause, onDestroy, onResume.
+  //service resolve use its own callbackcontext.
   var that = this;
-  window.NSDNative.initNsd(
+  this._NSDNative.initNsd(
     function(msgfromnative){
       switch(typeof msgfromnative){
         case "object":
@@ -372,7 +374,7 @@ NsdClass.prototype.initNsd = function() {
  */
 NsdClass.prototype.stopNsd = function() {
   var that = this;
-  window.NSDNative.stopNsd(
+  this._NSDNative.stopNsd(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.stopNsd");
     },
@@ -384,7 +386,7 @@ NsdClass.prototype.stopNsd = function() {
 
 NsdClass.prototype.startDiscovery = function() {
   var that = this;
-  window.NSDNative.startDiscovery(
+  this._NSDNative.startDiscovery(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.startDiscovery");
     },
@@ -395,7 +397,7 @@ NsdClass.prototype.startDiscovery = function() {
 };
 NsdClass.prototype.stopDiscovery = function() {
   var that = this;
-  window.NSDNative.stopDiscovery(
+  this._NSDNative.stopDiscovery(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.stopDiscovery");
     },
@@ -408,7 +410,7 @@ NsdClass.prototype.stopDiscovery = function() {
 NsdClass.prototype.registerService = function() {
   var that = this;
   serviceInfo = [this._mName, this._mPort];
-  window.NSDNative.registerService(
+  this._NSDNative.registerService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.registerService");
       that.callRegisterServiceListener("start", serviceInfo);
@@ -422,7 +424,7 @@ NsdClass.prototype.registerService = function() {
 NsdClass.prototype.unRegisterService = function() {
   var that = this;
   serviceInfo = [this._mName, this._mPort];
-  window.NSDNative.unRegisterService(
+  this._NSDNative.unRegisterService(
     function(msgfromnative){
       that._d.myLog(msgfromnative, "NsdClass.prototype.unRegisterService");
       that.callRegisterServiceListener("stop", serviceInfo);
@@ -497,7 +499,7 @@ NsdClass.prototype.showDeviceList = function(){
 NsdClass.prototype.appendUser = function (name, txt){
   var that = this;
   var af_a = $.create('<a>').on('click', function(e){
-    window.NSDNative.resolveService(
+    that._NSDNative.resolveService(
       function(msgfromnative){
         that._d.myLog(JSON.stringify(msgfromnative), "NSDUserList.prototype.appendUser");
         that.overWriteADevice(msgfromnative);
@@ -687,6 +689,7 @@ var ChatClass = function(device, socketObj){
   /** format of device: {"type":"_http._tcp.","port":0,"address":"null","name":"Test-UserB"}*/
   this._device = {};
   $.extend(this._device, device);
+  this._device.port=7777;
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._chatId = this._id + "_chat";
   this._socket = socketObj;
