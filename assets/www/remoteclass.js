@@ -15,9 +15,10 @@ DataClass.prototype.loadData = function(title){
   if(!$('#'+this._dataId).length){
     this.newData(title);
   }
-  if(!this._remotedata || !this._remoteapp){
-    this.loadRemoteJS();
-  }
+  // if(!this._remotedata || !this._remoteapp){
+    // this.loadRemoteJS();
+  // }  
+  this.getRemoteData();
   if(!this._panel){
     this._panel = $('#'+this._dataId);
     if(this._panel.find('.afScrollPanel')){
@@ -35,61 +36,6 @@ DataClass.prototype.newData = function(title){
   }
   this._panel.attr("data-footer", "none");
   // this.loadRemoteJS();
-};
-DataClass.prototype.loadRemoteJS = function(cb){
-  var that = this;
-  //全局方法中对本地对象参数的设置。
-  that._origin = "http://" + that._address + ":" + that._port;
-  requirejs([that._origin + "/lib/api/data.js", that._origin + "/lib/api/app.js"], function(data, app){
-    //that._remotedata = data;
-    that._remotedata = wrapRemoteJS(that._origin, "data", data);
-    that._remoteapp = wrapRemoteJS(that._origin, "app", app);
-    that.getRemoteData();
-    /*
-    that._remotedata.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : "http://192.168.5.243:8888/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    that._remoteapp.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : that._origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    */
-    
-  },
-  function(data){
-    alert("fail to load script: " + that._origin +"/lib/api/data.js");
-  });  
 };
 DataClass.prototype.getRemoteData = function(){
   var that = this;
@@ -138,7 +84,7 @@ DataClass.prototype.getRemoteData = function(){
           if($(this).hasClass('focus')){
             $(this).removeClass('focus');
             var uri = $(this).data('uri');
-            // console.log("You click" + uri);
+            console.log("You click" + uri);
             that.openRemoteData(uri);
           }
         });
@@ -150,17 +96,12 @@ DataClass.prototype.getRemoteData = function(){
       }
     }
   }
-  if(!this._remotedata){
-    this.loadRemoteJS();
-  }else{
-    this._remotedata.getAllDataByCate(handleDataCB, "document");
-  }
+  window._remotedata.getAllDataByCate(handleDataCB, "document");  
 };
 
 DataClass.prototype.openRemoteData = function(uri){
   var that = this;
-
-  function showPopUpPanel(obj){
+  function showPopUpPanel(status, obj){
     /**console.log('get ppt source file', obj);
      * format of obj:
      * {
@@ -174,19 +115,19 @@ DataClass.prototype.openRemoteData = function(uri){
     btns = {
       "Stop" : function(){
         console.log("Close CB");
-        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Escape');
+        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Escape');
         },
       "Play" : function(){
         console.log("Play CB");
-        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'F5');
+        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'F5');
         },
       "PageUp" : function(){
         console.log("PageUp CB");
-        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Up');
+        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Up');
         },
       "PageDown" : function(){
         console.log("PageDown CB");
-        that._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Down');
+        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Down');
         },
     };
     $("#afui").popPanel({
@@ -196,7 +137,7 @@ DataClass.prototype.openRemoteData = function(uri){
       buttons: btns,
     });
   }
-  this._remotedata.openDataByUri(showPopUpPanel, uri);
+  window._remotedata.openDataByUri(showPopUpPanel, uri);
 };
 
 
@@ -216,11 +157,12 @@ RemoteFileBrowser.prototype.show = function(title){
   if(!$('#'+this._ID).length){
     this.newPanel(title);
   }
-  if(!this._remotedata || !this._remoteapp){
-    this.loadRemoteJS();
-  }else{
+  //if(!this._remotedata || !this._remoteapp){
+  //  this.loadRemoteJS();
+  this.setNavBar();
+  //}else{
     $.ui.loadContent(this._ID, false, false, "fade");
-  }
+  //}
 };
 RemoteFileBrowser.prototype.newPanel = function(title){
   $.ui.addContentDiv(this._ID, "", title);
@@ -230,111 +172,63 @@ RemoteFileBrowser.prototype.newPanel = function(title){
   }
   this._panel.attr("data-footer", "none");
 };
-RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
+RemoteFileBrowser.prototype.setNavBar = function(){
   var that = this;
   //全局方法中对本地对象参数的设置。
-  var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){    
-    that._remotedata = wrapRemoteJS(that._origin, "data", data);
-    that._remoteapp = wrapRemoteJS(that._origin, "app", app);
-    /*
-    that._remotedata = data;
-    that._remotedata.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };    
-    that._remoteapp = app;
-    that._remoteapp.sendrequest = function (a, ar) {
-      var sd = {};
-      var cb = ar.shift();
-      sd.api = a;
-      sd.args = ar;
-      $.ajax({
-        url : origin +"/callapi",
-        type : "post",
-        contentType : "application/json;charset=utf-8",
-        dataType : "json",
-        data : JSON.stringify(sd),
-        success : function(r) {
-          setTimeout(cb.apply(null, r), 0);
-        },
-        error : function(e) {
-          throw e;
-        }
-      });
-    };
-    */
-    function getAllCateCB(objArr){
-      // that.LogObjArray(objArr);
-      var ul = $.create("ul", {className: "list"});
-      ul.append($.create("li", {className: "divider"}).html("远程文件浏览"));
-      for(var idx in objArr){
-        obj = objArr[idx];
-        if(("Other" == obj.type) || ("Devices" == obj.type)){
-          continue;
-        }
-        that._cateInfo[obj.type] = new Object();
-        $.extend(that._cateInfo[obj.type], obj);
-        var icon;
-        switch(obj.type){
-          case "Contact":
-            icon = "icon user big";
-          break;
-          case "Picture":
-            icon = "icon picture big";
-          break;
-          case "Video":
-            icon = "icon tv big";
-          break;
-          case "Document":
-            icon = "icon paper big";
-          break;
-          case "Music":
-            icon = "icon headset big";
-          break;
-        };
-        ul.append(
-          $.create("li", {}).append(
-            $.create("a", {className: icon}).html(obj.desc).data("type", obj.type).on("click", function(){
-              //console.log($(this).data("type"));
-              that.getAllDataByCate($(this).data("type"));
-            })
-          )
-        );
+  function getAllCateCB(objArr){
+    // that.LogObjArray(objArr);
+    var ul = $.create("ul", {className: "list"});
+    ul.append($.create("li", {className: "divider"}).html("远程文件浏览"));
+    for(var idx in objArr){
+      obj = objArr[idx];
+      if(("Other" == obj.type) || ("Devices" == obj.type)){
+        continue;
       }
-      // that.LogObjObj(that._cateInfo);
-      var nav = $.create("nav", {id: "nav_remotefilebrowser"});
-      nav.append(ul).appendTo($("#afui"));
-      that._panel.attr("data-nav", "nav_remotefilebrowser");
-      $.ui.loadContent(that._ID, false, false, "fade");
+      that._cateInfo[obj.type] = new Object();
+      $.extend(that._cateInfo[obj.type], obj);
+      var icon;
+      switch(obj.type){
+        case "Contact":
+          icon = "icon user big";
+        break;
+        case "Picture":
+          icon = "icon picture big";
+        break;
+        case "Video":
+          icon = "icon tv big";
+        break;
+        case "Document":
+          icon = "icon paper big";
+        break;
+        case "Music":
+          icon = "icon headset big";
+        break;
+      };
+      ul.append(
+        $.create("li", {}).append(
+          $.create("a", {className: icon}).html(obj.desc).data("type", obj.type).on("click", function(){
+            //console.log($(this).data("type"));
+            that.getAllDataByCate($(this).data("type"));
+          })
+        )
+      );
     }
-    that._remotedata.getAllCate(getAllCateCB);
-  },
-  function(data){
-    alert("fail to load script: " + origin +"/lib/api/data.js");
-  });  
+    // that.LogObjObj(that._cateInfo);
+    var nav = $.create("nav", {id: "nav_remotefilebrowser"});
+    nav.append(ul).appendTo($("#afui"));
+    that._panel.attr("data-nav", "nav_remotefilebrowser");
+    $.ui.loadContent(that._ID, false, false, "fade");
+  }
+  if(!$('#nav_remotefilebrowser').length){
+    window._remotedata.getAllCate(getAllCateCB);
+  }
 };
 RemoteFileBrowser.prototype.getAllCate = function(){
   var that = this;
   function getAllCateCb(objArr){
     that.LogObjArray(objArr);
   }  
-  this._remotedata.getAllCate(getAllCateCb);
+  window._remotedata.getAllCate(getAllCateCb);
 };
 
 RemoteFileBrowser.prototype.getAllDataByCate = function(type){
@@ -384,7 +278,7 @@ RemoteFileBrowser.prototype.getAllDataByCate = function(type){
     $.ui.toggleSideMenu();
   }
   //Contact, Picture, Video, Document, Music
-  this._remotedata.getAllDataByCate(getAllDataByCateCb, type);  
+  window._remotedata.getAllDataByCate(getAllDataByCateCb, type);  
 };
 RemoteFileBrowser.prototype.getNameAndIconByObj = function(type, obj){
   var name, icon;

@@ -591,7 +591,7 @@ EntranceClass.prototype.show = function(title){
 };
 EntranceClass.prototype.loadRemoteJS = function(){
   var that = this;
-  that._origin = "http://" + this._device.address + ":" + this._device.port;
+  that._origin = "http://" + this._device.address + ":8888";
   requirejs(
     [that._origin + "/lib/api/data.js", that._origin + "/lib/api/app.js"],
     function(data, app){
