@@ -121,7 +121,7 @@ HomeClass.prototype.initPanel = function(){
         }
       );
       //add default value.      
-      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.5.176");
+      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.");
     }))
   )
   .append(
@@ -197,7 +197,7 @@ NsdLogClass.prototype.clearContent = function(){
  * Class NsdClass is used for Network Service Discovery.
  */ 
 var NsdClass = function(device, debug) {
-  this._NSDNative = window.JMDNSNative;//NSDNative
+  this._NSDNative = window.NSDNative;//JMDNSNative;//
   if(!this._NSDNative){
     alert("object window.NSD does not exist.");
     return;
@@ -576,6 +576,7 @@ var EntranceClass = function(device, socketObj){
   this._chat = new ChatClass(device, socketObj);
   this._data = new DataClass(device);
   this._remotefilebrowser = new RemoteFileBrowser(device);
+  window.device_address = device.address;
 };
 EntranceClass.prototype.processMsg = function(msgfromnative){
   this._chat.loadChat();

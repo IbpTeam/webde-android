@@ -9,7 +9,7 @@ var DataClass = function(device){
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._dataId = this._id + "_remote_data";
   this._address = device.address;
-  this._port = 8888;  
+  this._port = 8888;
 };
 DataClass.prototype.loadData = function(title){
   if(!$('#'+this._dataId).length){
@@ -39,8 +39,10 @@ DataClass.prototype.newData = function(title){
 DataClass.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
-  var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
+  that._origin = "http://" + that._address + ":" + that._port;
+  var call_url = that._origin + "/callapi";
+  console.log("call_url: " + call_url);
+  requirejs([that._origin + "/lib/api/data.js", that._origin + "/lib/api/app.js"], function(data, app){
     that._remotedata = data;
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
@@ -48,7 +50,7 @@ DataClass.prototype.loadRemoteJS = function(cb){
       sd.api = a;
       sd.args = ar;
       $.ajax({
-        url : origin +"/callapi",
+        url : "http://192.168.5.243:8888/callapi",
         type : "post",
         contentType : "application/json;charset=utf-8",
         dataType : "json",
@@ -69,7 +71,7 @@ DataClass.prototype.loadRemoteJS = function(cb){
       sd.api = a;
       sd.args = ar;
       $.ajax({
-        url : origin +"/callapi",
+        url : that._origin +"/callapi",
         type : "post",
         contentType : "application/json;charset=utf-8",
         dataType : "json",
@@ -86,12 +88,12 @@ DataClass.prototype.loadRemoteJS = function(cb){
     that.getRemoteData();
   },
   function(data){
-    alert("fail to load script: " + origin +"/lib/api/data.js");
+    alert("fail to load script: " + that._origin +"/lib/api/data.js");
   });  
 };
 DataClass.prototype.getRemoteData = function(){
   var that = this;
-  function handleDataCB(objArray){
+  function handleDataCB(type, objArray){
     /** format of objArray:
     URI: "rio1529rio#693be79d86e01358c560#document"
     createDev: "rio1529rio"
@@ -109,6 +111,10 @@ DataClass.prototype.getRemoteData = function(){
     project: "上海专项"
     size: "0"
     */
+    if(type !== null){
+      console.log("handleDataCB Error");
+      return;
+    }
     // console.log(objArray);
     for(var idx = 0; idx < objArray.length; idx++){
       if(objArray[idx].postfix == 'ppt' || objArray[idx].postfix == 'pptx')
