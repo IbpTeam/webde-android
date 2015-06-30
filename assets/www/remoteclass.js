@@ -40,10 +40,12 @@ DataClass.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
   that._origin = "http://" + that._address + ":" + that._port;
-  var call_url = that._origin + "/callapi";
-  console.log("call_url: " + call_url);
   requirejs([that._origin + "/lib/api/data.js", that._origin + "/lib/api/app.js"], function(data, app){
-    that._remotedata = data;
+    //that._remotedata = data;
+    that._remotedata = wrapRemoteJS(that._origin, "data", data);
+    that._remoteapp = wrapRemoteJS(that._origin, "app", app);
+    that.getRemoteData();
+    /*
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
       var cb = ar.shift();
@@ -63,8 +65,6 @@ DataClass.prototype.loadRemoteJS = function(cb){
         }
       });
     };
-    
-    that._remoteapp = app;
     that._remoteapp.sendrequest = function (a, ar) {
       var sd = {};
       var cb = ar.shift();
@@ -84,8 +84,8 @@ DataClass.prototype.loadRemoteJS = function(cb){
         }
       });
     };
+    */
     
-    that.getRemoteData();
   },
   function(data){
     alert("fail to load script: " + that._origin +"/lib/api/data.js");
@@ -234,7 +234,10 @@ RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
   var that = this;
   //全局方法中对本地对象参数的设置。
   var origin = "http://" + this._address + ":" + this._port;
-  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){
+  requirejs([origin + "/lib/api/data.js", origin + "/lib/api/app.js"], function(data, app){    
+    that._remotedata = wrapRemoteJS(that._origin, "data", data);
+    that._remoteapp = wrapRemoteJS(that._origin, "app", app);
+    /*
     that._remotedata = data;
     that._remotedata.sendrequest = function (a, ar) {
       var sd = {};
@@ -254,8 +257,7 @@ RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
           throw e;
         }
       });
-    };
-    
+    };    
     that._remoteapp = app;
     that._remoteapp.sendrequest = function (a, ar) {
       var sd = {};
@@ -276,6 +278,7 @@ RemoteFileBrowser.prototype.loadRemoteJS = function(cb){
         }
       });
     };
+    */
     function getAllCateCB(objArr){
       // that.LogObjArray(objArr);
       var ul = $.create("ul", {className: "list"});

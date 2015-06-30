@@ -38,7 +38,7 @@ public class CordovaApp extends CordovaActivity
         // Set by <content src="index.html" /> in config.xml
         String launchUrl;
         /**注意修改app.html中的远程脚本custom, afclass的加载方式*/
-        launchUrl = "file:///android_asset/www/app.html?ios7"; 
+        launchUrl = "file:///android_asset/www/app.html?ios7";
 //        launchUrl = "http://192.168.5.176:8000/www/app.html?ios7";
 //        launchUrl = "http://192.168.5.243:8888/www/app.html?ios7";
         WebSettings settings = appView.getSettings();
