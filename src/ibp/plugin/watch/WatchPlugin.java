@@ -16,6 +16,7 @@ public class WatchPlugin extends CordovaPlugin {
     private static WatchPlugin instance;
     public WatchPlugin(){
         instance = this;
+//        cordova.getActivity().startService(new Intent(cordova.getActivity(), ListenerServiceForMobile.class));
     }
     
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {

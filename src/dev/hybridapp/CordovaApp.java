@@ -19,6 +19,7 @@
 
 package dev.hybridapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -49,6 +50,8 @@ public class CordovaApp extends CordovaActivity
 //        settings.setLoadWithOverviewMode(true);
 //      this.appView.enableRemoteDebugging();
 //        this.setWindowWidth(432);
+//Need Reset Later;
+        this.startService(new Intent(this, ibp.plugin.watch.ListenerServiceForMobile.class));
         loadUrl(launchUrl);
     }
     private void setWindowWidth(int width){
