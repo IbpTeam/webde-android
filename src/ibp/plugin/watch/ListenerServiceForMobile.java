@@ -55,7 +55,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v("", "ListenerServiceForMobile");
+        Log.v(WatchPlugin.TAG, "ListenerServiceForMobile");
         // 注册通信
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Wearable.API).build();
@@ -71,8 +71,8 @@ public class ListenerServiceForMobile extends WearableListenerService implements
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         String MessagePath = messageEvent.getPath();
-        Log.v("OnMessageR", "received a message for wear");
-        Log.v("MessagePath", "the Path is " + MessagePath);
+        Log.v(WatchPlugin.TAG, "OnMessageR, received a message for wear");
+        Log.v(WatchPlugin.TAG, "MessagePath, the Path is " + MessagePath);
         /*
          * Receive the message from wear
          */
@@ -87,7 +87,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
             WatchPlugin.messageFromWear(3);
         } else if (MessagePath.equals(PHONE_PPT_CONTROL)) {
             String s = new String(messageEvent.getData());
-            Log.d("well", "the message is " + s);
+            Log.d(WatchPlugin.TAG, "the message is " + s);
             // Bundle bundle = new Bundle();
             // bundle.putString("message", s);
             // intent.putExtras(bundle);
@@ -143,7 +143,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                         for (Node node : nodes.getNodes()) {
                             mNode = node;
                             NodeID = mNode.getId();
-                            Log.d("NodeId", "The node id is " + NodeID);
+                            Log.d(WatchPlugin.TAG, "The node id is " + NodeID);
                             // 获得node ID后发送消息启动activity
 
                         }
@@ -171,7 +171,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
 
     // -----------------------------------------------custom-------------------------------------------------------
     public void SendMessageToWear(String content, String path) {
-        Log.e("message", "You're sending a message at service: " + content);
+        Log.e(WatchPlugin.TAG, "You're sending a message at service: " + content);
         byte[] abc = new byte[0];
         try {
             abc = content.getBytes("UTF-8");
@@ -186,10 +186,10 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                         public void onResult(MessageApi.SendMessageResult sendMessageResult) {
 
                             if (!sendMessageResult.getStatus().isSuccess()) {
-                                Log.e("TAG", "Failed to send message with status code: "
+                                Log.e(WatchPlugin.TAG, "Failed to send message with status code: "
                                         + sendMessageResult.getStatus().getStatusCode());
                             } else {
-                                Log.e("TAG", "Success on send ");
+                                Log.e(WatchPlugin.TAG, "Success on send ");
                             }
                         }
                     });
@@ -203,18 +203,18 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                                                                                   // 1
                                                                                   // for
                                                                                   // IntegerArrayList
-        Log.d("DATA", "path is " + path + "key is " + key);
+        Log.d(WatchPlugin.TAG, "path is " + path + "key is " + key);
         PutDataMapRequest dataMap = PutDataMapRequest.create(path);
 
         switch (type) {
         case 0:
             ArrayList<String> ValueString = bundle.getStringArrayList(key);
             dataMap.getDataMap().putStringArrayList(key, ValueString);
-            Log.d("case", "case 0");
+            Log.d(WatchPlugin.TAG, "case 0");
         case 1:
             ArrayList<Integer> ValueInt = bundle.getIntegerArrayList(key);
             dataMap.getDataMap().putIntegerArrayList(key, ValueInt);
-            Log.d("case ", "case 1");
+            Log.d(WatchPlugin.TAG, "case 1");
         }
         // 加入时间，确保数据变化
         dataMap.getDataMap().putLong("TimeKey", new Date().getTime());
@@ -225,9 +225,9 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                     @Override
                     public void onResult(DataApi.DataItemResult dataItemResult) {
                         if (dataItemResult.getStatus().isSuccess()) {
-                            Log.d("DataSend", "Data sending success");
+                            Log.d(WatchPlugin.TAG, "DataSend, Data sending success");
                         } else {
-                            Log.d("DataSend", "Data sending Failed");
+                            Log.d(WatchPlugin.TAG, "DataSend, Data sending Failed");
                         }
                     }
                 });
@@ -239,11 +239,11 @@ public class ListenerServiceForMobile extends WearableListenerService implements
     public class ServiceMsgReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Broadcast", "get a message");
+            Log.e(WatchPlugin.TAG, "Broadcast get a message");
             Bundle bundle = intent.getExtras();
             if (bundle.containsKey("PPT")) {
                 String message = bundle.getString("PPT");
-                Log.e("BroadCastMessage", "Service received message: " + message);
+                Log.e(WatchPlugin.TAG, "BroadCastMessage, Service received message: " + message);
                 // send message to wear
                 SendMessageToWear(message, WEAR_PPT_CONTROL);
 
@@ -254,7 +254,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                 SendDataToWear(bundle, WEAR_OPEN_LIST, "PPTList", 0);
             } else if (bundle.containsKey("OpenPPT")) {
                 int aaa = bundle.getInt("OpenPPT");
-                Log.e("BroadCastMessage", "Service received message: " + aaa);
+                Log.e(WatchPlugin.TAG, "BroadCastMessage, Service received message: " + aaa);
                 SendMessageToWear("0", WEAR_OPEN_PPT);
             }
 

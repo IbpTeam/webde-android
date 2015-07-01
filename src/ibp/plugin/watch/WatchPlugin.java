@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class WatchPlugin extends CordovaPlugin {    
+public class WatchPlugin extends CordovaPlugin {
+    public static String TAG = "WatchPlugin";
     private Intent intent;
     private static WatchPlugin instance;
     public WatchPlugin(){
         instance = this;
 //        cordova.getActivity().startService(new Intent(cordova.getActivity(), ListenerServiceForMobile.class));
+        Log.v(TAG, ListenerServiceForMobile.class.getName());
     }
     
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -33,7 +35,7 @@ public class WatchPlugin extends CordovaPlugin {
         //messageFromWear(type);
     }
     public void sendMsgToServer(int type){
-        Log.v("sendMsgToServer", ""+type);
+        Log.v(TAG, "sendMsgToServer: "+type);
         intent = new Intent("io.cordova.hellocordova.ForPhoneServer");
         Bundle bundle = new Bundle();
         switch(type){

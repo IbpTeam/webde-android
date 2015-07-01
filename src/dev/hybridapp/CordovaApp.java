@@ -19,6 +19,8 @@
 
 package dev.hybridapp;
 
+import ibp.plugin.watch.ListenerServiceForMobile;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -50,8 +52,7 @@ public class CordovaApp extends CordovaActivity
 //        settings.setLoadWithOverviewMode(true);
 //      this.appView.enableRemoteDebugging();
 //        this.setWindowWidth(432);
-//Need Reset Later;
-        this.startService(new Intent(this, ibp.plugin.watch.ListenerServiceForMobile.class));
+        this.startService(new Intent(this, ListenerServiceForMobile.class));
         loadUrl(launchUrl);
     }
     private void setWindowWidth(int width){
@@ -83,6 +84,12 @@ public class CordovaApp extends CordovaActivity
         }        
     }
     
+    @Override
+    public Activity getActivity() {
+        // TODO Auto-generated method stub
+        return this;
+    }
+
     private final int START_DISCOVER = 0, STOP_DISCOVER = 1, LIST_SERVICE_INFO = 2, RESOLVE_SERVICE = 3,
             REGISTER_SERVICE = 4, UNREGISTER_SERVICE = 5, CLEAR_SCREEN = 6;
     @Override
