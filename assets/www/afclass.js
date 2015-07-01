@@ -14,7 +14,7 @@ HomeClass.prototype.show = function(){
 HomeClass.prototype.initObject = function(){
   var that = this;
   this._nsdLogObj = new NsdLogClass();
-  this._entrances = new Object();  
+  this._entrances = new Object();
   this._socketObj = new SocketClass(this._nsdLogObj);
   this._socketObj.addReceiveMessageListener(function(msgfromnative){
     console.log(msgfromnative);

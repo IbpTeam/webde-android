@@ -41,4 +41,7 @@
     <feature name="JMDNSlugin">
         <param name="android-package" value="ibp.plugin.jmdns.JMDNSPlugin" />
     </feature>
+    <feature name="WatchPlugin">
+        <param name="android-package" value="ibp.plugin.watch.WatchPlugin" />
+    </feature>
 </widget>

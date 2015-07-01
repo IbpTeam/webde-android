@@ -224,4 +224,9 @@ TimerClass.prototype.stopTimer = function () {
     window.homeObj = new HomeClass(device);
     window.nativeObj = new NativeClass();
   });
+  document.addEventListener("deviceready", function(){console.log("device ready");}, false);
+  document.addEventListener("pause", function(){console.log("pause");}, false);
+  document.addEventListener("resume", function(){console.log("resume");}, false);
+  channel.onPause.subscribe(function(){console.log("channel onPause");});
+  channel.onResume.subscribe(function(){console.log("channel onResume");});
 })();
