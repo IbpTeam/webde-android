@@ -102,46 +102,6 @@ CameraClass.prototype.cameraGallery = function() {
     });
 };
 
-var NativeClass = function(){
-  this._ID = "native";
-  this._panel = $("#" + this._ID);
-  if(this._panel.find('.afScrollPanel')){
-    this._panelScroll = this._panel.find('.afScrollPanel');
-  }
-  //this._navbar = this._panel.data("tab");
-  this.initPanel();
-  this._timer = new TimerClass();
-  this._camera = new CameraClass();
-};
-NativeClass.prototype.show = function(){
-  $.ui.loadContent(this._ID, false, false, "slide");
-};
-NativeClass.prototype.initPanel = function(){
-  var that = this;
-  var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
-  var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
-  .append(
-    $.create("li", {className: "divider"}).html("本地模块测试")
-  )
-  .append(
-    $("<li>").append($("<a>").html("ibp.plugin.timer").on("click", function(){
-      console.log("ibp.plugin.timer");
-      that._timer.show();
-    }))
-  )
-  .append(
-    $("<li>").append($("<a>").html("org.apache.cordova.camera").on("click", function(){
-      console.log("org.apache.cordova.camera");
-      that._camera.show();
-    }))
-  );
-  if(this._panelScroll){
-    this._panelScroll.append(ul);
-  }else{
-    this._panel.append(ul);
-  };
-};
-
 var TimerClass = function(){
   if(!window.TimerNative){
     window.alert("window.TimerNative is not found.");
@@ -216,13 +176,163 @@ TimerClass.prototype.stopTimer = function () {
       that.log(msgfromnative);
     });
 };
-  
+
+
+var NativeClass = function(){
+  this._ID = "native";
+  this._panel = $("#" + this._ID);
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  //this._navbar = this._panel.data("tab");
+  this.initPanel();
+  this._timer = new TimerClass();
+  this._camera = new CameraClass();
+  //this._log = new LogClass();
+};
+NativeClass.prototype.show = function(){
+  $.ui.loadContent(this._ID, false, false, "slide");
+};
+NativeClass.prototype.initPanel = function(){
+  var that = this;
+  var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
+  var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
+  .append(
+    $.create("li", {className: "divider"}).html("本地模块测试")
+  )
+  .append(
+    $("<li>").append($("<a>").html("ibp.plugin.timer").on("click", function(){
+      console.log("ibp.plugin.timer");
+      that._timer.show();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("org.apache.cordova.camera").on("click", function(){
+      console.log("org.apache.cordova.camera");
+      that._camera.show();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("log for test").on("click", function(){
+      console.log("log for test");
+      window.testlog.show();
+    }))
+  );
+  if(this._panelScroll){
+    this._panelScroll.append(ul);
+  }else{
+    this._panel.append(ul);
+  };
+};
+
+// used for content show.
+var LogClass = function(){
+  this._ID = "test_log";
+  this._navID = "nav_" + this._ID;
+  this.init_test();
+};
+LogClass.prototype.show = function(title){
+  if(!$('#'+this._ID).length){      
+    this.newPanel(title);
+  }
+  $.ui.loadContent('#'+this._ID, false, false, "slide");
+};
+LogClass.prototype.newPanel = function(title){  
+  if(!title){
+    title = this._ID;
+  }
+  var that = this;
+  $.ui.addContentDiv(this._ID, "<ul></ul>", title);
+  this._panel = $('#'+this._ID);
+  this._ui = this._panel.find("ul");
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  this._debug = true;
+  this._panel.data("nav", this._navID);
+  this.addNavBar();
+};
+LogClass.prototype.addNavBar = function(){  
+  var that = this;
+  var ul = $.create("ul", {className: "list"})
+  .append(
+    $.create("li", {className: "divider"}).html(this._ID)
+  )
+  .append(
+    $("<li>").append($("<a>").html("buttonA").on("click", function(){
+      that.buttonA();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("buttonB").on("click", function(){
+      that.buttonB();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("buttonC").on("click", function(){
+      that.buttonC();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("clear").on("click", function(){
+      that.clearContent();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("write_test").on("click", function(){
+      that.myLog("write_test", "LogClass");
+      $.ui.toggleSideMenu();
+    }))
+  );  
+  var nav = $.create("nav", {id: this._navID});
+  nav.append(ul).appendTo($("#afui"));
+};
+LogClass.prototype.init_test = function(){
+  function cb(type){
+    window.testlog.myLog("add:" + type, "test");
+  }
+  window.WatchNative.addDeviceListener(cb);
+};
+LogClass.prototype.buttonA = function(){
+  window.WatchNative.messageToWear(null, null, [0]);  
+};
+LogClass.prototype.buttonB = function(){
+  window.WatchNative.messageToWear(null, null, [1]);  
+};
+LogClass.prototype.buttonC = function(){
+  window.WatchNative.messageToWear(null, null, [2]);  
+};
+LogClass.prototype.myLog = function(info, prefix){
+  if(!this._debug){
+    return;
+  }
+  switch(typeof info){
+    case "object":
+      info = JSON.stringify(info);
+    break;
+  }
+  info = prefix + ": " + info;
+  console.log(info);
+  this._ui.append($('<li></li>').html(info));
+};
+LogClass.prototype.scrollToBottom = function(){
+  $.ui.scrollToBottom('#device_nsd');
+};
+LogClass.prototype.clearContent = function(){
+  this._ui.html('');
+};
+
 (function(){
   var channel = cordova.require('cordova/channel');
   channel.onPluginsReady.subscribe(function() {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
     window.homeObj = new HomeClass(device);
     window.nativeObj = new NativeClass();
+    window.testlog = new LogClass();
   });
   document.addEventListener("deviceready", function(){console.log("device ready");}, false);
   document.addEventListener("pause", function(){console.log("pause");}, false);
