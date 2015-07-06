@@ -178,8 +178,8 @@ TimerClass.prototype.stopTimer = function () {
 };
 
 
-var NativeClass = function(){
-  this._ID = "native";
+var TestNativeClass = function(){
+  this._ID = "test_native";
   this._panel = $("#" + this._ID);
   if(this._panel.find('.afScrollPanel')){
     this._panelScroll = this._panel.find('.afScrollPanel');
@@ -190,10 +190,10 @@ var NativeClass = function(){
   this._camera = new CameraClass();
   //this._log = new LogClass();
 };
-NativeClass.prototype.show = function(){
+TestNativeClass.prototype.show = function(){
   $.ui.loadContent(this._ID, false, false, "slide");
 };
-NativeClass.prototype.initPanel = function(){
+TestNativeClass.prototype.initPanel = function(){
   var that = this;
   var explan = $("<p>").css({"margin-bottom": "12px", "text-align": "center"}).html("用于对本地功能模块的测试。");
   var ul = $.create("ul", {className: "list inset"}).css({"margin-top": "12px"})
@@ -331,7 +331,7 @@ LogClass.prototype.clearContent = function(){
   channel.onPluginsReady.subscribe(function() {
     var device = {"type":"_http._tcp.","port":7777,"address":"null","name":"nsd-android-test"};
     window.homeObj = new HomeClass(device);
-    window.nativeObj = new NativeClass();
+    window.testNativeObj = new TestNativeClass();
     window.testlog = new LogClass();
   });
   document.addEventListener("deviceready", function(){console.log("device ready");}, false);
