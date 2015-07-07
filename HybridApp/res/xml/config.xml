@@ -44,4 +44,7 @@
     <feature name="WatchPlugin">
         <param name="android-package" value="ibp.plugin.watch.WatchPlugin" />
     </feature>
+    <feature name="TestCordova">
+        <param name="android-package" value="ibp.plugin.helloworld.TestCordova" />
+    </feature>
 </widget>

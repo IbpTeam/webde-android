@@ -299,6 +299,13 @@ module.exports = [
         "clobbers": [
             "WatchNative"
         ]
+    },
+    {
+        "file": "plugins/ibp.plugin.test/www/test_cordova.js",
+        "id": "ibp.plugin.test.test_cordova",
+        "clobbers": [
+            "TestCordovaNative"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -316,7 +323,8 @@ module.exports.metadata =
     "ibp.plugin.nsd": "0.0.1",
     "ibp.plugin.timer": "0.0.2",
     "ibp.plugin.jmdns": "0.0.1",
-    "ibp.plugin.watch": "0.0.1"
+    "ibp.plugin.watch": "0.0.1",
+    "ibp.plugin.test": "0.0.1"
 }
 // BOTTOM OF METADATA
 });
