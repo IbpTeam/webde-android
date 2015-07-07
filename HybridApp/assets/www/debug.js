@@ -59,7 +59,7 @@ var TestDataJSObj = {
       if(typeof _cb === 'function') _cb.call(that, null);
     }, 'Default.conf');
   }
-}
+};
 /**
  * Show functions of remote data.js
  */
@@ -662,3 +662,36 @@ $(window).on("afui:ready", entry);
   // blank.setAttribute("data-load", startDebug());  
 // }
 // setBlankPanle();
+// used for content show.
+var NsdLogClass = function(){
+  this._panel = $('#content #blank');
+  this._content = $('<div></div>');
+  if(this._panel.find('.afScrollPanel')){
+    this._panelScroll = this._panel.find('.afScrollPanel');
+  }
+  if(this._panelScroll){
+    this._panelScroll.append(this._content);
+  }else{
+    this._panel.append(this._content);
+  }
+  this._debug = true;
+};
+NsdLogClass.prototype.myLog = function(info, prefix){
+  if(!this._debug){
+    return;
+  }
+  switch(typeof info){
+    case "object":
+      info = JSON.stringify(info);
+    break;
+  }
+  info = prefix + ": " + info;
+  console.log(info);
+  this._content.append($('<p></p>').html(info));
+};
+NsdLogClass.prototype.scrollToBottom = function(){
+  $.ui.scrollToBottom('#device_nsd');
+};
+NsdLogClass.prototype.clearContent = function(){
+  this._content.html('');
+};
