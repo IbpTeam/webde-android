@@ -70,7 +70,7 @@ DataClass.prototype.getRemoteData = function(){
         .data("uri", objArray[idx].URI)
         .append(
           $.create("div", {className: "icon"}).append(
-            $.create("img",{src: "data/icons/powerpoint.png"})
+            $.create("img",{src: "custom/data/icons/powerpoint.png"})
           )
         )
         .append(

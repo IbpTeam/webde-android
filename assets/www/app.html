@@ -45,7 +45,7 @@
         <link rel="stylesheet" type="text/css" href="plugins/css/af.scroller.css"  />
         <link rel="stylesheet" type="text/css" href="plugins/css/af.selectBox.css"  />
         
-        <link rel="stylesheet" type="text/css" href="custom.css" />
+        <link rel="stylesheet" type="text/css" href="custom/css/custom.css" />
         <link rel="stylesheet" type="text/css" href="plugins/css/ibp.pop.css"/>
 
         <!-- uncomment for intel.xdk apps
@@ -98,11 +98,11 @@
         <script type="text/javascript" charset="utf-8" src="./ui/transitions/slideUp.js"></script>
         <script type="text/javascript" charset="utf-8" src="./plugins/af.slidemenu.js"></script>
         <script type="text/javascript" charset="utf-8" src="./plugins/af.8tiles.js"></script>
-        <script type="text/javascript" charset="utf-8" src="require.js"></script>
+        <script type="text/javascript" charset="utf-8" src="third_party/require.js"></script>
         <script type="text/javascript" charset="utf-8" src="./plugins/ibp.pop.js"></script>
-        <script type="text/javascript" charset="utf-8" src="remoteclass.js"></script>
-        <script type="text/javascript" charset="utf-8" src="afclass.js"></script>
-        <script type="text/javascript" charset="utf-8" src="custom.js"></script>
+        <script type="text/javascript" charset="utf-8" src="custom/remoteclass.js"></script>
+        <script type="text/javascript" charset="utf-8" src="custom/afclass.js"></script>
+        <script type="text/javascript" charset="utf-8" src="custom/custom.js"></script>
 
         <script type="text/javascript">
             /* This function runs once the page is loaded, but intel.xdk is not yet active */
@@ -181,14 +181,13 @@
     <body>
         <div id="afui">
             <!-- this is the header div at the top -->
-   
             <div id="content">
                 <!-- 首页 -->
                 <div class="panel" id="home" title="首页" data-tab="navbar_home" >
                 </div>                
 
                 <!-- 本地模块测试 -->
-                <div class="panel" id="native" title="本地模块测试" data-tab="navbar_native" >
+                <div class="panel" id="test_native" title="本地模块测试" data-tab="navbar_native" >
                 </div>           
 
                 <div class="panel" id="theme_setting" title="主题设置" data-tab="none">
