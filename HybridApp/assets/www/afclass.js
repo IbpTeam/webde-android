@@ -14,7 +14,7 @@ HomeClass.prototype.show = function(){
 HomeClass.prototype.initObject = function(){
   var that = this;
   this._nsdLogObj = new NsdLogClass();
-  this._entrances = new Object();  
+  this._entrances = new Object();
   this._socketObj = new SocketClass(this._nsdLogObj);
   this._socketObj.addReceiveMessageListener(function(msgfromnative){
     console.log(msgfromnative);
@@ -121,7 +121,7 @@ HomeClass.prototype.initPanel = function(){
         }
       );
       //add default value.      
-      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.5.176");
+      $('#' + popup.id).find("input[data-id='address']").attr("value", "192.168.");
     }))
   )
   .append(
@@ -197,7 +197,7 @@ NsdLogClass.prototype.clearContent = function(){
  * Class NsdClass is used for Network Service Discovery.
  */ 
 var NsdClass = function(device, debug) {
-  this._NSDNative = window.JMDNSNative;//NSDNative
+  this._NSDNative = window.NSDNative;//JMDNSNative;//
   if(!this._NSDNative){
     alert("object window.NSD does not exist.");
     return;
@@ -576,6 +576,7 @@ var EntranceClass = function(device, socketObj){
   this._chat = new ChatClass(device, socketObj);
   this._data = new DataClass(device);
   this._remotefilebrowser = new RemoteFileBrowser(device);
+  window.device_address = device.address;
 };
 EntranceClass.prototype.processMsg = function(msgfromnative){
   this._chat.loadChat();
@@ -585,7 +586,55 @@ EntranceClass.prototype.show = function(title){
   if(!$('#'+this._ID).length){      
     this.newPanel(title);
   }
+  this.loadRemoteJS();
   $.ui.loadContent('#'+this._ID, false, false, "up");
+};
+EntranceClass.prototype.loadRemoteJS = function(){
+  var that = this;
+  that._origin = "http://" + this._device.address + ":8888";
+  requirejs(
+    [that._origin + "/lib/api/data.js", that._origin + "/lib/api/app.js"],
+    function(data, app){
+      window._remotedata = wrapRemoteJS(that._origin, "data", data);
+      window._remoteapp = wrapRemoteJS(that._origin, "app", app);
+   },
+   function(data){
+     alert("fail to load remote api script from " + that._origin);
+   });  
+};
+var wrapRemoteJS = function(origin, name, remoteObj){
+  var localObj = new Object();
+  localObj._origin = origin;
+  localObj._name = name;
+  localObj.sendrequest = function (a, ar) {
+    var sd = {};
+    var cb = ar.shift();
+    sd.api = a;
+    sd.args = ar;
+    $.ajax({
+      url : localObj._origin + "/callapi",
+      type : "post",
+      contentType : "application/json;charset=utf-8",
+      dataType : "json",
+      data : JSON.stringify(sd),
+      success : function(r) {
+        setTimeout(cb.apply(null, r), 0);
+      },
+      error : function(e) {
+        throw e;
+      }
+    });
+  };
+  var func;
+  function makefunction(func){
+    return function(){
+      localObj.sendrequest(localObj._name + "." + func, Array.prototype.slice.call(arguments));
+    };
+  }
+  for(func in remoteObj){
+    localObj[func] = makefunction(func);
+  }
+  return localObj;
 };
 EntranceClass.prototype.newPanel = function(title){
   if(!title){

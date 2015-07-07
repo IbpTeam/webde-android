@@ -19,6 +19,8 @@
 
 package dev.hybridapp;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,9 +40,9 @@ public class CordovaApp extends CordovaActivity
         // Set by <content src="index.html" /> in config.xml
         String launchUrl;
         /**注意修改app.html中的远程脚本custom, afclass的加载方式*/
-//        launchUrl = "file:///android_asset/www/app.html?default";
+        launchUrl = "file:///android_asset/www/app.html?ios7";
 //        launchUrl = "http://192.168.5.176:8000/www/app.html?ios7";
-        launchUrl = "http://192.168.5.243:8888/www/app.html?ios7";
+//        launchUrl = "http://192.168.5.243:8888/www/app.html?ios7";
         WebSettings settings = appView.getSettings();
         //不使用缓存
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -49,6 +51,7 @@ public class CordovaApp extends CordovaActivity
 //        settings.setLoadWithOverviewMode(true);
 //      this.appView.enableRemoteDebugging();
 //        this.setWindowWidth(432);
+//        this.startService(new Intent(this, ListenerServiceForMobile.class));
         loadUrl(launchUrl);
     }
     private void setWindowWidth(int width){
@@ -80,6 +83,12 @@ public class CordovaApp extends CordovaActivity
         }        
     }
     
+    @Override
+    public Activity getActivity() {
+        // TODO Auto-generated method stub
+        return this;
+    }
+
     private final int START_DISCOVER = 0, STOP_DISCOVER = 1, LIST_SERVICE_INFO = 2, RESOLVE_SERVICE = 3,
             REGISTER_SERVICE = 4, UNREGISTER_SERVICE = 5, CLEAR_SCREEN = 6;
     @Override

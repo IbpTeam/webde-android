@@ -76,7 +76,7 @@ public class SocketPlugin extends CordovaPlugin {
             }
             msgObj.put("to", dstName);
             msgObj.put("message", message);
-            msgObj.put("type", "app1");
+            msgObj.put("type", "imChat");
             if(socketConn.sendMessage(dstAddress, dstPort, msgObj)){
                 callbackContext.success("Plugin.sendMessage success");
             }else{

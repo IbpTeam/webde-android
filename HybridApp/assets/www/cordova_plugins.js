@@ -292,6 +292,13 @@ module.exports = [
         "clobbers": [
             "JMDNSNative"
         ]
+    },
+    {
+        "file": "plugins/ibp.plugin.watch/www/watch.js",
+        "id": "ibp.plugin.watch.watch",
+        "clobbers": [
+            "WatchNative"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -308,7 +315,8 @@ module.exports.metadata =
     "ibp.plugin.socket": "0.0.1",
     "ibp.plugin.nsd": "0.0.1",
     "ibp.plugin.timer": "0.0.2",
-    "ibp.plugin.jmdns": "0.0.1"
+    "ibp.plugin.jmdns": "0.0.1",
+    "ibp.plugin.watch": "0.0.1"
 }
 // BOTTOM OF METADATA
 });
