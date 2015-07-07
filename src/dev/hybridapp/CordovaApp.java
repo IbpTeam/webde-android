@@ -19,7 +19,6 @@
 
 package dev.hybridapp;
 
-import ibp.plugin.watch.ListenerServiceForMobile;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,7 +51,7 @@ public class CordovaApp extends CordovaActivity
 //        settings.setLoadWithOverviewMode(true);
 //      this.appView.enableRemoteDebugging();
 //        this.setWindowWidth(432);
-        this.startService(new Intent(this, ListenerServiceForMobile.class));
+//        this.startService(new Intent(this, ListenerServiceForMobile.class));
         loadUrl(launchUrl);
     }
     private void setWindowWidth(int width){

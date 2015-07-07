@@ -31,7 +31,7 @@ import java.util.Date;
 /**
  * Created by f on 2015/6/4.
  */
-public class ListenerServiceForMobile extends WearableListenerService implements DataApi.DataListener,
+public class Service4Watch extends WearableListenerService implements DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // 发送数据path
@@ -55,7 +55,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v(WatchPlugin.TAG, "ListenerServiceForMobile");
+        Log.v(WatchPlugin.TAG, "Service4Watch.onCreate, Service4Watch has started.");
         // 注册通信
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Wearable.API).build();
@@ -243,7 +243,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
             Bundle bundle = intent.getExtras();
             if (bundle.containsKey("PPT")) {
                 String message = bundle.getString("PPT");
-                Log.e(WatchPlugin.TAG, "BroadCastMessage, Service received message: " + message);
+                Log.e(WatchPlugin.TAG, "Service4Watch received message: " + message);
                 // send message to wear
                 SendMessageToWear(message, WEAR_PPT_CONTROL);
 
@@ -254,7 +254,7 @@ public class ListenerServiceForMobile extends WearableListenerService implements
                 SendDataToWear(bundle, WEAR_OPEN_LIST, "PPTList", 0);
             } else if (bundle.containsKey("OpenPPT")) {
                 int aaa = bundle.getInt("OpenPPT");
-                Log.e(WatchPlugin.TAG, "BroadCastMessage, Service received message: " + aaa);
+                Log.e(WatchPlugin.TAG, "Service4Watch received message: " + aaa);
                 SendMessageToWear("0", WEAR_OPEN_PPT);
             }
 
