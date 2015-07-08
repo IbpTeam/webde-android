@@ -4,7 +4,7 @@ Watch.prototype.messageToWear = function(successCallback, errorCallback, info){
 };
 
 var listenerArr = new Array();
-Watch.prototype.addDeviceListener = function(cb){
+Watch.prototype.addListener = function(cb){
   listenerArr.push(cb);
 };
 
@@ -19,10 +19,10 @@ Watch.prototype.messageFromWear = function(type){
   for(index in listenerArr){
     listenerArr[index](type);
   }
-
 };
-var WatchObj = new Watch();
-module.exports = WatchObj;
+
+var watch = new Watch();
+module.exports = watch;
 
 
 });

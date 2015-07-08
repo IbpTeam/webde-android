@@ -575,6 +575,7 @@ var EntranceClass = function(device, socketObj){
   this._navID = "nav_entrance";
   this._chat = new ChatClass(device, socketObj);
   this._data = new DataClass(device);
+  this._data.setWatchCallback();
   this._remotefilebrowser = new RemoteFileBrowser(device);
   window.device_address = device.address;
 };
