@@ -87,9 +87,10 @@ task cdvPrintProps << {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    for (subproject in getProjectList()) {
-        compile project(subproject)
-    }
+//    for (subproject in getProjectList()) {
+//        compile project(subproject)
+//    }
+    compile project(':CordovaLib')
     compile 'com.google.android.support:wearable:1.2.0'
     compile 'com.google.android.gms:play-services-wearable:7.5.0'
 }

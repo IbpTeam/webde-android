@@ -1,3 +1,4 @@
+/*
 import java.util.regex.Pattern
 
 def getProjectList() {
@@ -16,3 +17,6 @@ for (subproject in getProjectList()) {
 }
 
 include ':'
+*/
+include ':CordovaLib'
+project(':CordovaLib').projectDir = new File('cordova-android/framework')
