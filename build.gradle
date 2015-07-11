@@ -144,6 +144,19 @@ android {
     lintOptions {
         abortOnError false
     }
+    signingConfigs {
+        release {
+            storeFile file("ibp.key")
+            storePassword "ibp.key"
+            keyAlias "ibp.key"
+            keyPassword "ibp.key"
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
