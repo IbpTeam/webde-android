@@ -77,6 +77,11 @@ DataClass.prototype.getRemoteData = function(){
       console.log("handleDataCB Error");
       return;
     }
+    if(that._panelScroll){
+      that._panelScroll.html("");
+    }else{
+      that._panel.html("");
+    }
     // console.log(objArray);
     for(var idx = 0; idx < objArray.length; idx++){
       if(objArray[idx].postfix == 'ppt' || objArray[idx].postfix == 'pptx')
