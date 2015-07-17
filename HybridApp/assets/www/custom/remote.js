@@ -1,3 +1,18 @@
+var WatchClass = function(){
+  if(!window.WatchNative){
+    window.alert("window.WatchNative is not found.");
+    return;
+  }
+  this.sendMessage([-1]);
+};
+WatchClass.prototype.sendMessage = function(info_arr){
+  // var args = new Array();
+  // args.push();
+  window.WatchNative.messageToWear(null, null, info_arr);
+};
+WatchClass.prototype.addListener = function(cb){
+  window.WatchNative.addListener(cb);  
+};
 
 /**
  * DataClass类，用于聊天界面。
@@ -9,7 +24,8 @@ var DataClass = function(device){
   this._id = device.address.replace(/\./g, '_') + '_' + device.port;
   this._dataId = this._id + "_remote_data";
   this._address = device.address;
-  this._port = 8888;
+  this._port = 8888;  
+  this._watch = new WatchClass();
 };
 DataClass.prototype.loadData = function(title){
   if(!$('#'+this._dataId).length){
@@ -61,6 +77,11 @@ DataClass.prototype.getRemoteData = function(){
       console.log("handleDataCB Error");
       return;
     }
+    if(that._panelScroll){
+      that._panelScroll.html("");
+    }else{
+      that._panel.html("");
+    }
     // console.log(objArray);
     for(var idx = 0; idx < objArray.length; idx++){
       if(objArray[idx].postfix == 'ppt' || objArray[idx].postfix == 'pptx')
@@ -98,7 +119,19 @@ DataClass.prototype.getRemoteData = function(){
   }
   window._remotedata.getAllDataByCate(handleDataCB, "document");  
 };
-
+DataClass.prototype.setWatchCallback = function(){
+  var that = this;
+  this._watch.addListener(function(type){
+    switch(type){
+      case 1:
+        window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'Down');
+      break;
+      case 0:
+        window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'Up');
+      break;
+    }
+  });
+};
 DataClass.prototype.openRemoteData = function(uri){
   var that = this;
   function showPopUpPanel(status, obj){
@@ -112,22 +145,29 @@ DataClass.prototype.openRemoteData = function(uri){
      * windowname: "Firefox OS调研.pptx"
      * }
      */
+    that._remoteWindowName = obj['windowname'];
     btns = {
       "Stop" : function(){
-        console.log("Close CB");
-        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Escape');
+          console.log("Close CB");
+          window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'Escape');
+          if(that._watch){
+            that._watch.sendMessage([2]);
+          }
         },
       "Play" : function(){
-        console.log("Play CB");
-        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'F5');
+          console.log("Play CB");
+          window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'F5');
+          if(that._watch){
+            that._watch.sendMessage([0]);
+          }
         },
       "PageUp" : function(){
-        console.log("PageUp CB");
-        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Up');
+          console.log("PageUp CB");
+          window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'Up');
         },
       "PageDown" : function(){
-        console.log("PageDown CB");
-        window._remoteapp.sendKeyToApp(function(){}, obj['windowname'], 'Down');
+          console.log("PageDown CB");
+          window._remoteapp.sendKeyToApp(function(){}, that._remoteWindowName, 'Down');
         },
     };
     $("#afui").popPanel({

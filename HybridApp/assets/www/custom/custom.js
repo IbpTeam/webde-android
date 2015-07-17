@@ -277,6 +277,18 @@ LogClass.prototype.addNavBar = function(){
     }))
   )
   .append(
+    $("<li>").append($("<a>").html("buttonD").on("click", function(){
+      that.buttonD();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
+    $("<li>").append($("<a>").html("buttonE").on("click", function(){
+      that.buttonE();
+      $.ui.toggleSideMenu();
+    }))
+  )
+  .append(
     $("<li>").append($("<a>").html("clear").on("click", function(){
       that.clearContent();
       $.ui.toggleSideMenu();
@@ -295,16 +307,22 @@ LogClass.prototype.init_test = function(){
   function cb(type){
     window.testlog.myLog("add:" + type, "test");
   }
-  window.WatchNative.addDeviceListener(cb);
+  window.WatchNative.addListener(cb);
 };
-LogClass.prototype.buttonA = function(){
+LogClass.prototype.buttonA = function(){//start
   window.WatchNative.messageToWear(null, null, [0]);  
 };
-LogClass.prototype.buttonB = function(){
+LogClass.prototype.buttonB = function(){//next
   window.WatchNative.messageToWear(null, null, [1]);  
 };
-LogClass.prototype.buttonC = function(){
-  window.WatchNative.messageToWear(null, null, [2]);  
+LogClass.prototype.buttonC = function(){//prev
+  window.WatchNative.messageToWear(null, null, [3]);  
+};
+LogClass.prototype.buttonD = function(){//start_service
+  window.WatchNative.messageToWear(null, null, [-1]);  
+};
+LogClass.prototype.buttonE = function(){//stop_service
+  window.WatchNative.messageToWear(null, null, [-2]);  
 };
 LogClass.prototype.myLog = function(info, prefix){
   if(!this._debug){
