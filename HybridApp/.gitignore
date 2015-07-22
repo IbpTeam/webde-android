@@ -14,3 +14,9 @@ CordovaLib/bin/
 bin/
 # Gradle builds
 /build
+.gradle/
+.idea/
+
+# third_party
+cordova-android/
+
